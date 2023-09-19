@@ -26,7 +26,7 @@ export type CreateDecoratorOptions = CommonCreateOptions & {
 
 
 export interface  MiscellaneousDecoratorOptions {
-    body?: boolean;
-    params?: boolean;
-    config?: boolean
+    hasBody?: boolean;
+    hasParams?: boolean;
+    hasConfig?: boolean
 }

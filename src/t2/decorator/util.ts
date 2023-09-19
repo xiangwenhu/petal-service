@@ -27,8 +27,8 @@ export function getBaseConfig(apiFunction: Function,
     console.log("final config", fConfig);
     return {
         config: fConfig,
-        hasParams: apiConfig.params || false,
-        hasBody: apiConfig.body || false,
-        hasExtraConfig: apiConfig.config || false
+        hasParams: apiConfig.hasParams || false,
+        hasBody: apiConfig.hasBody || false,
+        hasExtraConfig: apiConfig.hasConfig || false
     };
 }
