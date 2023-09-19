@@ -1,7 +1,21 @@
-import { CreateDecoratorOptions } from "../other.type";
+import { CreateDecoratorOptions, MiscellaneousDecoratorOptions } from "../other.type";
 import { RequestConfig } from "../types";
 import { DEFAULT_CONFIG } from "./const";
-import { getConfig } from "./util";
+import { getBaseConfig } from "./util";
+
+
+function updateAPIConfig(storeMap: Map<any, any>, key: Function, api: Function, config: any) {
+    const val = (storeMap.get(key) || new Map()) as Map<any, any>;
+    let apis: Map<any, any> = val.get("apis");
+    if (!apis) {
+        apis = new Map();
+        val.set("apis", apis);
+    }
+    const oldConfig = apis.get(api) || {};
+    Object.assign(oldConfig, config);
+    apis.set(api, oldConfig)
+    storeMap.set(key, val)
+}
 
 export function createApiDecorator({
     storeMap,
@@ -19,24 +33,16 @@ export function createApiDecorator({
                 // this 是实例对象, this.constructor 是 class
                 methodHost = this;
                 const key = this.constructor;
-                const val = (storeMap.get(key) || new Map()) as Map<any, any>;
-                let apis: Map<any, any> = val.get("apis");
-                if (!apis) {
-                    apis = new Map();
-                    val.set("apis", apis);
-                }
-                const oldConfig = apis.get(target) || {};
-                oldConfig.config = config;
-                apis.set(target, oldConfig)
-                storeMap.set(key, val)
+                updateAPIConfig(storeMap, key, target, { config });
             })
 
             return function () {
                 const {
                     config,
                     hasParams,
-                    hasBody
-                } = getConfig(target, methodHost.constructor, defaults, storeMap);
+                    hasBody,
+                    hasExtraConfig
+                } = getBaseConfig(target, methodHost.constructor, defaults, storeMap);
 
                 // 有请求参数
                 if (hasParams) {
@@ -47,7 +53,16 @@ export function createApiDecorator({
                     config.data = hasParams ? arguments[1] : arguments[0]
                 }
 
-                return request!(config as any)
+                // 额外的配置
+                let fConfig = config;
+                if (hasExtraConfig) {
+                    fConfig = {
+                        ...config,
+                        ...arguments[arguments.length - 1]
+                    }
+                }
+
+                return request!(fConfig as any)
                     .then((res) => {
                         return res.data
                     })
@@ -62,12 +77,11 @@ export function createApiDecorator({
 
 }
 
-export function createParamsDecorator({
-    storeMap,
-    defaults,
-    request
+
+export function createMiscellaneousDecorator({
+    storeMap
 }: CreateDecoratorOptions) {
-    return function paramsDecorator() {
+    return function apiMiscellaneousDecorator(options: MiscellaneousDecoratorOptions = {}) {
         return function (target: Function, context: ClassMethodDecoratorContext<any>) {
             if (context.kind !== 'method') {
                 return
@@ -76,47 +90,8 @@ export function createParamsDecorator({
             context.addInitializer(function () {
                 // this 是实例对象, this.constructor 是 class
                 const key = this.constructor;
-                const val = (storeMap.get(key) || new Map()) as Map<any, any>;
-                let apis: Map<any, any> = val.get("apis");
-                if (!apis) {
-                    apis = new Map();
-                    val.set("apis", apis);
-                }
-                const config = apis.get(target) || {};
-                config.hasParams = true;
-                apis.set(target, config)
-                storeMap.set(key, val)
+                updateAPIConfig(storeMap, key, target, options);
             })
         }
     }
-}
-
-export function createBodyDecorator({
-    storeMap,
-    defaults,
-    request
-}: CreateDecoratorOptions) {
-    return function bodyDecorator(config: RequestConfig = DEFAULT_CONFIG) {
-        return function (target: Function, context: ClassMethodDecoratorContext<any>) {
-            if (context.kind !== 'method') {
-                return
-            }
-            console.log(":paramsDecorator");
-            context.addInitializer(function () {
-                // this 是实例对象, this.constructor 是 class
-                const key = this.constructor;
-                const val = (storeMap.get(key) || new Map()) as Map<any, any>;
-                let apis: Map<any, any> = val.get("apis");
-                if (!apis) {
-                    apis = new Map();
-                    val.set("apis", apis);
-                }
-                const config = apis.get(target) || {};
-                config.hasBody = true;
-                apis.set(target, config)
-                storeMap.set(key, val)
-            })
-        }
-    }
-
 }

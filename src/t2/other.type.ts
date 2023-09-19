@@ -23,3 +23,10 @@ export type CreateDecoratorOptions = CommonCreateOptions & {
     request?: (config: RequestConfig) => Promise<ApiResponse>;
     updateConfig?: (config: RequestConfig) => void;
 }
+
+
+export interface  MiscellaneousDecoratorOptions {
+    body?: boolean;
+    params?: boolean;
+    config?: boolean
+}

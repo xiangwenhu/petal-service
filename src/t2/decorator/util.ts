@@ -2,7 +2,7 @@ import { isAsyncFunction, isFunction, isObject } from "../../util";
 import { RequestConfig } from "../types";
 import { CONFIG_KEY } from "./const";
 
-export function getConfig(apiFunction: Function,
+export function getBaseConfig(apiFunction: Function,
     constructor: Function,
     defaults: RequestConfig = {},
     storeMap: Map<any, any>) {
@@ -16,15 +16,19 @@ export function getConfig(apiFunction: Function,
     const apiConfig = config.get("apis").get(apiFunction) || {};
 
     const fConfig: RequestConfig = {
+        // 初始化默认值
         ...defaults,
+        // class装饰器上的默认值
         ...classApiConfig,
+        // api上配置的默认值
         ...(apiConfig.config || {}),
     }
 
     console.log("final config", fConfig);
     return {
         config: fConfig,
-        hasParams: apiConfig.hasParams || false,
-        hasBody: apiConfig.hasBody || false,
+        hasParams: apiConfig.params || false,
+        hasBody: apiConfig.body || false,
+        hasExtraConfig: apiConfig.config || false
     };
 }

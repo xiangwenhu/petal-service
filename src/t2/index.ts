@@ -1,6 +1,6 @@
 import { createServiceRoot } from "./decorator"
 
-const { classDecorator, apiDecorator, setConfig, apiParamsDecorator, apiBodyDecorator } = createServiceRoot();
+const { classDecorator, apiDecorator, setConfig, apiMiscellaneousDecorator } = createServiceRoot();
 
 setConfig({
     headers: {
@@ -16,8 +16,9 @@ class DemoService {
         method: "get",
         url: "trending/javascript",
     })
-    @apiParamsDecorator()
-    // @apiBodyDecorator()
+    @apiMiscellaneousDecorator({
+        params: true,
+    })
     async getIndex<R = string>(this: any, params: any): Promise<string> {
         return this.data
     }

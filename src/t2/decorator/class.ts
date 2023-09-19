@@ -10,10 +10,11 @@ export function createClassDecorator({ storeMap }: CreateDecoratorOptions) {
                 return
             }
             context.addInitializer(function () {
-                // this 是实例对象
-                const val = (storeMap.get(this) || new Map()) as Map<any, any>;
+                // this 是 class
+                const key = this;
+                const val = (storeMap.get(key) || new Map()) as Map<any, any>;
                 val.set(CONFIG_KEY, config);
-                storeMap.set(this, val)
+                storeMap.set(key, val)
             })
         }
     }

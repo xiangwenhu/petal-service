@@ -3,7 +3,7 @@ import { CreateDecoratorOptions, ServiceRootConfig } from "../other.type";
 import { RequestConfig } from "../types";
 import { createClassDecorator } from "./class";
 import { DEFAULT_CONFIG } from "./const";
-import { createApiDecorator, createBodyDecorator, createParamsDecorator } from "./method";
+import { createApiDecorator, createMiscellaneousDecorator } from "./method";
 import axios from "axios";
 
 function setConfig(options: CreateDecoratorOptions, config: RequestConfig) {
@@ -22,8 +22,7 @@ export function createServiceRoot(config: ServiceRootConfig = {}) {
     return {
         classDecorator: createClassDecorator(options),
         apiDecorator: createApiDecorator(options),
-        apiParamsDecorator: createParamsDecorator(options),
-        apiBodyDecorator: createBodyDecorator(options),
+        apiMiscellaneousDecorator: createMiscellaneousDecorator(options),
         setConfig: (config: RequestConfig) => setConfig(options, config),
     }
 }
