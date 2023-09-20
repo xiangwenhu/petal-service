@@ -3,12 +3,14 @@
 轻量级的装饰器服务
 
 ## 特性
-1. 支持多实例
-2. 支持多级配置 
+- [x] 支持多实例
+- [x] 支持多级配置 
     方法配置 > 实例配置 > class的配置 > 自定义默认值 > 系统默认配置
-3. 理论上支持自定义 request
-4. 支持继承
-5. 支持扩展装饰器（TODO::)
+- [x] 理论上支持自定义 request
+- [x] 支持继承
+- [ ] 支持扩展装饰器（TODO::))
+- [ ] json配置转服务 (TODO::))
+- [ ] 拦截器 (TODO::))
 
 ## 使用示例
 ### 示例1  多级配置
@@ -21,7 +23,12 @@ const {
     apiDecorator,
     setConfig,
     commonFieldDecorator
-} = createServiceInstance();
+} = createServiceInstance({
+    defaults: {
+        baseURL: "https://github.com",
+        timeout: 30 * 1000
+    }
+});
 
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
@@ -180,6 +187,8 @@ subService
 
 ```
 
+## 代码思路和存储
+参见 [design.md](/docs/design.md)
 
 ## 注意
 1. TypeScript 5.0 的修饰器标准跟之前的修饰器是不兼容的。旧版的 --experimentalDecorators 选项将会仍然保留，如果启用此配置，则仍然会将装饰器视为旧版，新版的装饰器无需任何配置就能够默认启用。

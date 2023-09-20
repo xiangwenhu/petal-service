@@ -6,7 +6,12 @@ const {
     apiDecorator,
     setConfig,
     commonFieldDecorator
-} = createServiceInstance();
+} = createServiceInstance({
+    defaults: {
+        baseURL: "https://github.com",
+        timeout: 30 * 1000
+    }
+});
 
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
