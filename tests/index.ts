@@ -79,9 +79,9 @@ const serviceA = new DemoService();
 serviceA
     .getIndex(
         { since: "monthly" },
-        { a: 1 },
+        undefined,
         {
-            headers: { a: 1 },
+            headers: { userId: 1 },
         }
     )
     .then((res) => {

@@ -22,7 +22,8 @@ const {
     classDecorator,
     apiDecorator,
     setConfig,
-    fieldDecorator: commonFieldDecorator
+    fieldDecorator,
+    paramsDecorator
 } = createServiceInstance({
     defaults: {
         baseURL: "https://github.com",
@@ -47,10 +48,15 @@ class DemoService {
 
     protected res?: ApiResponse;
 
-    // 设置 api 请求参数，最主要的是url, method, headers等
+    // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @apiDecorator({
         method: "get",
         url: "",
+    })
+    @paramsDecorator({
+        hasParams: true,
+        hasBody: false,
+        hasConfig: true
     })
     public async getIndex<R = string>(
         this: DemoService,
@@ -63,11 +69,12 @@ class DemoService {
         // return this.res!.data
     }
 
-    // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 自定义默认值 > 系统默认值
-    @commonFieldDecorator("timeout")
+    // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
+    @fieldDecorator("timeout")
     timeoutValue = 1000;
 
-    // @commonFieldDecorator("baseURL")
+    // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
+    // @fieldDecorator("baseURL")
     baseURLValue = "https://www.google.com"
 
 
@@ -81,7 +88,7 @@ serviceA
     .getIndex(
         { since: "monthly" },
         {
-            headers: { a: 1 },
+            headers: { userId: 1 },
         },
     )
     .then((res) => {
@@ -91,11 +98,12 @@ serviceA
         console.log("error serviceA getIndex:", err);
     });
 
+
 ```
 
 ### 示例2 继承
 ```typescript
-imimport Axios from "axios";
+import Axios from "axios";
 import { createServiceInstance } from "../src";
 import { ApiResponse, RequestConfig } from "../src/types";
 
@@ -176,9 +184,9 @@ const serviceA = new DemoService();
 serviceA
     .getIndex(
         { since: "monthly" },
-        { a: 1 },
+        undefined,
         {
-            headers: { a: 1 },
+            headers: { userId: 1 },
         }
     )
     .then((res) => {
@@ -272,6 +280,7 @@ class DemoService {
     public async getIndex<R = string>(
         this: DemoService,
         params: any,
+        data: any,
         config: RequestConfig,
     ): Promise<any> {
         // 不写任何返回， 默认会返回 this.res.data
@@ -287,6 +296,7 @@ const serviceA = new DemoService();
 serviceA
     .getIndex(
         { since: "monthly" },
+        undefined,
         {
             headers: { a: 1 },
         },
@@ -297,7 +307,6 @@ serviceA
     .catch((err) => {
         console.log("error serviceA getIndex:", err);
     });
-
 
 ```
 

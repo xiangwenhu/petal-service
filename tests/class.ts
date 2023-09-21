@@ -5,7 +5,8 @@ const {
     classDecorator,
     apiDecorator,
     setConfig,
-    fieldDecorator
+    fieldDecorator,
+    paramsDecorator
 } = createServiceInstance({
     defaults: {
         baseURL: "https://github.com",
@@ -34,6 +35,11 @@ class DemoService {
     @apiDecorator({
         method: "get",
         url: "",
+    })
+    @paramsDecorator({
+        hasParams: true,
+        hasBody: false,
+        hasConfig: true
     })
     public async getIndex<R = string>(
         this: DemoService,
@@ -65,7 +71,7 @@ serviceA
     .getIndex(
         { since: "monthly" },
         {
-            headers: { a: 1 },
+            headers: { userId: 1 },
         },
     )
     .then((res) => {
