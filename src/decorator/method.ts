@@ -1,35 +1,16 @@
+import { DEFAULT_CONFIG } from "../const";
 import {
     CreateDecoratorOptions,
-    ParamsDecoratorOptions,
-    StorageMap,
-    StorageMapValue,
+    ParamsDecoratorOptions
 } from "../other.type";
 import { RequestConfig } from "../types";
-import { DEFAULT_CONFIG } from "../const";
 import { getBaseConfig } from "./util";
-
-function updateAPIConfig(
-    storeMap: StorageMap,
-    key: Function,
-    api: Function,
-    config: any
-) {
-    const val: StorageMapValue = (storeMap.get(key) || new Map());
-    let apis: StorageMapValue.APISMapValue = val.get("apis");
-    if (!apis) {
-        apis = new Map();
-        val.set("apis", apis);
-    }
-    const oldConfig: StorageMapValue.APIValue = apis.get(api) || {};
-    Object.assign(oldConfig, config);
-    apis.set(api, oldConfig);
-    storeMap.set(key, val);
-}
 
 export function createApiDecorator({
     storeMap,
     defaults,
     request,
+    updateAPIConfig
 }: CreateDecoratorOptions) {
     return function apiDecorator(config: RequestConfig = DEFAULT_CONFIG) {
         // target 是 class 的方法
@@ -41,10 +22,10 @@ export function createApiDecorator({
             context.addInitializer(function () {
                 // this 是实例对象, this.constructor 是 class
                 classInstance = this;
-                const key = this.constructor;
+                const key = classInstance.constructor;
                 console.log(`apiDecorator class:${key.name}, method:${String(context.name)}`);
 
-                updateAPIConfig(storeMap, key, target, { config });
+                updateAPIConfig( key, target, { config });
                 // 防止被串改
                 Object.defineProperty(classInstance, context.name, {
                     configurable: false,
@@ -76,7 +57,13 @@ export function createApiDecorator({
                                 return Reflect.get(target, property, receiver)
                             },
                         });
-                        return target.call(proxy);
+                        return target.call(proxy)
+                            .then((resData: any) => {  // api方法里面可以什么都不写，直接返回结果
+                                if (resData === undefined) {
+                                    return res.data
+                                }
+                                return resData;
+                            });
                     })
             };
         };
@@ -84,7 +71,7 @@ export function createApiDecorator({
 }
 
 export function createParamsDecorator({
-    storeMap,
+    updateAPIConfig
 }: CreateDecoratorOptions) {
     return function paramsDecorator(
         options: ParamsDecoratorOptions = {}
@@ -99,7 +86,7 @@ export function createParamsDecorator({
                 const key = this.constructor;
                 console.log(`paramsDecorator class:${key.name}, method:${String(context.name)}`);
 
-                updateAPIConfig(storeMap, key, target, options);
+                updateAPIConfig(key, target, options);
             });
         };
     };

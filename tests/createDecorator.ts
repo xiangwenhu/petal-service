@@ -1,11 +1,12 @@
+import { AxiosHeaders, RawAxiosRequestHeaders } from "axios";
 import { createServiceInstance } from "../src";
+import { StorageMapValue } from "../src/other.type";
 import { ApiResponse, RequestConfig } from "../src/types";
 
 const {
     classDecorator,
-    apiDecorator,
-    setConfig,
-    fieldDecorator
+    createDecorator,
+    apiDecorator
 } = createServiceInstance({
     defaults: {
         baseURL: "https://github.com",
@@ -13,21 +14,29 @@ const {
     }
 });
 
-// 更新配置，比如授权信息，例如jwt, cookies
-setConfig({
-    headers: {
-        token: "ccccc",
-    },
-});
+/**
+ * 通过filed自定义headers
+ */
+const headersDecorator = createDecorator(({ storeMap, updateFiledConfig }) => {
+    // target 为 undefined
+    return function (target: any, context: ClassFieldDecoratorContext<any>) {
+        context.addInitializer(function () {
+            // this 是实例对象, this.constructor 是 class
+            const instance = this;
+            const key = instance.constructor;
+            updateFiledConfig(key, instance, {
+                headers: context.name
+            })
+        })
+    }
 
+})
 
 // 设置baseUrl和超时时间
 @classDecorator({
     baseURL: "https://www.baidu.com",
-    timeout: 60 * 1000
 })
 class DemoService {
-
     protected res?: ApiResponse;
 
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
@@ -40,24 +49,13 @@ class DemoService {
         params: any,
         config: RequestConfig,
     ): Promise<any> {
-        const something = this.getSomething();
-        console.log("something: ", something);
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
     }
-
-    // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
-    @fieldDecorator("timeout")
-    timeoutValue = 1000;
-
-    // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
-    // @fieldDecorator("baseURL")
-    baseURLValue = "https://www.google.com"
-
-
-    getSomething() {
-        return `something - ${this.timeoutValue}`
+    @headersDecorator headers = {
+        "AppId": 5000
     }
+
 }
 
 const serviceA = new DemoService();

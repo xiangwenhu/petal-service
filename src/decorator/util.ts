@@ -100,3 +100,40 @@ export function getBaseConfig(
     }
     return mConfig;
 }
+
+export function updateFiledConfig(
+    storeMap: StorageMap,
+    key: Function,
+    instance: Object,
+    config: Record<PropertyKey, PropertyKey>
+) {
+    const val: StorageMapValue = (storeMap.get(key) || new Map());
+    let instances: StorageMapValue.InstancesMapValue = val.get("instances");
+    if (!instances) {
+        instances = new Map();
+        val.set("instances", instances);
+    }
+    const oldConfig: StorageMapValue.InstanceValue = instances.get(instance) || {};
+    Object.assign(oldConfig, config);
+    instances.set(instance, oldConfig);
+    storeMap.set(key, val);
+}
+
+
+export function updateAPIConfig(
+    storeMap: StorageMap,
+    key: Function,
+    api: Function,
+    config: StorageMapValue.APIValue
+) {
+    const val: StorageMapValue = (storeMap.get(key) || new Map());
+    let apis: StorageMapValue.APISMapValue = val.get("apis");
+    if (!apis) {
+        apis = new Map();
+        val.set("apis", apis);
+    }
+    const oldConfig: StorageMapValue.APIValue = apis.get(api) || {};
+    Object.assign(oldConfig, config);
+    apis.set(api, oldConfig);
+    storeMap.set(key, val);
+}

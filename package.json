@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "axios": "^1.5.0",
-    "lodash": "^4.17.21",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.198"
+    "@types/lodash": "^4.14.198",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   }
 }

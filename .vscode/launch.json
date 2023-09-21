@@ -24,7 +24,7 @@
             "type": "node",
             "request": "launch",
             "args": [
-                "./tests/index.ts"
+                "./tests/createDecorator.ts"
             ],
             "runtimeArgs": [
                 "-r",

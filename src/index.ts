@@ -1,11 +1,12 @@
 import { createMap } from "./store"
-import { CreateDecoratorOptions, ServiceRootConfig, StorageMapValue } from "./other.type";
+import { CreateDecoratorOptions, InnerCreateDecoratorOptions, ServiceRootConfig, StorageMapValue } from "./other.type";
 import { RequestConfig } from "./types";
 import { createClassDecorator } from "./decorator/class";
 import { DEFAULT_CONFIG } from "./const";
 import { createFieldDecorator } from "./decorator/field";
 import { createApiDecorator, createParamsDecorator } from "./decorator/method";
 import { createRequestInstance, isAsyncFunction, isFunction } from "./util";
+import { updateAPIConfig, updateFiledConfig } from "./decorator/util";
 /**
  * 更新配置
  * @param options 
@@ -30,11 +31,25 @@ function getRequestInstance(config: ServiceRootConfig) {
 export function createServiceInstance(config: ServiceRootConfig = {}) {
     const storeMap = createMap<Function, StorageMapValue>();
 
-    const options: CreateDecoratorOptions = {
+    const innerOptions: InnerCreateDecoratorOptions = {
         storeMap,
         defaults: config.defaults || DEFAULT_CONFIG,
-        request: getRequestInstance(config),
+        request: getRequestInstance(config)!,
+        updateAPIConfig(_class_, api, config) {
+            updateAPIConfig(storeMap, _class_, api, config);
+        },
+        updateFiledConfig(_class_, instance, config) {
+            updateFiledConfig(storeMap, _class_, instance, config);
+        },
     };
+
+    const options: CreateDecoratorOptions = {
+        storeMap,
+        defaults: innerOptions.defaults,
+        updateAPIConfig: innerOptions.updateAPIConfig,
+        updateFiledConfig: innerOptions.updateFiledConfig,
+        request: innerOptions.request
+    }
 
     return {
         /**
@@ -64,7 +79,7 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
          * @param creator 
          * @returns 
          */
-        createDecorator: (creator: (options: CreateDecoratorOptions)=> Function) => {
+        createDecorator: (creator: (options: CreateDecoratorOptions) => Function) => {
             return creator.call(null, options)
         }
     }

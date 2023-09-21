@@ -37,14 +37,48 @@ export interface ServiceRootConfig {
     createRequest?: () => RequestInstance
 }
 
-export interface CommonCreateOptions {
+export interface CreateDecoratorOptions {
     /**
      * 存储
      */
-    storeMap: StorageMap
+    storeMap: StorageMap;
+
+    updateAPIConfig: (
+        /**
+         * class
+         */
+        _class_: Function,
+        /**
+         * api 函数
+         */
+        api: Function,
+        config: StorageMapValue.APIValue,
+    ) => void;
+
+    updateFiledConfig: (
+        /**
+         * class
+         */
+        _class_: Function,
+        /**
+         * class 实例
+         */
+        instance: Object,
+        config: Record<PropertyKey, PropertyKey>
+    ) => void,
+    /**
+     * 默认配置
+     */
+    defaults?: RequestConfig,
+    /**
+     * 请求方法
+     * @param config RequestConfig
+     * @returns 
+     */
+    request: RequestInstance;
 }
 
-export type CreateDecoratorOptions = CommonCreateOptions & ServiceRootConfig;
+export type InnerCreateDecoratorOptions = CreateDecoratorOptions & ServiceRootConfig;
 
 
 /**
