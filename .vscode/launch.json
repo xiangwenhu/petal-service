@@ -24,7 +24,7 @@
             "type": "node",
             "request": "launch",
             "args": [
-                "./src/index.ts"
+                "./tests/index.ts"
             ],
             "runtimeArgs": [
                 "-r",

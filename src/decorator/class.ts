@@ -1,9 +1,8 @@
 import { CreateDecoratorOptions, StorageMapValue } from "../other.type";
+import { STORE_KEY_CONFIG, DEFAULT_CONFIG } from "../const";
 import { RequestConfig } from "../types";
-import { STORE_KEY_CONFIG, DEFAULT_CONFIG } from "./const";
 
 export function createClassDecorator({ storeMap }: CreateDecoratorOptions) {
-
     /**
      * 示例
      * @classDecorator({
@@ -13,14 +12,12 @@ export function createClassDecorator({ storeMap }: CreateDecoratorOptions) {
      * }
      */
     return function classDecorator(config: RequestConfig = DEFAULT_CONFIG) {
-        return function (target: any, context: ClassDecoratorContext<any>) {
-            console.log(":classDecorator");
-            if (context.kind !== 'class') {
-                return
-            }
+        // target 是 class
+        return function (target: Function, context: ClassDecoratorContext<any>) {
+            console.log("classDecorator:", target.name);
             context.addInitializer(function () {
                 // this 是 class
-                const key = this;
+                const key = target;
                 const val: StorageMapValue = (storeMap.get(key) || new Map());
                 val.set(STORE_KEY_CONFIG, config);
                 storeMap.set(key, val)

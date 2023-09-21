@@ -1,5 +1,4 @@
-import { ApiResponse, RequestConfig } from "./types";
-
+import { ApiResponse, RequestConfig, RequestInstance } from "./types";
 
 export type StorageMapValue = Map<"__config__" | "apis" | "instances", any>
 
@@ -18,6 +17,8 @@ export namespace StorageMapValue {
 
 export type StorageMap = Map<Function, StorageMapValue>;
 
+
+
 export interface ServiceRootConfig {
     /**
      * 默认配置
@@ -28,13 +29,12 @@ export interface ServiceRootConfig {
      * @param config RequestConfig
      * @returns 
      */
-    request?: (config: RequestConfig) => Promise<ApiResponse>;
+    request?: RequestInstance;
     /**
-     * 更新配置
-     * @param config RequestConfig
+     * 创建re
      * @returns 
      */
-    updateConfig?: (config: RequestConfig) => void;
+    createRequest?: () => RequestInstance
 }
 
 export interface CommonCreateOptions {
@@ -50,7 +50,7 @@ export type CreateDecoratorOptions = CommonCreateOptions & ServiceRootConfig;
 /**
  * API 方法杂项配置
  */
-export interface ApiMiscellaneousDecoratorOptions {
+export interface ParamsDecoratorOptions {
     /**
      * 是否有body
      */

@@ -1,6 +1,6 @@
-import { StorageMapValue } from "../other.type";
-import { createMap } from "../store";
-import { RequestConfig } from "../types";
+import { StorageMapValue } from "./other.type";
+import { createMap } from "./store";
+import { RequestConfig } from "./types";
 
 export const DEFAULT_CONFIG: RequestConfig = {
     timeout: 60 * 1000,
@@ -18,5 +18,3 @@ export const STORE_KEYS  = {
 }
 
 export const storeMap = createMap<Function, StorageMapValue>();
-
-console.log(STORE_KEYS);

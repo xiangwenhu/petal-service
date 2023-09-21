@@ -4,13 +4,13 @@
 
 ## 特性
 - [x] 支持多实例
-- [x] 支持多级配置 
+- [x] 支持多级配置
     方法配置 > 实例配置 > class的配置 > 自定义默认值 > 系统默认配置
-- [x] 理论上支持自定义 request
+- [x] 支持基于Axios自定义request
 - [x] 支持继承
-- [ ] 支持扩展装饰器（TODO::))
+- [x] 支持扩展装饰器(初级支持)
 - [ ] json配置转服务 (TODO::))
-- [ ] 拦截器 (TODO::))
+- [x] 支持拦截器, 可以通过基于Axios自定义request实现
 
 ## 使用示例
 ### 示例1  多级配置
@@ -66,20 +66,38 @@ class DemoService {
     baseURLValue = "https://www.google.com"
 }
 
+const serviceA = new DemoService();
+serviceA
+    .getIndex(
+        { since: "monthly" },
+        {
+            headers: { a: 1 },
+        },
+    )
+    .then((res) => {
+        console.log("res serviceA getIndex:", res.length);
+    })
+    .catch((err) => {
+        console.log("error serviceA getIndex:", err);
+    });
+
 ```
 
 ### 示例2 继承
 ```typescript
+imimport Axios from "axios";
 import { createServiceInstance } from "../src";
-import { RequestConfig } from "../src/types";
+import { ApiResponse, RequestConfig } from "../src/types";
 
 const {
     classDecorator,
     apiDecorator,
     setConfig,
-    apiMiscellaneousDecorator,
-    commonFieldDecorator
-} = createServiceInstance();
+    paramsDecorator,
+    fieldDecorator
+} = createServiceInstance({
+    request: Axios
+});
 
 setConfig({
     headers: {
@@ -87,55 +105,60 @@ setConfig({
     },
 });
 
+
 @classDecorator({
-    baseURL: "https://www.baidu.com",
+    baseURL: "https://www.jd.com",
 })
 class DemoService {
+
+    protected res?: ApiResponse;
+
     @apiDecorator({
         method: "get",
         url: "",
     })
     public async getIndex<R = string>(
-        this: any,
+        this: DemoService,
         params: any,
         data: any,
         config: RequestConfig
-    ): Promise<string> {
-        return this.data;
+    ) {
+        return this.res!.data;
     }
 
-    @commonFieldDecorator("timeout")
+    @fieldDecorator("timeout")
     timeoutValue = 1000;
 
-    @commonFieldDecorator("baseURL")
-    baseURLValue = "https://www.google.com"
+    @fieldDecorator("baseURL")
+    baseURLValue = "https://www.github.com"
 }
 
 @classDecorator({
-    baseURL: "https://www.bing.com",
+    baseURL: "https://cn.bing.com/",
 })
-class SubDemoService extends DemoService{
+class SubDemoService extends DemoService {
+
     @apiDecorator({
         method: "get",
         url: "",
     })
-    @apiMiscellaneousDecorator({
+    @paramsDecorator({
         hasParams: true,
         hasConfig: true,
         hasBody: false,
     })
     async getBingIndex<R = string>(
-        this: any,
+        this: SubDemoService,
         params: any,
         config: RequestConfig
     ): Promise<string> {
-        return this.data;
+        return this.res!.data;
     }
-    @commonFieldDecorator("timeout")
-    timeoutValue = 3000;
+    @fieldDecorator("timeout")
+    timeoutValue = 30 * 1000;
 
-    @commonFieldDecorator("baseURL")
-    baseURLValue = "https://www.youtube.com"
+    @fieldDecorator("baseURL")
+    baseURLValue = "https://www.example.com"
 }
 
 
@@ -149,10 +172,10 @@ serviceA
         }
     )
     .then((res) => {
-        console.log("resA:", res.length);
+        console.log("res serviceA getIndex:", res.length);
     })
     .catch((err) => {
-        console.log("error:", err);
+        console.log("error serviceA getIndex:", err);
     });
 
 const subService = new SubDemoService();
@@ -164,25 +187,25 @@ subService
         }
     )
     .then((res) => {
-        console.log("resA:", res.length);
+        console.log("res subService getBingIndex:", res.length);
     })
     .catch((err) => {
-        console.log("error:", err);
+        console.log("res subService getBingIndex error:", err);
     });
 
 subService
     .getIndex(
         { since: "monthly" },
-        { a: 1 },
+        undefined,
         {
             headers: { a: 1 },
         }
     )
     .then((res) => {
-        console.log("resA:", res.length);
+        console.log("res subService getIndex :", res.length);
     })
     .catch((err) => {
-        console.log("error:", err);
+        console.log("res subService getIndex  error:", err);
     });
 
 ```

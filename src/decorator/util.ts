@@ -1,7 +1,7 @@
-import { isAsyncFunction, isFunction, isObject } from "../util";
+import { isAsyncFunction, isFunction, isObject, getOwnProperty, hasOwnProperty } from "../util";
 import { StorageMap, StorageMapValue } from "../other.type";
 import { RequestConfig } from "../types";
-import { STORE_KEY_CONFIG } from "./const";
+import { STORE_KEY_CONFIG } from "../const";
 import { merge } from "lodash";
 
 /**
@@ -9,7 +9,7 @@ import { merge } from "lodash";
  * @param apiFunction api对象的函数
  * @param classInstance class的实例
  * @param constructor class
- * @param defaults 默认值
+ * @param defaultConfig 默认值
  * @param argumentsObj api实参
  * @param storeMap 存储
  * @returns
@@ -17,18 +17,17 @@ import { merge } from "lodash";
 export function getBaseConfig(
     apiFunction: Function,
     classInstance: Object,
-    constructor: Function,
-    defaults: RequestConfig = {},
+    defaultConfig: RequestConfig = {},
     argumentsObj: ArrayLike<any>,
     storeMap: StorageMap) {
 
     if (!isObject(apiFunction) && !isFunction(apiFunction) && !isAsyncFunction(apiFunction)) {
         throw new Error("apiFunction must be a/an Object|Function|AsyncFunction");
     }
-    const key = constructor;
+    const key = classInstance.constructor;
     const config: StorageMapValue = storeMap.get(key) || new Map();;
     // 挂载class身上的
-    const classApiConfig = config.get(STORE_KEY_CONFIG) || {};
+    const classConfig = config.get(STORE_KEY_CONFIG) || {};
     const apiConfig = config.get("apis").get(apiFunction) || {};
 
     // 实例
@@ -36,16 +35,18 @@ export function getBaseConfig(
     const instancePropertyMap = instances.get(classInstance) || {};
 
     const instanceConfig = Object.entries(instancePropertyMap).reduce((obj: RequestConfig, [key, value]) => {
-        // @ts-ignore
-        obj[key] = classInstance[value]
+        if (hasOwnProperty(classInstance, value)) {
+            // @ts-ignore
+            obj[key] = getOwnProperty(classInstance, value);
+        }
         return obj;
     }, {})
 
     let mConfig: RequestConfig = {
         // 初始化默认值
-        ...defaults,
+        ...defaultConfig,
         // class装饰器上的默认值
-        ...classApiConfig,
+        ...classConfig,
         // class实例的值
         ...instanceConfig,
         // api上配置的默认值
@@ -97,6 +98,5 @@ export function getBaseConfig(
                 );
         }
     }
-    console.log("final config", mConfig);
     return mConfig;
 }

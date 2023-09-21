@@ -1,11 +1,11 @@
 import {
     CreateDecoratorOptions,
-    ApiMiscellaneousDecoratorOptions,
+    ParamsDecoratorOptions,
     StorageMap,
     StorageMapValue,
 } from "../other.type";
 import { RequestConfig } from "../types";
-import { DEFAULT_CONFIG } from "./const";
+import { DEFAULT_CONFIG } from "../const";
 import { getBaseConfig } from "./util";
 
 function updateAPIConfig(
@@ -32,59 +32,73 @@ export function createApiDecorator({
     request,
 }: CreateDecoratorOptions) {
     return function apiDecorator(config: RequestConfig = DEFAULT_CONFIG) {
+        // target 是 class 的方法
         return function (
             target: Function,
             context: ClassMethodDecoratorContext<any>
         ) {
-            if (context.kind !== "method") {
-                return;
-            }
-            console.log(":methodDecorator");
-            let methodHost: Function;
+            let classInstance: Function;
             context.addInitializer(function () {
                 // this 是实例对象, this.constructor 是 class
-                methodHost = this;
+                classInstance = this;
                 const key = this.constructor;
+                console.log(`apiDecorator class:${key.name}, method:${String(context.name)}`);
+
                 updateAPIConfig(storeMap, key, target, { config });
+                // 防止被串改
+                Object.defineProperty(classInstance, context.name, {
+                    configurable: false,
+                    writable: false,
+                    value: proxyMethod
+                })
             });
 
-            return function () {
+            function proxyMethod() {
                 // 读取最终合并后的配置
                 const config =
                     getBaseConfig(
                         target,
-                        methodHost,
-                        methodHost.constructor,
+                        classInstance,
                         defaults,
                         arguments,
                         storeMap
                     );
+                console.log(`${classInstance.constructor.name} ${target.name} final config:`, config);
+
                 return request!(config as any)
                     .then((res) => {
-                        return target.call(res);
+                        // 代理 classInstance, 即方法实例
+                        const proxy = new Proxy(classInstance, {
+                            get: function (target, property, receiver) {
+                                if (property == "res") {
+                                    return res
+                                }
+                                return Reflect.get(target, property, receiver)
+                            },
+                        });
+                        return target.call(proxy);
                     })
             };
         };
     };
 }
 
-export function createMiscellaneousDecorator({
+export function createParamsDecorator({
     storeMap,
 }: CreateDecoratorOptions) {
-    return function apiMiscellaneousDecorator(
-        options: ApiMiscellaneousDecoratorOptions = {}
+    return function paramsDecorator(
+        options: ParamsDecoratorOptions = {}
     ) {
+        // target 是class的方法
         return function (
             target: Function,
             context: ClassMethodDecoratorContext<any>
         ) {
-            if (context.kind !== "method") {
-                return;
-            }
-            console.log(":paramsDecorator");
             context.addInitializer(function () {
                 // this 是实例对象, this.constructor 是 class
                 const key = this.constructor;
+                console.log(`paramsDecorator class:${key.name}, method:${String(context.name)}`);
+
                 updateAPIConfig(storeMap, key, target, options);
             });
         };

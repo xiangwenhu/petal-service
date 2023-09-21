@@ -19,16 +19,18 @@ function updateFiledConfig(
     storeMap.set(key, val);
 }
 
-export function createCommonFieldDecorator({
+export function createFieldDecorator({
     storeMap,
 }: CreateDecoratorOptions) {
-    return function commonFieldDecorator(field: keyof RequestConfig) {
-        console.log(":commonFieldDecorator");
+    return function fieldDecorator(field: keyof RequestConfig) {
+        // target 为 undefined
         return function (target: any, context: ClassFieldDecoratorContext<Object>) {
             context.addInitializer(function () {
                 // this 是实例对象, this.constructor 是 class
                 const instance = this;
                 const key = instance.constructor;
+                console.log(`fieldDecorator class:${key.name}, filed:${String(context.name)}`);
+
                 updateFiledConfig(storeMap, key, instance, {
                     [field]: context.name
                 })

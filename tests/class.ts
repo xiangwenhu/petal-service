@@ -1,11 +1,11 @@
 import { createServiceInstance } from "../src";
-import { RequestConfig } from "../src/types";
+import { ApiResponse, RequestConfig } from "../src/types";
 
 const {
     classDecorator,
     apiDecorator,
     setConfig,
-    commonFieldDecorator
+    fieldDecorator: commonFieldDecorator
 } = createServiceInstance({
     defaults: {
         baseURL: "https://github.com",
@@ -20,6 +20,7 @@ setConfig({
     },
 });
 
+
 // 设置baseUrl和超时时间
 @classDecorator({
     baseURL: "https://www.baidu.com",
@@ -27,17 +28,21 @@ setConfig({
 })
 class DemoService {
 
+    protected res?: ApiResponse;
+
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @apiDecorator({
         method: "get",
         url: "",
     })
     public async getIndex<R = string>(
-        this: any,
+        this: DemoService,
         params: any,
-        config: RequestConfig
+        config: RequestConfig,
     ): Promise<string> {
-        return this.data;
+        const something = this.getSomething();
+        console.log("something: ", something);
+        return this.res!.data
     }
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
@@ -45,6 +50,26 @@ class DemoService {
     timeoutValue = 1000;
 
     // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
-    @commonFieldDecorator("baseURL")
+    // @commonFieldDecorator("baseURL")
     baseURLValue = "https://www.google.com"
+
+
+    getSomething() {
+        return `something - ${this.timeoutValue}`
+    }
 }
+
+const serviceA = new DemoService();
+serviceA
+    .getIndex(
+        { since: "monthly" },
+        {
+            headers: { a: 1 },
+        },
+    )
+    .then((res) => {
+        console.log("res serviceA getIndex:", res.length);
+    })
+    .catch((err) => {
+        console.log("error serviceA getIndex:", err);
+    });

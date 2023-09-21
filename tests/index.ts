@@ -1,13 +1,16 @@
+import Axios from "axios";
 import { createServiceInstance } from "../src";
-import { RequestConfig } from "../src/types";
+import { ApiResponse, RequestConfig } from "../src/types";
 
 const {
     classDecorator,
     apiDecorator,
     setConfig,
-    apiMiscellaneousDecorator,
-    commonFieldDecorator
-} = createServiceInstance();
+    paramsDecorator,
+    fieldDecorator
+} = createServiceInstance({
+    request: Axios
+});
 
 setConfig({
     headers: {
@@ -15,55 +18,60 @@ setConfig({
     },
 });
 
+
 @classDecorator({
-    baseURL: "https://www.youtube.com",
+    baseURL: "https://www.jd.com",
 })
 class DemoService {
+
+    protected res?: ApiResponse;
+
     @apiDecorator({
         method: "get",
         url: "",
     })
     public async getIndex<R = string>(
-        this: any,
+        this: DemoService,
         params: any,
         data: any,
         config: RequestConfig
-    ): Promise<string> {
-        return this.data;
+    ) {
+        return this.res!.data;
     }
 
-    @commonFieldDecorator("timeout")
+    @fieldDecorator("timeout")
     timeoutValue = 1000;
 
-    @commonFieldDecorator("baseURL")
+    @fieldDecorator("baseURL")
     baseURLValue = "https://www.github.com"
 }
 
 @classDecorator({
-    baseURL: "https://www.bing.com",
+    baseURL: "https://cn.bing.com/",
 })
-class SubDemoService extends DemoService{
+class SubDemoService extends DemoService {
+
     @apiDecorator({
         method: "get",
         url: "",
     })
-    @apiMiscellaneousDecorator({
+    @paramsDecorator({
         hasParams: true,
         hasConfig: true,
         hasBody: false,
     })
     async getBingIndex<R = string>(
-        this: any,
+        this: SubDemoService,
         params: any,
         config: RequestConfig
     ): Promise<string> {
-        return this.data;
+        return this.res!.data;
     }
-    @commonFieldDecorator("timeout")
-    timeoutValue = 3000;
+    @fieldDecorator("timeout")
+    timeoutValue = 30 * 1000;
 
-    @commonFieldDecorator("baseURL")
-    baseURLValue = "https://www.baidu.com"
+    @fieldDecorator("baseURL")
+    baseURLValue = "https://www.example.com"
 }
 
 
@@ -101,7 +109,7 @@ subService
 subService
     .getIndex(
         { since: "monthly" },
-        { a: 1 },
+        undefined,
         {
             headers: { a: 1 },
         }

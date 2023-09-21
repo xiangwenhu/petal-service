@@ -2,11 +2,10 @@ import { createMap } from "./store"
 import { CreateDecoratorOptions, ServiceRootConfig, StorageMapValue } from "./other.type";
 import { RequestConfig } from "./types";
 import { createClassDecorator } from "./decorator/class";
-import { DEFAULT_CONFIG } from "./decorator/const";
-import { createCommonFieldDecorator } from "./decorator/field";
-import { createApiDecorator, createMiscellaneousDecorator } from "./decorator/method";
-import axios from "axios";
-
+import { DEFAULT_CONFIG } from "./const";
+import { createFieldDecorator } from "./decorator/field";
+import { createApiDecorator, createParamsDecorator } from "./decorator/method";
+import { createRequestInstance, isAsyncFunction, isFunction } from "./util";
 /**
  * 更新配置
  * @param options 
@@ -17,37 +16,56 @@ function setConfig(options: CreateDecoratorOptions, config: RequestConfig) {
     Object.assign(oldConfig, config);
 }
 
+function getRequestInstance(config: ServiceRootConfig) {
+    if (isFunction(config.request) || isAsyncFunction(config.request)) {
+        return config.request;
+    }
+    if (isFunction(config.createRequest)) {
+        return config.createRequest?.call(config)
+    }
+    return createRequestInstance();
+}
+
 
 export function createServiceInstance(config: ServiceRootConfig = {}) {
     const storeMap = createMap<Function, StorageMapValue>();
+
     const options: CreateDecoratorOptions = {
         storeMap,
         defaults: config.defaults || DEFAULT_CONFIG,
-        request: config.request || axios.create() as any,
+        request: getRequestInstance(config),
     };
 
     return {
         /**
-         * class 装饰器
+         * class装饰器
          */
         classDecorator: createClassDecorator(options),
         /**
-         * api 装饰器
+         * api装饰器
          */
         apiDecorator: createApiDecorator(options),
         /**
-         * api 杂项装饰器
+         * params装饰器
          */
-        apiMiscellaneousDecorator: createMiscellaneousDecorator(options),
+        paramsDecorator: createParamsDecorator(options),
         /**
-         * 通用字段装饰器
+         * 字段装饰器
          */
-        commonFieldDecorator: createCommonFieldDecorator(options),
+        fieldDecorator: createFieldDecorator(options),
         /**
          * 更新配置，用户动态设置授权信息等，例如jwt
          * @param config
          * @returns
          */
         setConfig: (config: RequestConfig) => setConfig(options, config),
+        /**
+         * 自定义装饰器
+         * @param creator 
+         * @returns 
+         */
+        createDecorator: (creator: (options: CreateDecoratorOptions)=> Function) => {
+            return creator.call(null, options)
+        }
     }
 }
