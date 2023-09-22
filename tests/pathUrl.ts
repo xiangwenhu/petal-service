@@ -4,12 +4,8 @@ import { ApiResponse, RequestConfig } from "../src/types";
 const {
     classDecorator,
     apiDecorator,
-    setConfig,
-    fieldDecorator,
     paramsDecorator
 } = createServiceInstance();
-
-
 
 
 // 设置baseUrl和超时时间
@@ -17,9 +13,9 @@ const {
     baseURL: "https://www.baidu.com",
     timeout: 60 * 1000
 })
-class DemoService {
+class DemoService<R = any> {
 
-    protected res?: ApiResponse;
+    protected res!: ApiResponse<R>;
 
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @apiDecorator({
@@ -29,13 +25,14 @@ class DemoService {
     @paramsDecorator({
         hasParams: false,
     })
-    public async getIndex<R = string>(
-        this: DemoService,
+    public async getIndex(
+        this: DemoService<string>,
         pathParams: Record<string, string | number>,
         config: RequestConfig,
-    ): Promise<any> {
+    ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
+        return this.res.data
     }
 }
 

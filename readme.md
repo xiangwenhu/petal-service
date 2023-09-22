@@ -9,6 +9,7 @@
 - [x] 支持基于Axios自定义request
 - [x] 支持继承
 - [x] 支持扩展装饰器(初级支持)
+- [x] 支持path参数，即 /user/:id
 - [ ] json配置转服务 (TODO::))
 - [x] 支持拦截器, 可以通过基于Axios自定义request实现
 
@@ -44,10 +45,9 @@ setConfig({
     baseURL: "https://www.baidu.com",
     timeout: 60 * 1000
 })
-class DemoService {
+class DemoService<R = any> {
 
-    protected res?: ApiResponse;
-
+    protected res!: ApiResponse<R>;
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @apiDecorator({
         method: "get",
@@ -58,11 +58,11 @@ class DemoService {
         hasBody: false,
         hasConfig: true
     })
-    public async getIndex<R = string>(
-        this: DemoService,
+    public async getIndex(
+        this: DemoService<string>,
         params: any,
         config: RequestConfig,
-    ): Promise<any> {
+    ){
         const something = this.getSomething();
         console.log("something: ", something);
         // 不写任何返回， 默认会返回 this.res.data
@@ -91,6 +91,65 @@ serviceA
             headers: { userId: 1 },
         },
     )
+    .then((res: any) => {
+        console.log("res serviceA getIndex:", res.length);
+    })
+    .catch((err) => {
+        console.log("error serviceA getIndex:", err);
+    });
+
+```
+
+### 示例2 path参数
+```typescript
+import { createServiceInstance } from "../src";
+import { ApiResponse, RequestConfig } from "../src/types";
+
+const {
+    classDecorator,
+    apiDecorator,
+    paramsDecorator
+} = createServiceInstance();
+
+
+// 设置baseUrl和超时时间
+@classDecorator({
+    baseURL: "https://www.baidu.com",
+    timeout: 60 * 1000
+})
+class DemoService<R = any> {
+
+    protected res!: ApiResponse<R>;
+
+    // 设置 api 请求参数，最主要的是url, params, data和额外的config
+    @apiDecorator({
+        method: "get",
+        url: "/user/:id",
+    })
+    @paramsDecorator({
+        hasParams: false,
+    })
+    public async getIndex(
+        this: DemoService<string>,
+        pathParams: Record<string, string | number>,
+        config: RequestConfig,
+    ) {
+        // 不写任何返回， 默认会返回 this.res.data
+        // return this.res!.data
+        return this.res.data
+    }
+}
+
+const serviceA = new DemoService();
+serviceA
+    .getIndex(
+        {
+            id: 100
+        },
+        {
+            headers: { userId: 1 },
+        },
+    )
     .then((res) => {
         console.log("res serviceA getIndex:", res.length);
     })
@@ -101,7 +160,7 @@ serviceA
 
 ```
 
-### 示例2 继承
+### 示例3 继承
 ```typescript
 import Axios from "axios";
 import { createServiceInstance } from "../src";
@@ -127,21 +186,21 @@ setConfig({
 @classDecorator({
     baseURL: "https://www.jd.com",
 })
-class DemoService {
+class DemoService<R = any> {
 
-    protected res?: ApiResponse;
+    protected res!: ApiResponse<R>;
 
     @apiDecorator({
         method: "get",
         url: "",
     })
-    public async getIndex<R = string>(
+    public async getIndex(
         this: DemoService,
         params: any,
         data: any,
         config: RequestConfig
     ) {
-        return this.res!.data;
+        return this.res.data;
     }
 
     @fieldDecorator("timeout")
@@ -228,7 +287,7 @@ subService
 
 ```
 
-### 示例3 自定义装饰器
+### 示例4 自定义装饰器
 如下代码，通过field装饰器，添加headers
 ```typescript
 import { AxiosHeaders, RawAxiosRequestHeaders } from "axios";
@@ -269,22 +328,22 @@ const headersDecorator = createDecorator(({ storeMap, updateFiledConfig }) => {
 @classDecorator({
     baseURL: "https://www.baidu.com",
 })
-class DemoService {
-    protected res?: ApiResponse;
+class DemoService<R = any> {
+    protected res!: ApiResponse<R>;
 
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @apiDecorator({
         method: "get",
         url: "",
     })
-    public async getIndex<R = string>(
-        this: DemoService,
+    public async getIndex(
+        this: DemoService<string>,
         params: any,
         data: any,
         config: RequestConfig,
-    ): Promise<any> {
+    ) {
         // 不写任何返回， 默认会返回 this.res.data
-        // return this.res!.data
+        return this.res.data
     }
     @headersDecorator headers = {
         "AppId": 5000
@@ -307,6 +366,7 @@ serviceA
     .catch((err) => {
         console.log("error serviceA getIndex:", err);
     });
+
 
 ```
 

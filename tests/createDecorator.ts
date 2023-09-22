@@ -36,22 +36,22 @@ const headersDecorator = createDecorator(({ storeMap, updateFiledConfig }) => {
 @classDecorator({
     baseURL: "https://www.baidu.com",
 })
-class DemoService {
-    protected res?: ApiResponse;
+class DemoService<R = any> {
+    protected res!: ApiResponse<R>;
 
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @apiDecorator({
         method: "get",
         url: "",
     })
-    public async getIndex<R = string>(
-        this: DemoService,
+    public async getIndex(
+        this: DemoService<string>,
         params: any,
         data: any,
         config: RequestConfig,
-    ): Promise<any> {
+    ) {
         // 不写任何返回， 默认会返回 this.res.data
-        // return this.res!.data
+        return this.res.data
     }
     @headersDecorator headers = {
         "AppId": 5000

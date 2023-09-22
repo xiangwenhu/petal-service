@@ -22,21 +22,21 @@ setConfig({
 @classDecorator({
     baseURL: "https://www.jd.com",
 })
-class DemoService {
+class DemoService<R = any> {
 
-    protected res?: ApiResponse;
+    protected res!: ApiResponse<R>;
 
     @apiDecorator({
         method: "get",
         url: "",
     })
-    public async getIndex<R = string>(
+    public async getIndex(
         this: DemoService,
         params: any,
         data: any,
         config: RequestConfig
     ) {
-        return this.res!.data;
+        return this.res.data;
     }
 
     @fieldDecorator("timeout")
