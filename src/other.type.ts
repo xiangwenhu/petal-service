@@ -1,12 +1,14 @@
 import { ApiResponse, RequestConfig, RequestInstance } from "./types";
 
-export type StorageMapValue = Map<"__config__" | "apis" | "instances", any>
+export type StorageMapValue = Map<"__config__" | "apis" | "instances", any>;
 
 export namespace StorageMapValue {
     export type ConfigValue = RequestConfig;
-    export type APISMapValue = Map<Function, APIValue>;
-    export type APIValue = {
+    export type APISMapValue = Map<Function, APIConfigValue>;
+    export type APIConfigValue = {
         config?: RequestConfig;
+    } & APIValueParamsOptions;
+    export interface APIValueParamsOptions {
         hasParams?: boolean;
         hasBody?: boolean;
         hasConfig?: boolean;
@@ -17,24 +19,22 @@ export namespace StorageMapValue {
 
 export type StorageMap = Map<Function, StorageMapValue>;
 
-
-
 export interface ServiceRootConfig {
     /**
      * 默认配置
      */
-    defaults?: RequestConfig,
+    defaults?: RequestConfig;
     /**
      * 请求方法
      * @param config RequestConfig
-     * @returns 
+     * @returns
      */
     request?: RequestInstance;
     /**
      * 创建re
-     * @returns 
+     * @returns
      */
-    createRequest?: () => RequestInstance
+    createRequest?: () => RequestInstance;
 }
 
 export interface CreateDecoratorOptions {
@@ -52,7 +52,7 @@ export interface CreateDecoratorOptions {
          * api 函数
          */
         api: Function,
-        config: StorageMapValue.APIValue,
+        config: StorageMapValue.APIConfigValue
     ) => void;
 
     updateFiledConfig: (
@@ -65,21 +65,21 @@ export interface CreateDecoratorOptions {
          */
         instance: Object,
         config: Record<PropertyKey, PropertyKey>
-    ) => void,
+    ) => void;
     /**
      * 默认配置
      */
-    defaults?: RequestConfig,
+    defaults?: RequestConfig;
     /**
      * 请求方法
      * @param config RequestConfig
-     * @returns 
+     * @returns
      */
     request: RequestInstance;
 }
 
-export type InnerCreateDecoratorOptions = CreateDecoratorOptions & ServiceRootConfig;
-
+export type InnerCreateDecoratorOptions = CreateDecoratorOptions &
+    ServiceRootConfig;
 
 /**
  * API 方法杂项配置
@@ -96,5 +96,5 @@ export interface ParamsDecoratorOptions {
     /**
      * 是否有额外的配置选项
      */
-    hasConfig?: boolean
+    hasConfig?: boolean;
 }

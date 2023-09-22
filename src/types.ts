@@ -1,5 +1,6 @@
 export {
     AxiosRequestConfig as RequestConfig,
     AxiosResponse as ApiResponse,
-    AxiosInstance as RequestInstance
+    AxiosInstance as RequestInstance,
+    Method
 } from "axios"
