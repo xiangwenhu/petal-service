@@ -6,7 +6,7 @@ import { DEFAULT_CONFIG } from "./const";
 import { createFieldDecorator } from "./decorator/field";
 import { createMethodDecorator, createParamsDecorator } from "./decorator/method";
 import { createRequestInstance, isAsyncFunction, isFunction } from "./util";
-import { updateMethodConfig, updateFiledConfig, updateStaticFieldConfig, updateStaticMethodConfig } from "./decorator/util";
+import { updateMethodConfig, updateFieldConfig, updateStaticFieldConfig, updateStaticMethodConfig } from "./decorator/util";
 /**
  * 更新配置
  * @param options 
@@ -42,7 +42,7 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
             updateStaticMethodConfig(storeMap, _class_, api, config);
         },
         updateFieldConfig(_class_, instance, config) {
-            updateFiledConfig(storeMap, _class_, instance, config);
+            updateFieldConfig(storeMap, _class_, instance, config);
         },
         updateStaticFieldConfig(_class_, instance, config){
             updateStaticFieldConfig(storeMap, _class_, instance, config)

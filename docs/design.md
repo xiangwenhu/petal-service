@@ -1,9 +1,39 @@
 ## 存储结构
+
+数据其实分两类
+* classConfig  methods       instances 非静态的相互作用
+* classConfig  staticMethods staticFieldPropertyMap 相互作用
+
 ```typescript
 Map {
     ["构造函数class"]: Map {
-        "__config__": RequestConfig;
-        "apis": Map {
+        // class 的请求配置
+        "classConfig": RequestConfig,
+        // class 的方法（原型) 请求配置
+        "methods": Map {
+            // 键为方法， 值为请求配置和一些外的参数配置
+            ["方法"]: {
+                // 请求配置
+                config: RequestConfig;
+                // 方法是否有参数
+                hasParams?: boolean;
+                // 方法是否有body
+                hasBody?: boolean;
+                // 方法是否有额外配置
+                hasConfig?: boolean;
+            }
+        },
+        // class 实例 的 属性映射
+        "instancesFieldPropertyMap": Map {
+            // class 实例 的 属性映射
+            ["class实例"]: Record<PropertyKey, PropertyKey>
+        },
+
+        // 静态属性映射
+        "staticFieldPropertyMap": Record<PropertyKey, PropertyKey>;
+        // 静态方法配置
+        "staticMethods": Map {
+            // 键为方法， 值为请求配置和一些外的参数配置
             ["方法"]: {
                 config: RequestConfig;
                 hasParams?: boolean;
@@ -11,9 +41,6 @@ Map {
                 hasConfig?: boolean;
             }
         },
-        "instances": Map {
-            ["class实例"]: RequestConfig
-        }
     }
 }
 ```

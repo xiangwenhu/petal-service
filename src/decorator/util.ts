@@ -1,5 +1,4 @@
 import { merge } from "lodash";
-import { STORE_KEY_CONFIG } from "../const";
 import { StorageMap, StorageMapValue } from "../other.type";
 import { Method, RequestConfig } from "../types";
 import {
@@ -10,6 +9,7 @@ import {
     isObject,
 } from "../util";
 import { hasPathParams, pathToUrl } from "../util/path";
+import { STORE_KEYS } from "../const";
 
 const NOT_USE_BODY_METHODS: Method[] = ["get", "head", "GET", "HEAD"];
 
@@ -33,11 +33,7 @@ export function getMethodConfig(
     argumentsObj: ArrayLike<any>,
     storeMap: StorageMap
 ) {
-    if (
-        !isObject(method) &&
-        !isFunction(method) &&
-        !isAsyncFunction(method)
-    ) {
+    if (!isObject(method) && !isFunction(method) && !isAsyncFunction(method)) {
         throw new Error(
             "methodFunction must be a/an Object|Function|AsyncFunction"
         );
@@ -45,7 +41,7 @@ export function getMethodConfig(
     const key = instance.constructor;
     const config: StorageMapValue = storeMap.get(key) || new Map();
     // 挂载class身上的
-    const classConfig = config.get(STORE_KEY_CONFIG) || {};
+    const classConfig = config.get(STORE_KEYS.classConfig) || {};
     const methodConfig =
         (config.get("methods") as StorageMapValue.MethodsMapValue).get(
             method
@@ -53,7 +49,7 @@ export function getMethodConfig(
 
     // 实例
     const instances: StorageMapValue.InstancesMapValue =
-        (config.get("instances") as StorageMapValue.InstancesMapValue) ||
+        (config.get(STORE_KEYS.instancesFieldPropertyMap) as StorageMapValue.InstancesMapValue) ||
         new Map();
     const instancePropertyMap = instances.get(instance) || {};
 
@@ -100,11 +96,7 @@ export function getStaticMethodConfig(
     argumentsObj: ArrayLike<any>,
     storeMap: StorageMap
 ) {
-    if (
-        !isObject(method) &&
-        !isFunction(method) &&
-        !isAsyncFunction(method)
-    ) {
+    if (!isObject(method) && !isFunction(method) && !isAsyncFunction(method)) {
         throw new Error(
             "methodFunction must be a/an Object|Function|AsyncFunction"
         );
@@ -112,15 +104,16 @@ export function getStaticMethodConfig(
     const key = _class_;
     const config: StorageMapValue = storeMap.get(key) || new Map();
     // 挂载class身上的
-    const classConfig = config.get(STORE_KEY_CONFIG) || {};
+    const classConfig = config.get(STORE_KEYS.classConfig) || {};
     const methodConfig: StorageMapValue.MethodConfigValue =
         (config.get("staticMethods") as StorageMapValue.MethodsMapValue).get(
             method
         ) || {};
 
     const staticPropertyMap: StorageMapValue.FieldPropertyMapValue =
-        (config.get("staticConfig") as StorageMapValue.FieldPropertyMapValue) ||
-        {};
+        (config.get(
+            STORE_KEYS.staticFieldPropertyMap
+        ) as StorageMapValue.FieldPropertyMapValue) || {};
 
     const staticConfig = Object.entries(staticPropertyMap).reduce(
         (obj: RequestConfig, [key, value]) => {
@@ -222,13 +215,13 @@ function adjustConfig(
     return mConfig;
 }
 
-export function updateFiledConfig(
+export function updateFieldConfig(
     storeMap: StorageMap,
     _class_: Function,
     instance: Object,
     config: Record<PropertyKey, PropertyKey>
 ) {
-    const instancesKey = "instances";
+    const instancesKey = STORE_KEYS.instancesFieldPropertyMap;
 
     const val: StorageMapValue = storeMap.get(_class_) || new Map();
     let instances: StorageMapValue.InstancesMapValue = val.get(
@@ -251,14 +244,13 @@ export function updateStaticFieldConfig(
     _instance: Object,
     mapConfig: Record<PropertyKey, PropertyKey>
 ) {
-    const staticConfigKey = "staticConfig";
+    const staticConfigKey = STORE_KEYS.staticFieldPropertyMap;
 
     const val: StorageMapValue = storeMap.get(_class_) || new Map();
-    let oldConfig: StorageMapValue.ConfigValue = val.get(
-        staticConfigKey
-    ) as StorageMapValue.ConfigValue || {};
+    let oldConfig: StorageMapValue.ConfigValue =
+        (val.get(staticConfigKey) as StorageMapValue.ConfigValue) || {};
     Object.assign(oldConfig, mapConfig);
-    val.set(staticConfigKey, oldConfig)
+    val.set(staticConfigKey, oldConfig);
     storeMap.set(_class_, val);
 }
 

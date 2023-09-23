@@ -1,6 +1,5 @@
 import { CreateDecoratorOptions } from "../other.type";
 import { RequestConfig } from "../types";
-import { updateStaticFieldConfig } from "./util";
 
 export function createFieldDecorator(
     createDecoratorOptions: CreateDecoratorOptions
@@ -23,12 +22,12 @@ function innerFieldDecorator(
     target: Function,
     context: ClassFieldDecoratorContext<Function>,
     field: keyof RequestConfig,
-    { updateFieldConfig: updateFiledConfig }: CreateDecoratorOptions
+    { updateFieldConfig }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
-        // this 是 instance
-        // target undefined
-        // {"kind":"field","name":"name","static":false,"private":false,"access":{}}
+        // this: instance
+        // target: undefined
+        // context: demo {"kind":"field","name":"name","static":false,"private":false,"access":{}}
         const instance = this;
         const key = instance.constructor;
         console.log(
@@ -37,7 +36,7 @@ function innerFieldDecorator(
             )}`
         );
 
-        updateFiledConfig(key, instance, {
+        updateFieldConfig(key, instance, {
             [field]: context.name,
         });
     });
@@ -52,7 +51,7 @@ function innerStaticFieldDecorator(
     context.addInitializer(function () {
         // this：class
         // target： undefined
-        // context: {"kind":"field","name":"age","static":true,"private":false,"access":{}}
+        // context: demo {"kind":"field","name":"age","static":true,"private":false,"access":{}}
         const _class_ = this;
         console.log(
             `innerFieldDecorator class:${_class_.name}, filed:${String(

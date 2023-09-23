@@ -1,41 +1,69 @@
-function staticFiledDecorator(target: any, context: ClassFieldDecoratorContext) {
-    context.addInitializer(function(){
-        // this：class 
+function staticFiledDecorator(
+    target: any,
+    context: ClassFieldDecoratorContext
+) {
+    context.addInitializer(function () {
+        // this：class
         // target： undefined
         // context: {"kind":"field","name":"age","static":true,"private":false,"access":{}}
-        console.log('staticFiledDecorator addInitializer here',context, target);
-    })
+        console.log(
+            "staticFiledDecorator addInitializer here",
+            context,
+            target
+        );
+    });
 }
-function instanceFiledDecorator(target: any, context: ClassFieldDecoratorContext) {
-    context.addInitializer(function(){
+function instanceFiledDecorator(
+    target: any,
+    context: ClassFieldDecoratorContext
+) {
+    context.addInitializer(function () {
         // this 是 instance
         // target undefined
         // {"kind":"field","name":"name","static":false,"private":false,"access":{}}
-        console.log('instanceFiledDecorator addInitializer here', context, target);
-    })
+        console.log(
+            "instanceFiledDecorator addInitializer here",
+            context,
+            target
+        );
+    });
 }
 
-
-function staticMethodDecorator(target: any, context: ClassMethodDecoratorContext) {
+function staticMethodDecorator(
+    target: any,
+    context: ClassMethodDecoratorContext
+) {
     // this: class
-    // target: 静态方法
+    // target: 静态method
     // context: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
-    context.addInitializer(function(){
-        console.log('staticMethodDecorator addInitializer here', context, target);
-    })
+    context.addInitializer(function () {
+        console.log(
+            "staticMethodDecorator addInitializer here",
+            context,
+            target
+        );
+    });
 }
-
 
 function classDecorator(target: any, context: ClassDecoratorContext) {
-    context.addInitializer(function() {
-        console.log('classDecorator addInitializer here', context, target);
-    })
+    context.addInitializer(function () {
+        // this: class
+        // target: class
+        // '{"kind":"class","name":"Class的Name"}'
+        console.log("classDecorator addInitializer here", context, target);
+    });
 }
 
-function instanceMethodDecorator(target: any, context: ClassMethodDecoratorContext) {
-    context.addInitializer(function() {
-        console.log('instanceMethod addInitializer here', context, target);
-    })
+function instanceMethodDecorator(
+    target: any,
+    context: ClassMethodDecoratorContext
+) {
+    context.addInitializer(function () {
+        // this: instance
+        // target: method
+        // {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
+        console.log("instanceMethod addInitializer here", context, target);
+    });
     function replacementMethod(this: any, ...args: any[]) {
         const result = target.call(this, ...args);
         return result;
@@ -49,17 +77,17 @@ class Person {
     static age: number = 23;
     @staticMethodDecorator
     static run() {
-        console.log('run');
+        console.log("run");
     }
     constructor(name: string) {
-        console.log('constructor');
+        console.log("constructor");
         this.name = name;
     }
     @instanceFiledDecorator
-    name: string = 'Forest';
+    name: string = "Forest";
     @instanceMethodDecorator
     eat() {
-        console.log('eat sth');
+        console.log("eat sth");
     }
 }
 const p = new Person("Ray");

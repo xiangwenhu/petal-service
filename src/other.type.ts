@@ -1,17 +1,17 @@
-import { ApiResponse, RequestConfig, RequestInstance } from "./types";
+import { RequestConfig, RequestInstance } from "./types";
 
 export type StorageMapValueKey =
-    | "__config__"
+    | "classConfig"
     | "methods"
-    | "instances"
-    | "staticConfig"
+    | "instancesFieldPropertyMap"
+    | "staticFieldPropertyMap"
     | "staticMethods";
 
 export type StorageMapValue = Map<
     StorageMapValueKey,
-    | StorageMapValue.ConfigValue        // __config__  staticConfig
-    | StorageMapValue.MethodsMapValue    // methods staticMethods
-    | StorageMapValue.InstancesMapValue  // instances
+    | StorageMapValue.ConfigValue // classConfig  staticConfig
+    | StorageMapValue.MethodsMapValue // methods staticMethods
+    | StorageMapValue.InstancesMapValue // instances
 >;
 
 export namespace StorageMapValue {
@@ -76,17 +76,6 @@ interface UpdateFieldConfig {
         config: Record<PropertyKey, PropertyKey>
     ): void;
 }
-
-// interface UpdateStaticFieldConfig {
-//     (
-//         /**
-//          * class
-//          */
-//         _class_: Function,
-//         config: Record<PropertyKey, PropertyKey>
-//     ): void;
-// }
-
 
 export interface CreateDecoratorOptions {
     /**

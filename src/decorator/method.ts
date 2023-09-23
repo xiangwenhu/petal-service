@@ -7,7 +7,6 @@ export function createMethodDecorator(
     createDecoratorOptions: CreateDecoratorOptions
 ) {
     return function methodDecorator(config: RequestConfig = DEFAULT_CONFIG) {
-        // target 是 class 的方法
         return function (
             target: Function,
             context: ClassMethodDecoratorContext<any>
@@ -29,11 +28,15 @@ function innerMethodDecorator(
 ) {
     let classInstance: Function;
     context.addInitializer(function () {
-        // this 是实例对象, this.constructor 是 class
+        // this: instance
+        // target: method
+        // context: demo {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
         classInstance = this;
         const key = classInstance.constructor;
         console.log(
-            `innerMethodDecorator class:${key.name}, method:${String(context.name)}`
+            `innerMethodDecorator class:${key.name}, method:${String(
+                context.name
+            )}`
         );
 
         updateMethodConfig(key, target, { config });
@@ -84,17 +87,23 @@ function innerStaticMethodDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<Function>,
     config: RequestConfig,
-    { updateStaticMethodConfig, defaults, storeMap, request }: CreateDecoratorOptions
+    {
+        updateStaticMethodConfig,
+        defaults,
+        storeMap,
+        request,
+    }: CreateDecoratorOptions
 ) {
-
     let _class_: Function;
     context.addInitializer(function () {
         // this: class
-        // target: 静态方法
-        // context: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
+        // target: 静态method
+        // context: demo: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
         _class_ = this;
         console.log(
-            `innerStaticMethodDecorator class:${_class_.name}, method:${String(context.name)}`
+            `innerStaticMethodDecorator class:${_class_.name}, method:${String(
+                context.name
+            )}`
         );
 
         updateStaticMethodConfig(_class_, target, { config });
@@ -141,26 +150,57 @@ function innerStaticMethodDecorator(
     }
 }
 
-export function createParamsDecorator({
-    updateMethodConfig,
-}: CreateDecoratorOptions) {
+export function createParamsDecorator(
+    createDecoratorOptions: CreateDecoratorOptions
+) {
     return function paramsDecorator(options: ParamsDecoratorOptions = {}) {
         // target 是class的方法
         return function (
             target: Function,
             context: ClassMethodDecoratorContext<any>
         ) {
-            context.addInitializer(function () {
-                // this 是实例对象, this.constructor 是 class
-                const key = this.constructor;
-                console.log(
-                    `paramsDecorator class:${key.name}, method:${String(
-                        context.name
-                    )}`
-                );
-
-                updateMethodConfig(key, target, options);
-            });
+            const method = context.static
+                ? innerStaticParamsDecorator
+                : innerParamsDecorator;
+            method(target, context, options, createDecoratorOptions);
         };
     };
+}
+
+function innerParamsDecorator(
+    target: Function,
+    context: ClassMethodDecoratorContext<Function>,
+    options: ParamsDecoratorOptions = {},
+    { updateMethodConfig }: CreateDecoratorOptions
+) {
+    context.addInitializer(function () {
+        // this: instance
+        // target: method
+        // context: demo {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
+        const _class_ = this.constructor;
+        console.log(
+            `paramsDecorator class:${_class_.name}, method:${String(context.name)}`
+        );
+
+        updateMethodConfig(_class_, target, options);
+    });
+}
+
+function innerStaticParamsDecorator(
+    target: Function,
+    context: ClassMethodDecoratorContext<Function>,
+    options: ParamsDecoratorOptions = {},
+    { updateStaticMethodConfig }: CreateDecoratorOptions
+) {
+    context.addInitializer(function () {
+        // this: class
+        // target: 静态method
+        // context: demo: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
+        const _class_ = this.constructor;
+        console.log(
+            `paramsDecorator class:${_class_.name}, method:${String(context.name)}`
+        );
+
+        updateStaticMethodConfig(_class_, target, options);
+    });
 }
