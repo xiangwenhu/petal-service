@@ -17,14 +17,14 @@ const {
 /**
  * 通过filed自定义headers
  */
-const headersDecorator = createDecorator(({ storeMap, updateFieldConfig: updateFiledConfig }) => {
+const headersDecorator = createDecorator(({ storeMap, updateFieldConfig }) => {
     // target 为 undefined
     return function (target: any, context: ClassFieldDecoratorContext<any>) {
         context.addInitializer(function () {
             // this 是实例对象, this.constructor 是 class
             const instance = this;
             const key = instance.constructor;
-            updateFiledConfig(key, instance, {
+            updateFieldConfig(key, instance, {
                 headers: context.name
             })
         })
