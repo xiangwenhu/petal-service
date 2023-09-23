@@ -4,9 +4,9 @@ import { RequestConfig } from "./types";
 import { createClassDecorator } from "./decorator/class";
 import { DEFAULT_CONFIG } from "./const";
 import { createFieldDecorator } from "./decorator/field";
-import { createApiDecorator, createParamsDecorator } from "./decorator/method";
+import { createMethodDecorator, createParamsDecorator } from "./decorator/method";
 import { createRequestInstance, isAsyncFunction, isFunction } from "./util";
-import { updateAPIConfig, updateFiledConfig } from "./decorator/util";
+import { updateMethodConfig, updateFiledConfig, updateStaticFieldConfig, updateStaticMethodConfig } from "./decorator/util";
 /**
  * 更新配置
  * @param options 
@@ -35,19 +35,28 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
         storeMap,
         defaults: config.defaults || DEFAULT_CONFIG,
         request: getRequestInstance(config)!,
-        updateAPIConfig(_class_, api, config) {
-            updateAPIConfig(storeMap, _class_, api, config);
+        updateMethodConfig(_class_, api, config) {
+            updateMethodConfig(storeMap, _class_, api, config);
         },
-        updateFiledConfig(_class_, instance, config) {
+        updateStaticMethodConfig(_class_, api, config) {
+            updateStaticMethodConfig(storeMap, _class_, api, config);
+        },
+        updateFieldConfig(_class_, instance, config) {
             updateFiledConfig(storeMap, _class_, instance, config);
         },
+        updateStaticFieldConfig(_class_, instance, config){
+            updateStaticFieldConfig(storeMap, _class_, instance, config)
+        }
+
     };
 
     const options: CreateDecoratorOptions = {
         storeMap,
         defaults: innerOptions.defaults,
-        updateAPIConfig: innerOptions.updateAPIConfig,
-        updateFiledConfig: innerOptions.updateFiledConfig,
+        updateMethodConfig: innerOptions.updateMethodConfig,
+        updateStaticMethodConfig: innerOptions.updateStaticMethodConfig,
+        updateFieldConfig: innerOptions.updateFieldConfig,
+        updateStaticFieldConfig: innerOptions.updateStaticFieldConfig,
         request: innerOptions.request
     }
 
@@ -59,7 +68,7 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
         /**
          * api装饰器
          */
-        apiDecorator: createApiDecorator(options),
+        methodDecorator: createMethodDecorator(options),
         /**
          * params装饰器
          */

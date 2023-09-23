@@ -4,7 +4,7 @@ import { ApiResponse, RequestConfig } from "../src/types";
 
 const {
     classDecorator,
-    apiDecorator,
+    methodDecorator,
     setConfig,
     paramsDecorator,
     fieldDecorator
@@ -26,7 +26,7 @@ class DemoService<R = any> {
 
     protected res!: ApiResponse<R>;
 
-    @apiDecorator({
+    @methodDecorator({
         method: "get",
         url: "",
     })
@@ -51,7 +51,7 @@ class DemoService<R = any> {
 })
 class SubDemoService extends DemoService {
 
-    @apiDecorator({
+    @methodDecorator({
         method: "get",
         url: "",
     })

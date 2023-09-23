@@ -1,26 +1,40 @@
-function classDecorator(target: any, context: ClassDecoratorContext) {
-    context.addInitializer(() => {
-        console.log('classDecorator addInitializer here', target);
-    })
-}
 function staticFiledDecorator(target: any, context: ClassFieldDecoratorContext) {
-    context.addInitializer(() => {
-        console.log('staticFiledDecorator addInitializer here', target);
-    })
-}
-function staticMethodDecorator(target: any, context: ClassMethodDecoratorContext) {
-    context.addInitializer(() => {
-        console.log('staticMethodDecorator addInitializer here', target);
+    context.addInitializer(function(){
+        // this：class 
+        // target： undefined
+        // context: {"kind":"field","name":"age","static":true,"private":false,"access":{}}
+        console.log('staticFiledDecorator addInitializer here',context, target);
     })
 }
 function instanceFiledDecorator(target: any, context: ClassFieldDecoratorContext) {
-    context.addInitializer(() => {
-        console.log('instanceFiledDecorator addInitializer here', target);
+    context.addInitializer(function(){
+        // this 是 instance
+        // target undefined
+        // {"kind":"field","name":"name","static":false,"private":false,"access":{}}
+        console.log('instanceFiledDecorator addInitializer here', context, target);
     })
 }
+
+
+function staticMethodDecorator(target: any, context: ClassMethodDecoratorContext) {
+    // this: class
+    // target: 静态方法
+    // context: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
+    context.addInitializer(function(){
+        console.log('staticMethodDecorator addInitializer here', context, target);
+    })
+}
+
+
+function classDecorator(target: any, context: ClassDecoratorContext) {
+    context.addInitializer(function() {
+        console.log('classDecorator addInitializer here', context, target);
+    })
+}
+
 function instanceMethodDecorator(target: any, context: ClassMethodDecoratorContext) {
-    context.addInitializer(() => {
-        console.log('instanceMethod addInitializer here', target);
+    context.addInitializer(function() {
+        console.log('instanceMethod addInitializer here', context, target);
     })
     function replacementMethod(this: any, ...args: any[]) {
         const result = target.call(this, ...args);

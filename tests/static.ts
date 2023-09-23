@@ -3,44 +3,49 @@ import { ApiResponse, RequestConfig } from "../src/types";
 
 const {
     classDecorator,
+    methodDecorator,
     paramsDecorator,
-    methodDecorator
+    fieldDecorator
 } = createServiceInstance();
 
 
 // 设置baseUrl和超时时间
 @classDecorator({
-    baseURL: "https://www.baidu.com",
+    baseURL: "https://juejin.cn",
     timeout: 60 * 1000
 })
-class DemoService<R = any> {
+class DemoService {
 
-    protected res!: ApiResponse<R>;
+    static res: ApiResponse;
 
-    // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @methodDecorator({
         method: "get",
-        url: "/user/:id",
+        url: "/course/:type",
     })
     @paramsDecorator({
-        hasParams: false,
+        hasParams: false
     })
-    public async getIndex(
-        this: DemoService<string>,
+    static async getCourse(
+        this: typeof DemoService,
         pathParams: Record<string, string | number>,
         config: RequestConfig,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
-        return this.res.data
+        return this.res.data;        
     }
+
+    @fieldDecorator("timeout")
+    static timeoutValue = 5000;
 }
 
-const serviceA = new DemoService();
-serviceA
-    .getIndex(
+var a: DemoService = {} as  any;
+
+
+DemoService
+    .getCourse(
         {
-            id: 100
+            type: "frontend"
         },
         {
             headers: { userId: 1 },

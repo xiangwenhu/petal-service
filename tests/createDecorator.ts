@@ -6,7 +6,7 @@ import { ApiResponse, RequestConfig } from "../src/types";
 const {
     classDecorator,
     createDecorator,
-    apiDecorator
+    methodDecorator
 } = createServiceInstance({
     defaults: {
         baseURL: "https://github.com",
@@ -17,7 +17,7 @@ const {
 /**
  * 通过filed自定义headers
  */
-const headersDecorator = createDecorator(({ storeMap, updateFiledConfig }) => {
+const headersDecorator = createDecorator(({ storeMap, updateFieldConfig: updateFiledConfig }) => {
     // target 为 undefined
     return function (target: any, context: ClassFieldDecoratorContext<any>) {
         context.addInitializer(function () {
@@ -40,7 +40,7 @@ class DemoService<R = any> {
     protected res!: ApiResponse<R>;
 
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
-    @apiDecorator({
+    @methodDecorator({
         method: "get",
         url: "",
     })

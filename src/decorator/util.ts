@@ -1,14 +1,14 @@
+import { merge } from "lodash";
+import { STORE_KEY_CONFIG } from "../const";
+import { StorageMap, StorageMapValue } from "../other.type";
+import { Method, RequestConfig } from "../types";
 import {
+    getOwnProperty,
+    hasOwnProperty,
     isAsyncFunction,
     isFunction,
     isObject,
-    getOwnProperty,
-    hasOwnProperty,
 } from "../util";
-import { StorageMap, StorageMapValue } from "../other.type";
-import { RequestConfig, Method } from "../types";
-import { STORE_KEY_CONFIG } from "../const";
-import { has, merge } from "lodash";
 import { hasPathParams, pathToUrl } from "../util/path";
 
 const NOT_USE_BODY_METHODS: Method[] = ["get", "head", "GET", "HEAD"];
@@ -19,46 +19,49 @@ function shouldUseBody(method: Method) {
 
 /**
  * 获取最终的配置
- * @param apiFunction api对象的函数
- * @param classInstance class的实例
- * @param constructor class
+ * @param method api对象的函数
+ * @param instance class的实例
  * @param defaultConfig 默认值
  * @param argumentsObj api实参
  * @param storeMap 存储
  * @returns
  */
-export function getBaseConfig(
-    apiFunction: Function,
-    classInstance: Object,
+export function getMethodConfig(
+    method: Function,
+    instance: Object,
     defaultConfig: RequestConfig = {},
     argumentsObj: ArrayLike<any>,
     storeMap: StorageMap
 ) {
     if (
-        !isObject(apiFunction) &&
-        !isFunction(apiFunction) &&
-        !isAsyncFunction(apiFunction)
+        !isObject(method) &&
+        !isFunction(method) &&
+        !isAsyncFunction(method)
     ) {
         throw new Error(
-            "apiFunction must be a/an Object|Function|AsyncFunction"
+            "methodFunction must be a/an Object|Function|AsyncFunction"
         );
     }
-    const key = classInstance.constructor;
+    const key = instance.constructor;
     const config: StorageMapValue = storeMap.get(key) || new Map();
     // 挂载class身上的
     const classConfig = config.get(STORE_KEY_CONFIG) || {};
-    const apiConfig = config.get("apis").get(apiFunction) || {};
+    const methodConfig =
+        (config.get("methods") as StorageMapValue.MethodsMapValue).get(
+            method
+        ) || {};
 
     // 实例
     const instances: StorageMapValue.InstancesMapValue =
-        config.get("instances") || new Map();
-    const instancePropertyMap = instances.get(classInstance) || {};
+        (config.get("instances") as StorageMapValue.InstancesMapValue) ||
+        new Map();
+    const instancePropertyMap = instances.get(instance) || {};
 
     const instanceConfig = Object.entries(instancePropertyMap).reduce(
         (obj: RequestConfig, [key, value]) => {
-            if (hasOwnProperty(classInstance, value)) {
+            if (hasOwnProperty(instance, value)) {
                 // @ts-ignore
-                obj[key] = getOwnProperty(classInstance, value);
+                obj[key] = getOwnProperty(instance, value);
             }
             return obj;
         },
@@ -73,17 +76,82 @@ export function getBaseConfig(
         // class实例的值
         ...instanceConfig,
         // api上配置的默认值
-        ...(apiConfig.config || {}),
+        ...(methodConfig.config || {}),
     };
 
-    mConfig = adjustConfig(mConfig, argumentsObj, apiConfig);
+    mConfig = adjustConfig(mConfig, argumentsObj, methodConfig);
+
+    return mConfig;
+}
+
+/**
+ * 获取最终的配置
+ * @param method api对象的函数
+ * @param _class_ class的实例
+ * @param defaultConfig 默认值
+ * @param argumentsObj api实参
+ * @param storeMap 存储
+ * @returns
+ */
+export function getStaticMethodConfig(
+    method: Function,
+    _class_: Function,
+    defaultConfig: RequestConfig = {},
+    argumentsObj: ArrayLike<any>,
+    storeMap: StorageMap
+) {
+    if (
+        !isObject(method) &&
+        !isFunction(method) &&
+        !isAsyncFunction(method)
+    ) {
+        throw new Error(
+            "methodFunction must be a/an Object|Function|AsyncFunction"
+        );
+    }
+    const key = _class_;
+    const config: StorageMapValue = storeMap.get(key) || new Map();
+    // 挂载class身上的
+    const classConfig = config.get(STORE_KEY_CONFIG) || {};
+    const methodConfig: StorageMapValue.MethodConfigValue =
+        (config.get("staticMethods") as StorageMapValue.MethodsMapValue).get(
+            method
+        ) || {};
+
+    const staticPropertyMap: StorageMapValue.FieldPropertyMapValue =
+        (config.get("staticConfig") as StorageMapValue.FieldPropertyMapValue) ||
+        {};
+
+    const staticConfig = Object.entries(staticPropertyMap).reduce(
+        (obj: RequestConfig, [key, value]) => {
+            if (hasOwnProperty(_class_, value)) {
+                // @ts-ignore
+                obj[key] = getOwnProperty(_class_, value);
+            }
+            return obj;
+        },
+        {}
+    );
+
+    let mConfig: RequestConfig = {
+        // 初始化默认值
+        ...defaultConfig,
+        // class装饰器上的默认值
+        ...classConfig,
+        // class 静态配置
+        ...staticConfig,
+        // api上配置的默认值
+        ...(methodConfig.config || {}),
+    };
+
+    mConfig = adjustConfig(mConfig, argumentsObj, methodConfig);
 
     return mConfig;
 }
 
 function getDefaultParamsOptions(
     method: Method
-): StorageMapValue.APIValueParamsOptions {
+): StorageMapValue.MethodParamsOptions {
     if (shouldUseBody(method)) {
         return {
             hasBody: true,
@@ -101,10 +169,11 @@ function getDefaultParamsOptions(
 function adjustConfig(
     mConfig: RequestConfig,
     argumentsObj: ArrayLike<any>,
-    apiConfig: StorageMapValue.APIConfigValue
+    methodConfig: StorageMapValue.MethodConfigValue
 ): RequestConfig<any> {
     let argLength = argumentsObj.length;
-    let { config, ...userOptions }: StorageMapValue.APIConfigValue = apiConfig;
+    let { config, ...userOptions }: StorageMapValue.MethodConfigValue =
+        methodConfig;
 
     const defaultOptions = getDefaultParamsOptions(mConfig.method as Method);
     const {
@@ -155,37 +224,86 @@ function adjustConfig(
 
 export function updateFiledConfig(
     storeMap: StorageMap,
-    key: Function,
+    _class_: Function,
     instance: Object,
     config: Record<PropertyKey, PropertyKey>
 ) {
-    const val: StorageMapValue = storeMap.get(key) || new Map();
-    let instances: StorageMapValue.InstancesMapValue = val.get("instances");
+    const instancesKey = "instances";
+
+    const val: StorageMapValue = storeMap.get(_class_) || new Map();
+    let instances: StorageMapValue.InstancesMapValue = val.get(
+        instancesKey
+    ) as StorageMapValue.InstancesMapValue;
     if (!instances) {
         instances = new Map();
-        val.set("instances", instances);
+        val.set(instancesKey, instances);
     }
-    const oldConfig: StorageMapValue.InstanceValue =
+    const oldConfig: StorageMapValue.FieldPropertyMapValue =
         instances.get(instance) || {};
     Object.assign(oldConfig, config);
     instances.set(instance, oldConfig);
-    storeMap.set(key, val);
+    storeMap.set(_class_, val);
 }
 
-export function updateAPIConfig(
+export function updateStaticFieldConfig(
     storeMap: StorageMap,
-    key: Function,
-    api: Function,
-    config: StorageMapValue.APIConfigValue
+    _class_: Function,
+    _instance: Object,
+    mapConfig: Record<PropertyKey, PropertyKey>
 ) {
-    const val: StorageMapValue = storeMap.get(key) || new Map();
-    let apis: StorageMapValue.APISMapValue = val.get("apis");
-    if (!apis) {
-        apis = new Map();
-        val.set("apis", apis);
+    const staticConfigKey = "staticConfig";
+
+    const val: StorageMapValue = storeMap.get(_class_) || new Map();
+    let oldConfig: StorageMapValue.ConfigValue = val.get(
+        staticConfigKey
+    ) as StorageMapValue.ConfigValue || {};
+    Object.assign(oldConfig, mapConfig);
+    val.set(staticConfigKey, oldConfig)
+    storeMap.set(_class_, val);
+}
+
+export function updateMethodConfig(
+    storeMap: StorageMap,
+    _class_: Function,
+    method: Function,
+    config: StorageMapValue.MethodConfigValue
+) {
+    innerUpdateStaticMethodConfig(storeMap, _class_, method, config, "methods");
+}
+
+export function updateStaticMethodConfig(
+    storeMap: StorageMap,
+    _class_: Function,
+    method: Function,
+    config: StorageMapValue.MethodConfigValue
+) {
+    innerUpdateStaticMethodConfig(
+        storeMap,
+        _class_,
+        method,
+        config,
+        "staticMethods"
+    );
+}
+
+function innerUpdateStaticMethodConfig(
+    storeMap: StorageMap,
+    _class_: Function,
+    method: Function,
+    config: StorageMapValue.MethodConfigValue,
+    key: "methods" | "staticMethods"
+) {
+    const val: StorageMapValue = storeMap.get(_class_) || new Map();
+    let methodsMapValue: StorageMapValue.MethodsMapValue = val.get(
+        key
+    ) as StorageMapValue.MethodsMapValue;
+    if (!methodsMapValue) {
+        methodsMapValue = new Map();
+        val.set(key, methodsMapValue);
     }
-    const oldConfig: StorageMapValue.APIConfigValue = apis.get(api) || {};
+    const oldConfig: StorageMapValue.MethodConfigValue =
+        methodsMapValue.get(method) || {};
     Object.assign(oldConfig, config);
-    apis.set(api, oldConfig);
-    storeMap.set(key, val);
+    methodsMapValue.set(method, oldConfig);
+    storeMap.set(_class_, val);
 }

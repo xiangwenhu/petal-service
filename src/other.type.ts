@@ -1,20 +1,32 @@
 import { ApiResponse, RequestConfig, RequestInstance } from "./types";
 
-export type StorageMapValue = Map<"__config__" | "apis" | "instances", any>;
+export type StorageMapValueKey =
+    | "__config__"
+    | "methods"
+    | "instances"
+    | "staticConfig"
+    | "staticMethods";
+
+export type StorageMapValue = Map<
+    StorageMapValueKey,
+    | StorageMapValue.ConfigValue        // __config__  staticConfig
+    | StorageMapValue.MethodsMapValue    // methods staticMethods
+    | StorageMapValue.InstancesMapValue  // instances
+>;
 
 export namespace StorageMapValue {
     export type ConfigValue = RequestConfig;
-    export type APISMapValue = Map<Function, APIConfigValue>;
-    export type APIConfigValue = {
+    export type MethodsMapValue = Map<Function, MethodConfigValue>;
+    export type MethodConfigValue = {
         config?: RequestConfig;
-    } & APIValueParamsOptions;
-    export interface APIValueParamsOptions {
+    } & MethodParamsOptions;
+    export interface MethodParamsOptions {
         hasParams?: boolean;
         hasBody?: boolean;
         hasConfig?: boolean;
     }
-    export type InstancesMapValue = Map<Object, InstanceValue>;
-    export type InstanceValue = Record<PropertyKey, PropertyKey>;
+    export type InstancesMapValue = Map<Object, FieldPropertyMapValue>;
+    export type FieldPropertyMapValue = Record<PropertyKey, PropertyKey>;
 }
 
 export type StorageMap = Map<Function, StorageMapValue>;
@@ -37,13 +49,8 @@ export interface ServiceRootConfig {
     createRequest?: () => RequestInstance;
 }
 
-export interface CreateDecoratorOptions {
-    /**
-     * 存储
-     */
-    storeMap: StorageMap;
-
-    updateAPIConfig: (
+interface UpdateMethodConfig {
+    (
         /**
          * class
          */
@@ -51,11 +58,13 @@ export interface CreateDecoratorOptions {
         /**
          * api 函数
          */
-        api: Function,
-        config: StorageMapValue.APIConfigValue
-    ) => void;
+        method: Function,
+        config: StorageMapValue.MethodConfigValue
+    ): void;
+}
 
-    updateFiledConfig: (
+interface UpdateFieldConfig {
+    (
         /**
          * class
          */
@@ -65,7 +74,33 @@ export interface CreateDecoratorOptions {
          */
         instance: Object,
         config: Record<PropertyKey, PropertyKey>
-    ) => void;
+    ): void;
+}
+
+// interface UpdateStaticFieldConfig {
+//     (
+//         /**
+//          * class
+//          */
+//         _class_: Function,
+//         config: Record<PropertyKey, PropertyKey>
+//     ): void;
+// }
+
+
+export interface CreateDecoratorOptions {
+    /**
+     * 存储
+     */
+    storeMap: StorageMap;
+
+    updateMethodConfig: UpdateMethodConfig;
+
+    updateStaticMethodConfig: UpdateMethodConfig;
+
+    updateFieldConfig: UpdateFieldConfig;
+
+    updateStaticFieldConfig: UpdateFieldConfig;
     /**
      * 默认配置
      */
@@ -98,4 +133,3 @@ export interface ParamsDecoratorOptions {
      */
     hasConfig?: boolean;
 }
-s
