@@ -26,7 +26,7 @@ import { ApiResponse, RequestConfig } from "../src/types";
 
 const {
     classDecorator,
-    apiDecorator,
+    methodDecorator,
     setConfig,
     fieldDecorator,
     paramsDecorator
@@ -53,8 +53,8 @@ setConfig({
 class DemoService<R = any> {
 
     protected res!: ApiResponse<R>;
-    // 设置 api 请求参数，最主要的是url, params, data和额外的config
-    @apiDecorator({
+    // 设置 api method 请求参数，最主要的是url, params, data和额外的config
+    @methodDecorator({
         method: "get",
         url: "",
     })
@@ -112,14 +112,14 @@ import { ApiResponse, RequestConfig } from "../src/types";
 
 const {
     classDecorator,
-    apiDecorator,
-    paramsDecorator
+    paramsDecorator,
+    methodDecorator
 } = createServiceInstance();
 
 
 // 设置baseUrl和超时时间
 @classDecorator({
-    baseURL: "https://www.baidu.com",
+    baseURL: "https://juejin.cn",
     timeout: 60 * 1000
 })
 class DemoService<R = any> {
@@ -127,9 +127,9 @@ class DemoService<R = any> {
     protected res!: ApiResponse<R>;
 
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
-    @apiDecorator({
+    @methodDecorator({
         method: "get",
-        url: "/user/:id",
+        url: "/course/:type",
     })
     @paramsDecorator({
         hasParams: false,
@@ -149,7 +149,7 @@ const serviceA = new DemoService();
 serviceA
     .getIndex(
         {
-            id: 100
+            type: 'frontend'
         },
         {
             headers: { userId: 1 },
@@ -162,137 +162,10 @@ serviceA
         console.log("error serviceA getIndex:", err);
     });
 
-
 ```
 
-### 示例3 继承
-```typescript
-import Axios from "axios";
-import { createServiceInstance } from "../src";
-import { ApiResponse, RequestConfig } from "../src/types";
 
-const {
-    classDecorator,
-    apiDecorator,
-    setConfig,
-    paramsDecorator,
-    fieldDecorator
-} = createServiceInstance({
-    request: Axios
-});
-
-setConfig({
-    headers: {
-        token: "ccccc",
-    },
-});
-
-
-@classDecorator({
-    baseURL: "https://www.jd.com",
-})
-class DemoService<R = any> {
-
-    protected res!: ApiResponse<R>;
-
-    @apiDecorator({
-        method: "get",
-        url: "",
-    })
-    public async getIndex(
-        this: DemoService,
-        params: any,
-        data: any,
-        config: RequestConfig
-    ) {
-        return this.res.data;
-    }
-
-    @fieldDecorator("timeout")
-    timeoutValue = 1000;
-
-    @fieldDecorator("baseURL")
-    baseURLValue = "https://www.github.com"
-}
-
-@classDecorator({
-    baseURL: "https://cn.bing.com/",
-})
-class SubDemoService extends DemoService {
-
-    @apiDecorator({
-        method: "get",
-        url: "",
-    })
-    @paramsDecorator({
-        hasParams: true,
-        hasConfig: true,
-        hasBody: false,
-    })
-    async getBingIndex<R = string>(
-        this: SubDemoService,
-        params: any,
-        config: RequestConfig
-    ): Promise<string> {
-        return this.res!.data;
-    }
-    @fieldDecorator("timeout")
-    timeoutValue = 30 * 1000;
-
-    @fieldDecorator("baseURL")
-    baseURLValue = "https://www.example.com"
-}
-
-
-const serviceA = new DemoService();
-serviceA
-    .getIndex(
-        { since: "monthly" },
-        undefined,
-        {
-            headers: { userId: 1 },
-        }
-    )
-    .then((res) => {
-        console.log("res serviceA getIndex:", res.length);
-    })
-    .catch((err) => {
-        console.log("error serviceA getIndex:", err);
-    });
-
-const subService = new SubDemoService();
-subService
-    .getBingIndex(
-        { since: "monthly" },
-        {
-            headers: { a: 1 },
-        }
-    )
-    .then((res) => {
-        console.log("res subService getBingIndex:", res.length);
-    })
-    .catch((err) => {
-        console.log("res subService getBingIndex error:", err);
-    });
-
-subService
-    .getIndex(
-        { since: "monthly" },
-        undefined,
-        {
-            headers: { a: 1 },
-        }
-    )
-    .then((res) => {
-        console.log("res subService getIndex :", res.length);
-    })
-    .catch((err) => {
-        console.log("res subService getIndex  error:", err);
-    });
-
-```
-
-### 示例4 自定义装饰器
+### 示例3 自定义装饰器
 如下代码，通过field装饰器，添加headers
 ```typescript
 import { AxiosHeaders, RawAxiosRequestHeaders } from "axios";
@@ -390,6 +263,201 @@ DemoService getIndex final config: {
 }
 res serviceA getIndex: 227
 ```
+
+### 示例4 支持静态模式
+静态属性和方法，无需实例化
+```typescript
+import { createServiceInstance } from "../src";
+import { ApiResponse, RequestConfig } from "../src/types";
+
+const {
+    classDecorator,
+    methodDecorator,
+    paramsDecorator,
+    fieldDecorator
+} = createServiceInstance();
+
+
+// 设置baseUrl和超时时间
+@classDecorator({
+    baseURL: "https://juejin.cn",
+    timeout: 60 * 1000
+})
+class DemoService {
+
+    static res: ApiResponse;
+
+    @methodDecorator({
+        method: "get",
+        url: "/course/:type",
+    })
+    @paramsDecorator({
+        hasParams: false
+    })
+    static async getCourse(
+        this: typeof DemoService,
+        pathParams: Record<string, string | number>,
+        config: RequestConfig,
+    ) {
+        // 不写任何返回， 默认会返回 this.res.data
+        // return this.res!.data
+        return this.res.data;        
+    }
+
+    @fieldDecorator("timeout")
+    static timeoutValue = 5000;
+}
+
+var a: DemoService = {} as  any;
+
+
+DemoService
+    .getCourse(
+        {
+            type: "frontend"
+        },
+        {
+            headers: { userId: 1 },
+        },
+    )
+    .then((res) => {
+        console.log("res serviceA getIndex:", res.length);
+    })
+    .catch((err) => {
+        console.log("error serviceA getIndex:", err);
+    });
+
+```
+
+
+### 示例5 继承
+```typescript
+import Axios from "axios";
+import { createServiceInstance } from "../src";
+import { ApiResponse, RequestConfig } from "../src/types";
+
+const {
+    classDecorator,
+    methodDecorator,
+    setConfig,
+    paramsDecorator,
+    fieldDecorator
+} = createServiceInstance({
+    request: Axios
+});
+
+setConfig({
+    headers: {
+        token: "ccccc",
+    },
+});
+
+
+@classDecorator({
+    baseURL: "https://www.jd.com",
+})
+class DemoService<R = any> {
+
+    protected res!: ApiResponse<R>;
+
+    @methodDecorator({
+        method: "get",
+        url: "",
+    })
+    public async getIndex(
+        this: DemoService,
+        params: any,
+        data: any,
+        config: RequestConfig
+    ) {
+        return this.res.data;
+    }
+
+    @fieldDecorator("timeout")
+    timeoutValue = 1000;
+
+    @fieldDecorator("baseURL")
+    baseURLValue = "https://www.github.com"
+}
+
+@classDecorator({
+    baseURL: "https://cn.bing.com/",
+})
+class SubDemoService extends DemoService {
+
+    @methodDecorator({
+        method: "get",
+        url: "",
+    })
+    @paramsDecorator({
+        hasParams: true,
+        hasConfig: true,
+        hasBody: false,
+    })
+    async getBingIndex<R = string>(
+        this: SubDemoService,
+        params: any,
+        config: RequestConfig
+    ): Promise<string> {
+        return this.res!.data;
+    }
+    @fieldDecorator("timeout")
+    timeoutValue = 30 * 1000;
+
+    @fieldDecorator("baseURL")
+    baseURLValue = "https://www.example.com"
+}
+
+
+const serviceA = new DemoService();
+serviceA
+    .getIndex(
+        { since: "monthly" },
+        undefined,
+        {
+            headers: { userId: 1 },
+        }
+    )
+    .then((res) => {
+        console.log("res serviceA getIndex:", res.length);
+    })
+    .catch((err) => {
+        console.log("error serviceA getIndex:", err);
+    });
+
+const subService = new SubDemoService();
+subService
+    .getBingIndex(
+        { since: "monthly" },
+        {
+            headers: { a: 1 },
+        }
+    )
+    .then((res) => {
+        console.log("res subService getBingIndex:", res.length);
+    })
+    .catch((err) => {
+        console.log("res subService getBingIndex error:", err);
+    });
+
+subService
+    .getIndex(
+        { since: "monthly" },
+        undefined,
+        {
+            headers: { a: 1 },
+        }
+    )
+    .then((res) => {
+        console.log("res subService getIndex :", res.length);
+    })
+    .catch((err) => {
+        console.log("res subService getIndex  error:", err);
+    });
+
+```
+
+
 
 ## 代码思路和存储
 参见 [design.md](/docs/design.md)
