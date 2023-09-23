@@ -73,7 +73,7 @@ function innerMethodDecorator(
                 },
             });
             return target.call(proxy).then((resData: any) => {
-                // api方法里面可以什么都不写，直接返回结果
+                // api method方法里面可以什么都不写，直接返回结果
                 if (resData === undefined) {
                     return res.data;
                 }
@@ -140,7 +140,7 @@ function innerStaticMethodDecorator(
                 },
             });
             return target.call(proxy).then((resData: any) => {
-                // api方法里面可以什么都不写，直接返回结果
+                // api method方法里面可以什么都不写，直接返回结果
                 if (resData === undefined) {
                     return res.data;
                 }

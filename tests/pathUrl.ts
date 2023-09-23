@@ -10,7 +10,7 @@ const {
 
 // 设置baseUrl和超时时间
 @classDecorator({
-    baseURL: "https://www.baidu.com",
+    baseURL: "https://juejin.cn",
     timeout: 60 * 1000
 })
 class DemoService<R = any> {
@@ -20,7 +20,7 @@ class DemoService<R = any> {
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @methodDecorator({
         method: "get",
-        url: "/user/:id",
+        url: "/course/:type",
     })
     @paramsDecorator({
         hasParams: false,
@@ -40,7 +40,7 @@ const serviceA = new DemoService();
 serviceA
     .getIndex(
         {
-            id: 100
+            type: 'frontend'
         },
         {
             headers: { userId: 1 },

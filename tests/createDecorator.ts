@@ -39,7 +39,7 @@ const headersDecorator = createDecorator(({ storeMap, updateFieldConfig: updateF
 class DemoService<R = any> {
     protected res!: ApiResponse<R>;
 
-    // 设置 api 请求参数，最主要的是url, params, data和额外的config
+    // 设置 api method 请求参数，最主要的是url, params, data和额外的config
     @methodDecorator({
         method: "get",
         url: "",

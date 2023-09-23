@@ -66,7 +66,7 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
          */
         classDecorator: createClassDecorator(options),
         /**
-         * api装饰器
+         * method装饰器
          */
         methodDecorator: createMethodDecorator(options),
         /**

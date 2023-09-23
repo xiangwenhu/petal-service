@@ -19,10 +19,10 @@ function shouldUseBody(method: Method) {
 
 /**
  * 获取最终的配置
- * @param method api对象的函数
+ * @param method method的函数
  * @param instance class的实例
  * @param defaultConfig 默认值
- * @param argumentsObj api实参
+ * @param argumentsObj method实参
  * @param storeMap 存储
  * @returns
  */
@@ -71,7 +71,7 @@ export function getMethodConfig(
         ...classConfig,
         // class实例的值
         ...instanceConfig,
-        // api上配置的默认值
+        // method 上的配置
         ...(methodConfig.config || {}),
     };
 
@@ -82,7 +82,7 @@ export function getMethodConfig(
 
 /**
  * 获取最终的配置
- * @param method api对象的函数
+ * @param method method的函数
  * @param _class_ class的实例
  * @param defaultConfig 默认值
  * @param argumentsObj api实参
@@ -133,7 +133,7 @@ export function getStaticMethodConfig(
         ...classConfig,
         // class 静态配置
         ...staticConfig,
-        // api上配置的默认值
+        // method 上配置的默认值
         ...(methodConfig.config || {}),
     };
 

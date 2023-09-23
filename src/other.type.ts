@@ -56,7 +56,7 @@ interface UpdateMethodConfig {
          */
         _class_: Function,
         /**
-         * api 函数
+         * method 函数
          */
         method: Function,
         config: StorageMapValue.MethodConfigValue
@@ -106,7 +106,7 @@ export type InnerCreateDecoratorOptions = CreateDecoratorOptions &
     ServiceRootConfig;
 
 /**
- * API 方法杂项配置
+ * method 参数配置
  */
 export interface ParamsDecoratorOptions {
     /**
