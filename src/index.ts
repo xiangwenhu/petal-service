@@ -93,3 +93,5 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
         }
     }
 }
+
+export { BaseService } from "./BaseService"

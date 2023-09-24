@@ -54,8 +54,9 @@ export function getMethodMergedConfig(
     const instanceMapValue: StorageMapValue.CommonConfigValue =
         instances.get(instance) || {};
 
-    // 实例的config属性
-    const instanceConfig = getOwnProperty(instance, "config", {});
+    // 实例的config属性, 支持原型上查找
+    // @ts-ignore
+    const instanceConfig = instance["config"] || {};
 
     const instancePropertyMap = instanceMapValue.fieldPropertyMap || {};
     const fieldConfig = Object.entries(instancePropertyMap).reduce(
