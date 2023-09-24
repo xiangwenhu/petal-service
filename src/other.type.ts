@@ -3,20 +3,21 @@ import { RequestConfig, RequestInstance } from "./types";
 export type StorageMapValueKey =
     | "classConfig"
     | "methods"
-    | "instancesFieldPropertyMap"
-    | "staticFieldPropertyMap"
+    | "instances"
+    | "staticConfig"
     | "staticMethods";
 
 export type StorageMapValue = Map<
     StorageMapValueKey,
-    | StorageMapValue.ConfigValue // classConfig  staticConfig
-    | StorageMapValue.MethodsMapValue // methods staticMethods
-    | StorageMapValue.InstancesMapValue // instances
+    | StorageMapValue.ConfigValue // classConfig 
+    | StorageMapValue.MethodsMap // methods staticMethods
+    | StorageMapValue.InstancesMap // instances
+    | StorageMapValue.CommonConfigValue // staticConfig
 >;
 
 export namespace StorageMapValue {
     export type ConfigValue = RequestConfig;
-    export type MethodsMapValue = Map<Function, MethodConfigValue>;
+    export type MethodsMap = Map<Function, MethodConfigValue>;
     export type MethodConfigValue = {
         config?: RequestConfig;
     } & MethodParamsOptions;
@@ -25,7 +26,11 @@ export namespace StorageMapValue {
         hasBody?: boolean;
         hasConfig?: boolean;
     }
-    export type InstancesMapValue = Map<Object, FieldPropertyMapValue>;
+    export type InstancesMap = Map<Object, CommonConfigValue>;
+    export type CommonConfigValue = {
+        config?: RequestConfig,
+        fieldPropertyMap?: FieldPropertyMapValue;
+    };
     export type FieldPropertyMapValue = Record<PropertyKey, PropertyKey>;
 }
 

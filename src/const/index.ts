@@ -11,8 +11,8 @@ export const storeMap = createMap<Function, StorageMapValue>();
 
 export const STORE_KEYS: Record<StorageMapValueKey, StorageMapValueKey> = {
     "classConfig": "classConfig",
-    "instancesFieldPropertyMap": "instancesFieldPropertyMap",
+    "instances": "instances",
     "methods": "methods",
-    "staticFieldPropertyMap": "staticFieldPropertyMap",
+    "staticConfig": "staticConfig",
     "staticMethods": "staticMethods",
 }

@@ -1,7 +1,7 @@
 import { DEFAULT_CONFIG } from "../const";
 import { CreateDecoratorOptions, ParamsDecoratorOptions } from "../other.type";
 import { RequestConfig } from "../types";
-import { getMethodConfig, getStaticMethodConfig } from "./util";
+import { getMethodMergedConfig, getStaticMethodMergedConfig } from "./util";
 
 export function createMethodDecorator(
     createDecoratorOptions: CreateDecoratorOptions
@@ -50,7 +50,7 @@ function innerMethodDecorator(
 
     function proxyMethod() {
         // 读取最终合并后的配置
-        const config = getMethodConfig(
+        const config = getMethodMergedConfig(
             target,
             classInstance,
             defaults,
@@ -117,7 +117,7 @@ function innerStaticMethodDecorator(
 
     function proxyMethod() {
         // 读取最终合并后的配置
-        const config = getStaticMethodConfig(
+        const config = getStaticMethodMergedConfig(
             target,
             _class_,
             defaults,

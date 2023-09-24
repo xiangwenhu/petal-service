@@ -26,7 +26,7 @@ function shouldUseBody(method: Method) {
  * @param storeMap 存储
  * @returns
  */
-export function getMethodConfig(
+export function getMethodMergedConfig(
     method: Function,
     instance: Object,
     defaultConfig: RequestConfig = {},
@@ -38,22 +38,27 @@ export function getMethodConfig(
             "methodFunction must be a/an Object|Function|AsyncFunction"
         );
     }
-    const key = instance.constructor;
-    const config: StorageMapValue = storeMap.get(key) || new Map();
-    // 挂载class身上的
+    const _class_ = instance.constructor;
+    const config: StorageMapValue = storeMap.get(_class_) || new Map();
+    // 挂载class身上的config
     const classConfig = config.get(STORE_KEYS.classConfig) || {};
+
+    // 方法上的config
     const methodConfig =
-        (config.get("methods") as StorageMapValue.MethodsMapValue).get(
-            method
-        ) || {};
+        (config.get("methods") as StorageMapValue.MethodsMap).get(method) || {};
 
     // 实例
-    const instances: StorageMapValue.InstancesMapValue =
-        (config.get(STORE_KEYS.instancesFieldPropertyMap) as StorageMapValue.InstancesMapValue) ||
+    const instances: StorageMapValue.InstancesMap =
+        (config.get(STORE_KEYS.instances) as StorageMapValue.InstancesMap) ||
         new Map();
-    const instancePropertyMap = instances.get(instance) || {};
+    const instanceMapValue: StorageMapValue.CommonConfigValue =
+        instances.get(instance) || {};
 
-    const instanceConfig = Object.entries(instancePropertyMap).reduce(
+    // 实例的config属性
+    const instanceConfig = getOwnProperty(instance, "config", {});
+
+    const instancePropertyMap = instanceMapValue.fieldPropertyMap || {};
+    const fieldConfig = Object.entries(instancePropertyMap).reduce(
         (obj: RequestConfig, [key, value]) => {
             if (hasOwnProperty(instance, value)) {
                 // @ts-ignore
@@ -64,16 +69,19 @@ export function getMethodConfig(
         {}
     );
 
-    let mConfig: RequestConfig = {
-        // 初始化默认值
-        ...defaultConfig,
-        // class装饰器上的默认值
-        ...classConfig,
-        // class实例的值
-        ...instanceConfig,
-        // method 上的配置
-        ...(methodConfig.config || {}),
-    };
+    let mConfig: RequestConfig = merge(
+        {},
+        // 自定义默认config
+        defaultConfig,
+        // class上的config
+        classConfig,
+        // 实例 config 属性的值
+        instanceConfig,
+        // class filed map后组成的config
+        fieldConfig,
+        // method 上的config
+        methodConfig.config || {}
+    );
 
     mConfig = adjustConfig(mConfig, argumentsObj, methodConfig);
 
@@ -89,7 +97,7 @@ export function getMethodConfig(
  * @param storeMap 存储
  * @returns
  */
-export function getStaticMethodConfig(
+export function getStaticMethodMergedConfig(
     method: Function,
     _class_: Function,
     defaultConfig: RequestConfig = {},
@@ -106,16 +114,22 @@ export function getStaticMethodConfig(
     // 挂载class身上的
     const classConfig = config.get(STORE_KEYS.classConfig) || {};
     const methodConfig: StorageMapValue.MethodConfigValue =
-        (config.get("staticMethods") as StorageMapValue.MethodsMapValue).get(
+        (config.get("staticMethods") as StorageMapValue.MethodsMap).get(
             method
         ) || {};
 
-    const staticPropertyMap: StorageMapValue.FieldPropertyMapValue =
+    const commonConfig: StorageMapValue.CommonConfigValue =
         (config.get(
-            STORE_KEYS.staticFieldPropertyMap
-        ) as StorageMapValue.FieldPropertyMapValue) || {};
+            STORE_KEYS.staticConfig
+        ) as StorageMapValue.CommonConfigValue) || {};
 
-    const staticConfig = Object.entries(staticPropertyMap).reduce(
+    // 静态属性 config 会被读取为配置
+    const staticConfig = getOwnProperty(_class_, "config", {});
+
+    // 静态属性映射
+    const staticPropertyMap = commonConfig.fieldPropertyMap || {};
+    // 映射组合成为 config
+    const staticFiledConfig = Object.entries(staticPropertyMap).reduce(
         (obj: RequestConfig, [key, value]) => {
             if (hasOwnProperty(_class_, value)) {
                 // @ts-ignore
@@ -126,16 +140,19 @@ export function getStaticMethodConfig(
         {}
     );
 
-    let mConfig: RequestConfig = {
+    let mConfig: RequestConfig = merge(
+        {},
         // 初始化默认值
-        ...defaultConfig,
-        // class装饰器上的默认值
-        ...classConfig,
-        // class 静态配置
-        ...staticConfig,
+        defaultConfig,
+        // class装饰器上的config
+        classConfig,
+        // 静态属性 config
+        staticConfig,
+        // class 静态field 映射后的 config
+        staticFiledConfig,
         // method 上配置的默认值
-        ...(methodConfig.config || {}),
-    };
+        methodConfig.config || {}
+    );
 
     mConfig = adjustConfig(mConfig, argumentsObj, methodConfig);
 
@@ -221,20 +238,21 @@ export function updateFieldConfig(
     instance: Object,
     config: Record<PropertyKey, PropertyKey>
 ) {
-    const instancesKey = STORE_KEYS.instancesFieldPropertyMap;
+    const instancesKey = STORE_KEYS.instances;
 
     const val: StorageMapValue = storeMap.get(_class_) || new Map();
-    let instances: StorageMapValue.InstancesMapValue = val.get(
+    let instances: StorageMapValue.InstancesMap = val.get(
         instancesKey
-    ) as StorageMapValue.InstancesMapValue;
+    ) as StorageMapValue.InstancesMap;
     if (!instances) {
         instances = new Map();
         val.set(instancesKey, instances);
     }
-    const oldConfig: StorageMapValue.FieldPropertyMapValue =
+    const commonConfig: StorageMapValue.CommonConfigValue =
         instances.get(instance) || {};
-    Object.assign(oldConfig, config);
-    instances.set(instance, oldConfig);
+    commonConfig.fieldPropertyMap = commonConfig.fieldPropertyMap || {};
+    Object.assign(commonConfig.fieldPropertyMap, config);
+    instances.set(instance, commonConfig);
     storeMap.set(_class_, val);
 }
 
@@ -244,13 +262,15 @@ export function updateStaticFieldConfig(
     _instance: Object,
     mapConfig: Record<PropertyKey, PropertyKey>
 ) {
-    const staticConfigKey = STORE_KEYS.staticFieldPropertyMap;
+    const staticConfigKey = STORE_KEYS.staticConfig;
 
     const val: StorageMapValue = storeMap.get(_class_) || new Map();
-    let oldConfig: StorageMapValue.ConfigValue =
-        (val.get(staticConfigKey) as StorageMapValue.ConfigValue) || {};
-    Object.assign(oldConfig, mapConfig);
-    val.set(staticConfigKey, oldConfig);
+    let commonConfig: StorageMapValue.CommonConfigValue =
+        val.get(staticConfigKey) as StorageMapValue.CommonConfigValue || {};
+
+    commonConfig.fieldPropertyMap = commonConfig.fieldPropertyMap || {};
+    Object.assign(commonConfig.fieldPropertyMap, mapConfig);
+    val.set(staticConfigKey, commonConfig);
     storeMap.set(_class_, val);
 }
 
@@ -286,9 +306,9 @@ function innerUpdateStaticMethodConfig(
     key: "methods" | "staticMethods"
 ) {
     const val: StorageMapValue = storeMap.get(_class_) || new Map();
-    let methodsMapValue: StorageMapValue.MethodsMapValue = val.get(
+    let methodsMapValue: StorageMapValue.MethodsMap = val.get(
         key
-    ) as StorageMapValue.MethodsMapValue;
+    ) as StorageMapValue.MethodsMap;
     if (!methodsMapValue) {
         methodsMapValue = new Map();
         val.set(key, methodsMapValue);
