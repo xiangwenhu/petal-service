@@ -12,8 +12,9 @@
 - [x] 支持path参数，即 /user/:id
 - [x] 支持拦截器, 可以通过基于Axios自定义request实现
 - [x] 支持静态方法和静态属性
-- [ ] 支持实例config，即构造函数传入 config
-- [ ] 支持 BaseServiceClass 以方便res和静态res
+- [x] 支持实例config属性作为请求的config
+- [x] 支持静态属性config作为请求的config
+- [x] 支持 BaseServiceClass 以方便res和静态res
 - [ ] 增强自定义装饰器的介入能力？
 - [ ] json配置转服务 (TODO::))
 
