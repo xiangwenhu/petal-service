@@ -8,7 +8,6 @@ setConfig({
     },
 });
 
-
 // 设置baseUrl和超时时间
 @classDecorator({
     timeout: 60 * 1000,

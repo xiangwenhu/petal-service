@@ -17,7 +17,7 @@ const {
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
     headers: {
-        token: "ccccc",
+        token: "token",
     },
 });
 
@@ -58,7 +58,6 @@ class DemoService<R = any> {
     // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
     // @fieldDecorator("baseURL")
     baseURLValue = "https://www.google.com"
-
 
     getSomething() {
         return `something - ${this.timeoutValue}`
