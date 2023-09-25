@@ -1,4 +1,4 @@
-import { CreateDecoratorOptions } from "../other.type";
+import { CreateDecoratorOptions } from "../type.other";
 import { RequestConfig } from "../types";
 
 export function createFieldDecorator(

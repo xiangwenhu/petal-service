@@ -1,4 +1,4 @@
-import { hasPathParams, pathToUrl } from "../../src/util/path";
+import { hasPathParams, pathToUrl } from "../../../src/util/path";
 
 const pathValue = "https://aacosmma:9980/user/:id/:month";
 

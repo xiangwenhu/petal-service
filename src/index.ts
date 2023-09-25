@@ -3,7 +3,7 @@ import DataStore from "./dataStore";
 import { createClassDecorator } from "./decorator/class";
 import { createFieldDecorator } from "./decorator/field";
 import { createMethodDecorator, createParamsDecorator } from "./decorator/method";
-import { CreateDecoratorOptions, InnerCreateDecoratorOptions, ServiceRootConfig } from "./other.type";
+import { CreateDecoratorOptions, InnerCreateDecoratorOptions, ServiceRootConfig } from "./type.other";
 import { RequestConfig } from "./types";
 import { createRequestInstance, isAsyncFunction, isFunction } from "./util";
 ;

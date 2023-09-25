@@ -1,4 +1,4 @@
-import { CreateDecoratorOptions } from "../other.type";
+import { CreateDecoratorOptions } from "../type.other";
 import { DEFAULT_CONFIG } from "../const";
 import { RequestConfig } from "../types";
 

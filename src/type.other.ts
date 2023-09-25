@@ -1,4 +1,4 @@
-import { IDataStore } from "./dataStore.type";
+import { IDataStore } from "./type.datastore";
 import { RequestConfig, RequestInstance } from "./types";
 
 export type StorageMapValueKey =

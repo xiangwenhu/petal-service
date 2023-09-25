@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIG } from "../const";
-import { CreateDecoratorOptions, ParamsDecoratorOptions } from "../other.type";
+import { CreateDecoratorOptions, ParamsDecoratorOptions } from "../type.other";
 import { RequestConfig } from "../types";
 import { proxyRequest } from "./util";
 
@@ -32,14 +32,14 @@ function innerMethodDecorator(
         // target: method
         // context: demo {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
         classInstance = this;
-        const key = classInstance.constructor;
+        const _class_ = classInstance.constructor;
         console.log(
-            `innerMethodDecorator class:${key.name}, method:${String(
+            `innerMethodDecorator class:${_class_.name}, method:${String(
                 context.name
             )}`
         );
 
-        dataStore.updateMethodConfig(key, target, { config });
+        dataStore.updateMethodConfig(_class_, target, { config });
         // 防止被串改
         Object.defineProperty(classInstance, context.name, {
             configurable: false,
@@ -127,7 +127,6 @@ export function createParamsDecorator(
     createDecoratorOptions: CreateDecoratorOptions
 ) {
     return function paramsDecorator(options: ParamsDecoratorOptions = {}) {
-        // target 是class的方法
         return function (
             target: Function,
             context: ClassMethodDecoratorContext<any>

@@ -2,14 +2,18 @@
   "dependencies": {
     "axios": "^1.5.0",
     "lodash": "^4.17.21",
-    "path-to-regexp": "^6.2.1",
-    "whatwg-url": "^13.0.0"
+    "path-to-regexp": "^6.2.1"
+  },
+  "scripts": {
+    "test": "mocha --recursive"
   },
   "devDependencies": {
+    "whatwg-url": "^13.0.0",
     "@types/lodash": "^4.14.198",
+    "@types/mocha": "^10.0.1",
+    "@types/whatwg-url": "^11.0.0",
+    "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2",
-    "@types/whatwg-url": "^11.0.0"
-
+    "typescript": "^5.2.2"
   }
 }

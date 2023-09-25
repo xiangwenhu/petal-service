@@ -1,5 +1,5 @@
-import { createServiceInstance } from "../src";
-import { ApiResponse, RequestConfig } from "../src/types";
+import { createServiceInstance } from "../../src";
+import { ApiResponse, RequestConfig } from "../../src/types";
 
 const {
     classDecorator,
