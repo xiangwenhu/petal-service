@@ -1,7 +1,6 @@
 import {  BaseService, classDecorator, methodDecorator, setConfig, fieldDecorator } from "../../src";
 import { RequestConfig } from "../../src/types";
 
-
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
     headers: {

@@ -4,7 +4,7 @@
 
 ## 特性
 - [x] 支持多实例
-- [x] 支持多级配置
+- [x] 支持多级配置    
     实例模式： 方法配置 > 实例属性配置 > 实例config属性 > class的配置 > 自定义默认值 > 系统默认配置
     静态模式： 方法配置 > 静态属性配置 > 静态config属性 > class的配置 > 自定义默认值 > 系统默认配置
 - [x] 支持基于Axios自定义request
@@ -23,75 +23,44 @@
 ## 使用示例
 ### 示例1  多级配置
 ```typescript
-import { createServiceInstance } from "../src";
-import { ApiResponse, RequestConfig } from "../src/types";
-
-const {
-    classDecorator,
-    methodDecorator,
-    setConfig,
-    fieldDecorator,
-    paramsDecorator
-} = createServiceInstance({
-    defaults: {
-        baseURL: "https://github.com",
-        timeout: 30 * 1000
-    }
-});
+import {  BaseService, classDecorator, methodDecorator, setConfig, fieldDecorator } from "../../src";
+import { RequestConfig } from "../../src/types";
 
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
     headers: {
-        token: "ccccc",
+        token: "token",
     },
 });
 
 
 // 设置baseUrl和超时时间
 @classDecorator({
-    baseURL: "https://www.baidu.com",
-    timeout: 60 * 1000
+    timeout: 60 * 1000,
+    baseURL: "http://www.example.com"
 })
-class DemoService<R = any> {
+class DemoService<R> extends BaseService<R>{
 
-    protected res!: ApiResponse<R>;
     // 设置 api method 请求参数，最主要的是url, params, data和额外的config
     @methodDecorator({
         method: "get",
         url: "",
     })
-    @paramsDecorator({
-        hasParams: true,
-        hasBody: false,
-        hasConfig: true
-    })
-    public async getIndex(
+    static async getIndex(
         this: DemoService<string>,
-        params: any,
-        config: RequestConfig,
+        _params: any,
+        _config: RequestConfig,
     ){
-        const something = this.getSomething();
-        console.log("something: ", something);
         // 不写任何返回， 默认会返回 this.res.data
-        // return this.res!.data
+        return this.res.data
     }
 
-    // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
+    // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 自定义默认值
     @fieldDecorator("timeout")
-    timeoutValue = 1000;
-
-    // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
-    // @fieldDecorator("baseURL")
-    baseURLValue = "https://www.google.com"
-
-
-    getSomething() {
-        return `something - ${this.timeoutValue}`
-    }
+    static timeoutValue = 5 * 1000;
 }
 
-const serviceA = new DemoService();
-serviceA
+DemoService
     .getIndex(
         { since: "monthly" },
         {
@@ -99,25 +68,22 @@ serviceA
         },
     )
     .then((res: any) => {
-        console.log("res serviceA getIndex:", res.length);
+        console.log("res DemoService static getIndex:", res.length);
     })
     .catch((err) => {
-        console.log("error serviceA getIndex:", err);
+        console.log("error DemoService static getIndex:", err);
     });
 
 ```
 
 ### 示例2 path参数
 ```typescript
-import { createServiceInstance } from "../src";
-import { ApiResponse, RequestConfig } from "../src/types";
-
-const {
+import {
     classDecorator,
     paramsDecorator,
     methodDecorator
-} = createServiceInstance();
-
+} from "../../src";
+import { ApiResponse, RequestConfig } from "../../src/types";
 
 // 设置baseUrl和超时时间
 @classDecorator({
@@ -125,7 +91,6 @@ const {
     timeout: 60 * 1000
 })
 class DemoService<R = any> {
-
     protected res!: ApiResponse<R>;
 
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
@@ -138,8 +103,8 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        pathParams: Record<string, string | number>,
-        config: RequestConfig,
+        _pathParams: Record<string, string | number>,
+        _config: RequestConfig,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
@@ -163,42 +128,31 @@ serviceA
     .catch((err) => {
         console.log("error serviceA getIndex:", err);
     });
-
 ```
 
 
 ### 示例3 自定义装饰器
 如下代码，通过field装饰器，添加headers
 ```typescript
-import { AxiosHeaders, RawAxiosRequestHeaders } from "axios";
-import { createServiceInstance } from "../src";
-import { StorageMapValue } from "../src/other.type";
-import { ApiResponse, RequestConfig } from "../src/types";
-
-const {
+import {
     classDecorator,
     createDecorator,
-    apiDecorator
-} = createServiceInstance({
-    defaults: {
-        baseURL: "https://github.com",
-        timeout: 30 * 1000
-    }
-});
+    methodDecorator
+} from "../../src";
+import { ApiResponse, RequestConfig } from "../../src/types";
 
 /**
  * 通过filed自定义headers
  */
-const headersDecorator = createDecorator(({ storeMap, updateFiledConfig }) => {
-    // target 为 undefined
-    return function (target: any, context: ClassFieldDecoratorContext<any>) {
+const headersDecorator = createDecorator(({ dataStore }) => {
+    return function (target: any, context: ClassFieldDecoratorContext<Function>) {
         context.addInitializer(function () {
-            // this 是实例对象, this.constructor 是 class
+            // this 是实例对象, this.constructor 是 class, target 为 undefined
             const instance = this;
-            const key = instance.constructor;
-            updateFiledConfig(key, instance, {
+            const _class_ = instance.constructor;
+            dataStore.updateFieldConfig(_class_, instance, {
                 headers: context.name
-            })
+            });
         })
     }
 
@@ -211,16 +165,14 @@ const headersDecorator = createDecorator(({ storeMap, updateFiledConfig }) => {
 class DemoService<R = any> {
     protected res!: ApiResponse<R>;
 
-    // 设置 api 请求参数，最主要的是url, params, data和额外的config
-    @apiDecorator({
+    @methodDecorator({
         method: "get",
         url: "",
     })
     public async getIndex(
         this: DemoService<string>,
-        params: any,
-        data: any,
-        config: RequestConfig,
+        _params: any,
+        _config: RequestConfig,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         return this.res.data
@@ -228,16 +180,14 @@ class DemoService<R = any> {
     @headersDecorator headers = {
         "AppId": 5000
     }
-
 }
 
 const serviceA = new DemoService();
 serviceA
     .getIndex(
         { since: "monthly" },
-        undefined,
         {
-            headers: { a: 1 },
+            headers: { secId: 'xx-xx' },
         },
     )
     .then((res) => {
@@ -247,21 +197,18 @@ serviceA
         console.log("error serviceA getIndex:", err);
     });
 
-
 ```
 
 输出结果：
 ```shell
-classDecorator: DemoService
-apiDecorator class:DemoService, method:getIndex
 DemoService getIndex final config: {
+  timeout: 60000,
+  responseType: 'json',
   baseURL: 'https://www.baidu.com',
-  timeout: 30000,
-  headers: { AppId: 5000 },
+  headers: { AppId: 5000, a: 1 },
   method: 'get',
   url: '',
-  params: { since: 'monthly' },
-  data: { headers: { a: 1 } }
+  params: { since: 'monthly' }
 }
 res serviceA getIndex: 227
 ```
@@ -269,20 +216,19 @@ res serviceA getIndex: 227
 ### 示例4 支持静态模式
 静态属性和方法，无需实例化
 ```typescript
-import { createServiceInstance } from "../src";
-import { ApiResponse, RequestConfig } from "../src/types";
+import createInstance from "../../src/createInstance"
+import { ApiResponse, RequestConfig } from "../../src/types";
 
 const {
-    classDecorator,
-    methodDecorator,
-    paramsDecorator,
-    fieldDecorator
-} = createServiceInstance();
-
+    classDecorator, methodDecorator, paramsDecorator, fieldDecorator
+} = createInstance({
+    defaults: {
+        baseURL: "https://juejin.cn"
+    }
+});
 
 // 设置baseUrl和超时时间
 @classDecorator({
-    baseURL: "https://juejin.cn",
     timeout: 60 * 1000
 })
 class DemoService {
@@ -298,20 +244,17 @@ class DemoService {
     })
     static async getCourse(
         this: typeof DemoService,
-        pathParams: Record<string, string | number>,
-        config: RequestConfig,
+        _pathParams: Record<string, string | number>,
+        _config: RequestConfig,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
-        return this.res.data;        
+        return this.res.data;
     }
 
     @fieldDecorator("timeout")
     static timeoutValue = 5000;
 }
-
-var a: DemoService = {} as  any;
-
 
 DemoService
     .getCourse(
@@ -328,38 +271,26 @@ DemoService
     .catch((err) => {
         console.log("error serviceA getIndex:", err);
     });
-
 ```
 
 
 ### 示例5 继承
 ```typescript
-import Axios from "axios";
-import { createServiceInstance } from "../src";
-import { ApiResponse, RequestConfig } from "../src/types";
-
-const {
-    classDecorator,
-    methodDecorator,
-    setConfig,
-    paramsDecorator,
-    fieldDecorator
-} = createServiceInstance({
-    request: Axios
-});
+import {
+    classDecorator, methodDecorator, setConfig, paramsDecorator, fieldDecorator
+} from "../../src";
+import { ApiResponse, RequestConfig } from "../../src/types";
 
 setConfig({
     headers: {
-        token: "ccccc",
+        token: "token",
     },
 });
-
 
 @classDecorator({
     baseURL: "https://www.jd.com",
 })
 class DemoService<R = any> {
-
     protected res!: ApiResponse<R>;
 
     @methodDecorator({
@@ -368,15 +299,15 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService,
-        params: any,
-        data: any,
-        config: RequestConfig
+        _params: any,
+        _data: any,
+        _config: RequestConfig
     ) {
         return this.res.data;
     }
 
     @fieldDecorator("timeout")
-    timeoutValue = 1000;
+    timeoutValue = 5000;
 
     @fieldDecorator("baseURL")
     baseURLValue = "https://www.github.com"
@@ -386,7 +317,6 @@ class DemoService<R = any> {
     baseURL: "https://cn.bing.com/",
 })
 class SubDemoService extends DemoService {
-
     @methodDecorator({
         method: "get",
         url: "",
@@ -398,16 +328,13 @@ class SubDemoService extends DemoService {
     })
     async getBingIndex<R = string>(
         this: SubDemoService,
-        params: any,
-        config: RequestConfig
+        _params: any,
+        _config: RequestConfig
     ): Promise<string> {
         return this.res!.data;
     }
     @fieldDecorator("timeout")
     timeoutValue = 30 * 1000;
-
-    @fieldDecorator("baseURL")
-    baseURLValue = "https://www.example.com"
 }
 
 

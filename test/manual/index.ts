@@ -1,25 +1,18 @@
 import {
-    classDecorator,
-    methodDecorator,
-    setConfig,
-    paramsDecorator,
-    fieldDecorator
+    classDecorator, methodDecorator, setConfig, paramsDecorator, fieldDecorator
 } from "../../src";
 import { ApiResponse, RequestConfig } from "../../src/types";
 
-
 setConfig({
     headers: {
-        token: "ccccc",
+        token: "token",
     },
 });
-
 
 @classDecorator({
     baseURL: "https://www.jd.com",
 })
 class DemoService<R = any> {
-
     protected res!: ApiResponse<R>;
 
     @methodDecorator({
@@ -28,9 +21,9 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService,
-        params: any,
-        data: any,
-        config: RequestConfig
+        _params: any,
+        _data: any,
+        _config: RequestConfig
     ) {
         return this.res.data;
     }
@@ -46,7 +39,6 @@ class DemoService<R = any> {
     baseURL: "https://cn.bing.com/",
 })
 class SubDemoService extends DemoService {
-
     @methodDecorator({
         method: "get",
         url: "",
@@ -58,16 +50,13 @@ class SubDemoService extends DemoService {
     })
     async getBingIndex<R = string>(
         this: SubDemoService,
-        params: any,
-        config: RequestConfig
+        _params: any,
+        _config: RequestConfig
     ): Promise<string> {
         return this.res!.data;
     }
     @fieldDecorator("timeout")
     timeoutValue = 30 * 1000;
-
-    @fieldDecorator("baseURL")
-    baseURLValue = "https://www.example.com"
 }
 
 

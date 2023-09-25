@@ -9,10 +9,9 @@ import { ApiResponse, RequestConfig } from "../../src/types";
  * 通过filed自定义headers
  */
 const headersDecorator = createDecorator(({ dataStore }) => {
-    // target 为 undefined
     return function (target: any, context: ClassFieldDecoratorContext<Function>) {
         context.addInitializer(function () {
-            // this 是实例对象, this.constructor 是 class
+            // this 是实例对象, this.constructor 是 class, target 为 undefined
             const instance = this;
             const _class_ = instance.constructor;
             dataStore.updateFieldConfig(_class_, instance, {
@@ -30,7 +29,6 @@ const headersDecorator = createDecorator(({ dataStore }) => {
 class DemoService<R = any> {
     protected res!: ApiResponse<R>;
 
-    // 设置 api method 请求参数，最主要的是url, params, data和额外的config
     @methodDecorator({
         method: "get",
         url: "",
@@ -46,7 +44,6 @@ class DemoService<R = any> {
     @headersDecorator headers = {
         "AppId": 5000
     }
-
 }
 
 const serviceA = new DemoService();
@@ -54,7 +51,7 @@ serviceA
     .getIndex(
         { since: "monthly" },
         {
-            headers: { a: 1 },
+            headers: { secId: 'xx-xx' },
         },
     )
     .then((res) => {
