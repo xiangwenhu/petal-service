@@ -5,16 +5,17 @@
 ## 特性
 - [x] 支持多实例
 - [x] 支持多级配置
-    方法配置 > 实例配置 > class的配置 > 自定义默认值 > 系统默认配置
+    实例模式： 方法配置 > 实例属性配置 > 实例config属性 > class的配置 > 自定义默认值 > 系统默认配置
+    静态模式： 方法配置 > 静态属性配置 > 静态config属性 > class的配置 > 自定义默认值 > 系统默认配置
 - [x] 支持基于Axios自定义request
 - [x] 支持继承
-- [x] 支持扩展装饰器(初级支持)
+- [x] 支持扩展装饰器(初级)
 - [x] 支持path参数，即 /user/:id
 - [x] 支持拦截器, 可以通过基于Axios自定义request实现
 - [x] 支持静态方法和静态属性
-- [x] 支持实例config属性作为请求的config
-- [x] 支持静态属性config作为请求的config
-- [x] 支持 BaseServiceClass 以方便res和静态res
+- [x] 支持实例属性config作为配置
+- [x] 支持静态属性config作为配置
+- [x] BaseServiceClass，快捷使用 res和config属性
 - [ ] 增强自定义装饰器的介入能力？
 - [ ] json配置转服务 (TODO::))
 

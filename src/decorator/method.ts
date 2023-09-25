@@ -1,7 +1,6 @@
 import { DEFAULT_CONFIG } from "../const";
 import { CreateDecoratorOptions, ParamsDecoratorOptions } from "../other.type";
 import { RequestConfig } from "../types";
-import { getMethodMergedConfig, getStaticMethodMergedConfig } from "./util";
 
 export function createMethodDecorator(
     createDecoratorOptions: CreateDecoratorOptions
@@ -24,7 +23,7 @@ function innerMethodDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<any>,
     config: RequestConfig,
-    { updateMethodConfig, defaults, storeMap, request }: CreateDecoratorOptions
+    {  defaults, dataStore, request }: CreateDecoratorOptions
 ) {
     let classInstance: Function;
     context.addInitializer(function () {
@@ -39,7 +38,7 @@ function innerMethodDecorator(
             )}`
         );
 
-        updateMethodConfig(key, target, { config });
+        dataStore.updateMethodConfig(key, target, { config });
         // 防止被串改
         Object.defineProperty(classInstance, context.name, {
             configurable: false,
@@ -50,12 +49,11 @@ function innerMethodDecorator(
 
     function proxyMethod() {
         // 读取最终合并后的配置
-        const config = getMethodMergedConfig(
+        const config = dataStore.getMethodMergedConfig(
             target,
             classInstance,
             defaults,
             arguments,
-            storeMap
         );
         console.log(
             `${classInstance.constructor.name} ${target.name} final config:`,
@@ -88,9 +86,8 @@ function innerStaticMethodDecorator(
     context: ClassMethodDecoratorContext<Function>,
     config: RequestConfig,
     {
-        updateStaticMethodConfig,
         defaults,
-        storeMap,
+        dataStore,
         request,
     }: CreateDecoratorOptions
 ) {
@@ -106,7 +103,7 @@ function innerStaticMethodDecorator(
             )}`
         );
 
-        updateStaticMethodConfig(_class_, target, { config });
+        dataStore.updateStaticMethodConfig(_class_, target, { config });
         // 防止被串改
         Object.defineProperty(_class_, context.name, {
             configurable: false,
@@ -117,12 +114,11 @@ function innerStaticMethodDecorator(
 
     function proxyMethod() {
         // 读取最终合并后的配置
-        const config = getStaticMethodMergedConfig(
+        const config = dataStore.getStaticMethodMergedConfig(
             target,
             _class_,
             defaults,
             arguments,
-            storeMap
         );
         console.log(
             `${_class_.constructor.name} ${target.name} final config:`,
@@ -171,7 +167,7 @@ function innerParamsDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<Function>,
     options: ParamsDecoratorOptions = {},
-    { updateMethodConfig }: CreateDecoratorOptions
+    { dataStore }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this: instance
@@ -182,7 +178,7 @@ function innerParamsDecorator(
             `paramsDecorator class:${_class_.name}, method:${String(context.name)}`
         );
 
-        updateMethodConfig(_class_, target, options);
+        dataStore.updateMethodConfig(_class_, target, options);
     });
 }
 
@@ -190,7 +186,7 @@ function innerStaticParamsDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<Function>,
     options: ParamsDecoratorOptions = {},
-    { updateStaticMethodConfig }: CreateDecoratorOptions
+    { dataStore }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this: class
@@ -201,6 +197,6 @@ function innerStaticParamsDecorator(
             `paramsDecorator class:${_class_.name}, method:${String(context.name)}`
         );
 
-        updateStaticMethodConfig(_class_, target, options);
+        dataStore.updateStaticMethodConfig(_class_, target, options);
     });
 }

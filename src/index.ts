@@ -1,12 +1,12 @@
-import { createMap } from "./store"
-import { CreateDecoratorOptions, InnerCreateDecoratorOptions, ServiceRootConfig, StorageMapValue } from "./other.type";
-import { RequestConfig } from "./types";
-import { createClassDecorator } from "./decorator/class";
 import { DEFAULT_CONFIG } from "./const";
+import DataStore from "./dataStore";
+import { createClassDecorator } from "./decorator/class";
 import { createFieldDecorator } from "./decorator/field";
 import { createMethodDecorator, createParamsDecorator } from "./decorator/method";
+import { CreateDecoratorOptions, InnerCreateDecoratorOptions, ServiceRootConfig } from "./other.type";
+import { RequestConfig } from "./types";
 import { createRequestInstance, isAsyncFunction, isFunction } from "./util";
-import { updateMethodConfig, updateFieldConfig, updateStaticFieldConfig, updateStaticMethodConfig } from "./decorator/util";
+;
 /**
  * 更新配置
  * @param options 
@@ -29,34 +29,16 @@ function getRequestInstance(config: ServiceRootConfig) {
 
 
 export function createServiceInstance(config: ServiceRootConfig = {}) {
-    const storeMap = createMap<Function, StorageMapValue>();
-
+    const dataStore = new DataStore();
     const innerOptions: InnerCreateDecoratorOptions = {
-        storeMap,
+        dataStore,
         defaults: config.defaults || DEFAULT_CONFIG,
-        request: getRequestInstance(config)!,
-        updateMethodConfig(_class_, api, config) {
-            updateMethodConfig(storeMap, _class_, api, config);
-        },
-        updateStaticMethodConfig(_class_, api, config) {
-            updateStaticMethodConfig(storeMap, _class_, api, config);
-        },
-        updateFieldConfig(_class_, instance, config) {
-            updateFieldConfig(storeMap, _class_, instance, config);
-        },
-        updateStaticFieldConfig(_class_, instance, config){
-            updateStaticFieldConfig(storeMap, _class_, instance, config)
-        }
-
+        request: getRequestInstance(config)!
     };
 
     const options: CreateDecoratorOptions = {
-        storeMap,
+        dataStore,
         defaults: innerOptions.defaults,
-        updateMethodConfig: innerOptions.updateMethodConfig,
-        updateStaticMethodConfig: innerOptions.updateStaticMethodConfig,
-        updateFieldConfig: innerOptions.updateFieldConfig,
-        updateStaticFieldConfig: innerOptions.updateStaticFieldConfig,
         request: innerOptions.request
     }
 
@@ -94,4 +76,5 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
     }
 }
 
-export { BaseService } from "./BaseService"
+export { BaseService } from "./BaseService";
+

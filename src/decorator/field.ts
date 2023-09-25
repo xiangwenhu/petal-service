@@ -5,7 +5,6 @@ export function createFieldDecorator(
     createDecoratorOptions: CreateDecoratorOptions
 ) {
     return function fieldDecorator(field: keyof RequestConfig) {
-        // target 为 undefined
         return function (
             target: any,
             context: ClassFieldDecoratorContext<Object>
@@ -19,34 +18,34 @@ export function createFieldDecorator(
 }
 
 function innerFieldDecorator(
-    target: Function,
+    _target: Function,
     context: ClassFieldDecoratorContext<Function>,
     field: keyof RequestConfig,
-    { updateFieldConfig }: CreateDecoratorOptions
+    { dataStore }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this: instance
         // target: undefined
         // context: demo {"kind":"field","name":"name","static":false,"private":false,"access":{}}
         const instance = this;
-        const key = instance.constructor;
+        const _class_ = instance.constructor;
         console.log(
-            `innerFieldDecorator class:${key.name}, filed:${String(
+            `innerFieldDecorator class:${_class_.name}, filed:${String(
                 context.name
             )}`
         );
 
-        updateFieldConfig(key, instance, {
+        dataStore.updateFieldConfig(_class_, instance, {
             [field]: context.name,
         });
     });
 }
 
 function innerStaticFieldDecorator(
-    target: Function,
+    _target: Function,
     context: ClassFieldDecoratorContext<Function>,
     field: keyof RequestConfig,
-    { updateStaticFieldConfig }: CreateDecoratorOptions
+    { dataStore }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this：class
@@ -59,7 +58,7 @@ function innerStaticFieldDecorator(
             )}`
         );
 
-        updateStaticFieldConfig(_class_, undefined as any, {
+        dataStore.updateStaticFieldConfig(_class_, undefined, {
             [field]: context.name,
         });
     });

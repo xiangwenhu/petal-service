@@ -1,3 +1,4 @@
+import { IDataStore } from "./dataStore.type";
 import { RequestConfig, RequestInstance } from "./types";
 
 export type StorageMapValueKey =
@@ -9,17 +10,17 @@ export type StorageMapValueKey =
 
 export type StorageMapValue = Map<
     StorageMapValueKey,
-    | StorageMapValue.ConfigValue // classConfig 
+    | StorageMapValue.ConfigValue // classConfig
     | StorageMapValue.MethodsMap // methods staticMethods
     | StorageMapValue.InstancesMap // instances
     | StorageMapValue.CommonConfigValue // staticConfig
 >;
 
 export namespace StorageMapValue {
-    export type ConfigValue = RequestConfig;
+    export type ConfigValue = Partial<RequestConfig>;
     export type MethodsMap = Map<Function, MethodConfigValue>;
     export type MethodConfigValue = {
-        config?: RequestConfig;
+        config?: ConfigValue;
     } & MethodParamsOptions;
     export interface MethodParamsOptions {
         hasParams?: boolean;
@@ -28,7 +29,7 @@ export namespace StorageMapValue {
     }
     export type InstancesMap = Map<Object, CommonConfigValue>;
     export type CommonConfigValue = {
-        config?: RequestConfig,
+        config?: ConfigValue,
         fieldPropertyMap?: FieldPropertyMapValue;
     };
     export type FieldPropertyMapValue = Record<PropertyKey, PropertyKey>;
@@ -54,6 +55,9 @@ export interface ServiceRootConfig {
     createRequest?: () => RequestInstance;
 }
 
+/**
+ * 更新方法的请求配置
+ */
 interface UpdateMethodConfig {
     (
         /**
@@ -68,6 +72,9 @@ interface UpdateMethodConfig {
     ): void;
 }
 
+/**
+ * 更新字段映射配置
+ */
 interface UpdateFieldConfig {
     (
         /**
@@ -75,9 +82,9 @@ interface UpdateFieldConfig {
          */
         _class_: Function,
         /**
-         * class 实例
+         * class 实例, 如果是静态字段，该值无意义
          */
-        instance: Object,
+        instance: Object | null | undefined,
         config: Record<PropertyKey, PropertyKey>
     ): void;
 }
@@ -86,15 +93,7 @@ export interface CreateDecoratorOptions {
     /**
      * 存储
      */
-    storeMap: StorageMap;
-
-    updateMethodConfig: UpdateMethodConfig;
-
-    updateStaticMethodConfig: UpdateMethodConfig;
-
-    updateFieldConfig: UpdateFieldConfig;
-
-    updateStaticFieldConfig: UpdateFieldConfig;
+    dataStore: IDataStore;
     /**
      * 默认配置
      */

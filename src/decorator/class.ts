@@ -1,15 +1,14 @@
-import { CreateDecoratorOptions, StorageMapValue } from "../other.type";
-import { DEFAULT_CONFIG, STORE_KEYS } from "../const";
+import { CreateDecoratorOptions } from "../other.type";
+import { DEFAULT_CONFIG } from "../const";
 import { RequestConfig } from "../types";
 
-export function createClassDecorator({ storeMap }: CreateDecoratorOptions) {
+export function createClassDecorator({ dataStore }: CreateDecoratorOptions) {
     /**
      * 示例
      * @classDecorator({
      *       baseURL: "https://www.api.com",
      *  })
-     * class DemoService {
-     * }
+     * class DemoService {}
      */
     return function classDecorator(config: RequestConfig = DEFAULT_CONFIG) {
         return function (
@@ -21,10 +20,8 @@ export function createClassDecorator({ storeMap }: CreateDecoratorOptions) {
             // context: demo '{"kind":"class","name":"Class的Name"}'
             console.log("classDecorator:", target.name);
             context.addInitializer(function () {
-                const key = target;
-                const val: StorageMapValue = storeMap.get(key) || new Map();
-                val.set(STORE_KEYS.classConfig, config);
-                storeMap.set(key, val);
+                const _class_ = target;
+                dataStore.updateClassConfig(_class_, config);
             });
         };
     };

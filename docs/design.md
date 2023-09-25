@@ -8,12 +8,18 @@
 ```typescript
 Map {
     ["构造函数class"]: Map {
-        // class 的请求配置
-        "classConfig": RequestConfig,
-        // class 的方法（原型) 请求配置
+        /**
+         * class 的请求配置
+         * 更新：dataStore.updateClassConfig
+         */
+        "classConfig": RequestConfig,  
+        /**
+         * class 的方法（原型) 请求配置
+         * 更新：dataStore.updateMethodConfig
+         */
         "methods": Map {
             // 键为方法， 值为请求配置和一些外的参数配置
-            ["方法"]: {
+            ["方法"]: { 
                 // 请求配置
                 config: RequestConfig;
                 // 方法是否有参数
@@ -24,7 +30,10 @@ Map {
                 hasConfig?: boolean;
             }
         },
-        // class 实例 的 属性映射
+        /**
+         * class 实例 的 属性映射
+         * 更新 dataStore.updateFieldConfig
+         */
         "instances": Map {
             // class 实例 的 属性映射
             ["class实例"]: {
@@ -32,13 +41,18 @@ Map {
                 fieldPropertyMap: Record<PropertyKey, PropertyKey>;
             }
         },
-
-        // 静态属性映射
+        /**
+         * 静态属性映射
+         * 更新: dataStore.updateFieldConfig
+         */
         "staticConfig": : {
                 // config: RequestConfig; 
                 fieldPropertyMap: Record<PropertyKey, PropertyKey>;
             }
-        // 静态方法配置
+        /**
+         * 静态方法配置
+         * 更新：dataStore.updateMethodConfig
+         */
         "staticMethods": Map {
             // 键为方法， 值为请求配置和一些外的参数配置
             ["方法"]: {

@@ -1,5 +1,4 @@
 import { StorageMapValue, StorageMapValueKey } from "../other.type";
-import { createMap } from "../store";
 import { RequestConfig } from "../types";
 
 export const DEFAULT_CONFIG: RequestConfig = {
@@ -7,7 +6,7 @@ export const DEFAULT_CONFIG: RequestConfig = {
     responseType: "json"
 }
 
-export const storeMap = createMap<Function, StorageMapValue>();
+export const storeMap = new Map<Function, StorageMapValue>();
 
 export const STORE_KEYS: Record<StorageMapValueKey, StorageMapValueKey> = {
     "classConfig": "classConfig",
