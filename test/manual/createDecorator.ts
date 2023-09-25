@@ -1,21 +1,14 @@
-import { createServiceInstance } from "../../src";
-import { ApiResponse, RequestConfig } from "../../src/types";
-
-const {
+import {
     classDecorator,
     createDecorator,
     methodDecorator
-} = createServiceInstance({
-    defaults: {
-        baseURL: "https://github.com",
-        timeout: 30 * 1000
-    }
-});
+} from "../../src";
+import { ApiResponse, RequestConfig } from "../../src/types";
 
 /**
  * 通过filed自定义headers
  */
-const headersDecorator = createDecorator(({ dataStore}) => {
+const headersDecorator = createDecorator(({ dataStore }) => {
     // target 为 undefined
     return function (target: any, context: ClassFieldDecoratorContext<Function>) {
         context.addInitializer(function () {

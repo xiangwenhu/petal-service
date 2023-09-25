@@ -1,4 +1,4 @@
-import { merge } from "lodash";
+import merge from "lodash/merge";
 import { StorageMap, StorageMapValue } from "../type.other";
 import { Method, RequestConfig } from "../types";
 import {
@@ -265,7 +265,7 @@ export default class DataStore {
         const commonConfig: StorageMapValue.CommonConfigValue =
             instances.get(instance!) || {};
         commonConfig.fieldPropertyMap = commonConfig.fieldPropertyMap || {};
-        Object.assign(commonConfig.fieldPropertyMap, config);
+        merge(commonConfig.fieldPropertyMap, config);
         instances.set(instance!, commonConfig);
         storeMap.set(_class_, val);
     }
@@ -289,7 +289,7 @@ export default class DataStore {
             val.get(staticConfigKey) as StorageMapValue.CommonConfigValue || {};
 
         commonConfig.fieldPropertyMap = commonConfig.fieldPropertyMap || {};
-        Object.assign(commonConfig.fieldPropertyMap, mapConfig);
+        merge(commonConfig.fieldPropertyMap, mapConfig);
         val.set(staticConfigKey, commonConfig);
         storeMap.set(_class_, val);
     }
@@ -344,7 +344,7 @@ export default class DataStore {
         }
         const oldConfig: StorageMapValue.MethodConfigValue =
             methodsMapValue.get(method) || {};
-        Object.assign(oldConfig, config);
+        merge(oldConfig, config);
         methodsMapValue.set(method, oldConfig);
         storeMap.set(_class_, val);
     }

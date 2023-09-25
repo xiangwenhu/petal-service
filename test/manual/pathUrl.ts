@@ -1,11 +1,11 @@
-import { createServiceInstance } from "../../src";
-import { ApiResponse, RequestConfig } from "../../src/types";
-
-const {
+import {
     classDecorator,
     paramsDecorator,
     methodDecorator
-} = createServiceInstance();
+} from "../../src";
+import { ApiResponse, RequestConfig } from "../../src/types";
+
+
 
 
 // 设置baseUrl和超时时间

@@ -1,4 +1,4 @@
-import { createServiceInstance } from "../../src";
+import createInstance from "../../src/createInstance"
 import { ApiResponse, RequestConfig } from "../../src/types";
 
 const {
@@ -7,7 +7,7 @@ const {
     setConfig,
     fieldDecorator,
     paramsDecorator
-} = createServiceInstance({
+} = createInstance({
     defaults: {
         timeout: 30 * 1000
     }

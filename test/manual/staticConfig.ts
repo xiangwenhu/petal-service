@@ -1,17 +1,11 @@
-import { createServiceInstance } from "../../src";
-import { ApiResponse, RequestConfig } from "../../src/types";
-
-const {
+import {
     classDecorator,
     methodDecorator,
     setConfig,
     fieldDecorator,
-    paramsDecorator
-} = createServiceInstance({
-    defaults: {
-        timeout: 30 * 1000
-    }
-});
+} from "../../src";
+import { ApiResponse, RequestConfig } from "../../src/types";
+
 
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
@@ -26,7 +20,7 @@ setConfig({
     timeout: 60 * 1000,
     baseURL: "http://www.example.com"
 })
-class DemoService{
+class DemoService {
 
     static config: RequestConfig = {
         timeout: 90 * 1000
@@ -41,7 +35,7 @@ class DemoService{
     static async getIndex(
         params: any,
         config: RequestConfig,
-    ){
+    ) {
         // 不写任何返回， 默认会返回 this.res.data
         return this.res.data
     }

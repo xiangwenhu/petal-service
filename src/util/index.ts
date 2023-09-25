@@ -35,6 +35,6 @@ export function hasOwnProperty(obj: any, propertyName: PropertyKey){
     return hasOwnProp.call(obj, propertyName);
 }
 
-export function createRequestInstance(){
+export function createDefaultRequestInstance(){
     return axios.create();
 }

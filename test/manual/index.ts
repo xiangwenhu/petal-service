@@ -1,16 +1,12 @@
-import Axios from "axios";
-import { createServiceInstance } from "../../src";
-import { ApiResponse, RequestConfig } from "../../src/types";
-
-const {
+import {
     classDecorator,
     methodDecorator,
     setConfig,
     paramsDecorator,
     fieldDecorator
-} = createServiceInstance({
-    request: Axios
-});
+} from "../../src";
+import { ApiResponse, RequestConfig } from "../../src/types";
+
 
 setConfig({
     headers: {

@@ -1,5 +1,5 @@
-import { createServiceInstance } from "../../src";
 import { ApiResponse, RequestConfig } from "../../src/types";
+import createInstance from "../../src/createInstance"
 
 const {
     classDecorator,
@@ -7,7 +7,7 @@ const {
     setConfig,
     fieldDecorator,
     paramsDecorator
-} = createServiceInstance({
+} = createInstance({
     defaults: {
         baseURL: "https://github.com",
         timeout: 30 * 1000
@@ -44,7 +44,7 @@ class DemoService<R = any> {
         this: DemoService<string>,
         params: any,
         config: RequestConfig,
-    ){
+    ) {
         const something = this.getSomething();
         console.log("something: ", something);
         // 不写任何返回， 默认会返回 this.res.data
@@ -79,3 +79,4 @@ serviceA
     .catch((err) => {
         console.log("error serviceA getIndex:", err);
     });
+

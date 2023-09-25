@@ -1,6 +1,6 @@
 import { ApiResponse, RequestConfig } from "./types";
 
-export class BaseService<R = any> {
+export default class BaseService<R = any> {
 
     // 实例config属性
     constructor(protected config: RequestConfig = {}){

@@ -1,4 +1,4 @@
-import { createServiceInstance } from "../../src";
+import createInstance from "../../src/createInstance"
 import { ApiResponse, RequestConfig } from "../../src/types";
 
 const {
@@ -6,12 +6,15 @@ const {
     methodDecorator,
     paramsDecorator,
     fieldDecorator
-} = createServiceInstance();
+} = createInstance({
+    defaults: {
+        baseURL: "https://juejin.cn"
+    }
+});
 
 
 // 设置baseUrl和超时时间
 @classDecorator({
-    baseURL: "https://juejin.cn",
     timeout: 60 * 1000
 })
 class DemoService {

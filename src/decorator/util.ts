@@ -1,6 +1,5 @@
 import { RequestConfig, RequestInstance } from "../types";
 
-
 export function proxyRequest({
     method,
     config,
