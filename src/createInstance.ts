@@ -3,7 +3,7 @@ import DataStore from "./dataStore";
 import { createClassDecorator } from "./decorator/class";
 import { createFieldDecorator } from "./decorator/field";
 import { createMethodDecorator, createParamsDecorator } from "./decorator/method";
-import { CreateDecoratorOptions, InnerCreateDecoratorOptions, ServiceRootConfig } from "./type.other";
+import { CreateDecoratorOptions, InnerCreateDecoratorOptions, ServiceRootConfig } from "./types";
 import { RequestConfig } from "./types";
 import { createDefaultRequestInstance, isAsyncFunction, isFunction } from "./util";
 import  merge from "lodash/merge";

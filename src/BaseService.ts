@@ -1,4 +1,4 @@
-import { ApiResponse, RequestConfig } from "./types";
+import { ApiResponse, RequestConfig } from "./types/request";
 
 export default class BaseService<R = any> {
 

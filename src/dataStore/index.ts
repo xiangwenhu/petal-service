@@ -1,5 +1,5 @@
 import merge from "lodash/merge";
-import { StorageMap, StorageMapValue } from "../type.other";
+import { StorageMap, StorageMapValue } from "../types";
 import { Method, RequestConfig } from "../types";
 import {
     getOwnProperty,

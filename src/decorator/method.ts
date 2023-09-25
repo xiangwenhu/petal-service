@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIG } from "../const";
-import { CreateDecoratorOptions, ParamsDecoratorOptions } from "../type.other";
+import { CreateDecoratorOptions, ParamsDecoratorOptions } from "../types";
 import { RequestConfig } from "../types";
 import { proxyRequest } from "./util";
 

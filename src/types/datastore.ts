@@ -1,3 +1,3 @@
-import DataStore from "./dataStore";
+import DataStore from "../dataStore";
 export type IDataStore = DataStore;
 

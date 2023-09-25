@@ -1,5 +1,5 @@
-import { StorageMapValue, StorageMapValueKey } from "./type.other";
-import { Method, RequestConfig } from "./types";
+import { StorageMapValue, StorageMapValueKey } from "./types/other";
+import { Method, RequestConfig } from "./types/request";
 
 export const DEFAULT_CONFIG: RequestConfig = {
     timeout: 60 * 1000,

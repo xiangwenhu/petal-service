@@ -1,5 +1,5 @@
-import { IDataStore } from "./type.datastore";
-import { RequestConfig, RequestInstance } from "./types";
+import { IDataStore } from "./datastore";
+import { RequestConfig, RequestInstance } from "./request";
 
 export type StorageMapValueKey =
     | "classConfig"
