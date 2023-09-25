@@ -53,7 +53,7 @@ class DemoService<R = any> {
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
     @fieldDecorator("timeout")
-    timeoutValue = 1000;
+    timeoutValue = 5000;
 
     // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
     // @fieldDecorator("baseURL")

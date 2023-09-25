@@ -1,6 +1,7 @@
 import { DEFAULT_CONFIG } from "../const";
 import { CreateDecoratorOptions, ParamsDecoratorOptions } from "../other.type";
 import { RequestConfig } from "../types";
+import { proxyRequest } from "./util";
 
 export function createMethodDecorator(
     createDecoratorOptions: CreateDecoratorOptions
@@ -23,7 +24,7 @@ function innerMethodDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<any>,
     config: RequestConfig,
-    {  defaults, dataStore, request }: CreateDecoratorOptions
+    { defaults, dataStore, request }: CreateDecoratorOptions
 ) {
     let classInstance: Function;
     context.addInitializer(function () {
@@ -60,24 +61,12 @@ function innerMethodDecorator(
             config
         );
 
-        return request!(config as any).then((res) => {
-            // 代理 classInstance, 即方法实例
-            const proxy = new Proxy(classInstance, {
-                get: function (target, property, receiver) {
-                    if (property == "res") {
-                        return res;
-                    }
-                    return Reflect.get(target, property, receiver);
-                },
-            });
-            return target.call(proxy).then((resData: any) => {
-                // api method方法里面可以什么都不写，直接返回结果
-                if (resData === undefined) {
-                    return res.data;
-                }
-                return resData;
-            });
-        });
+        return proxyRequest({
+            method: target,
+            proxyObject: classInstance,
+            config,
+            request
+        })
     }
 }
 
@@ -125,24 +114,12 @@ function innerStaticMethodDecorator(
             config
         );
 
-        return request!(config as any).then((res) => {
-            // 代理 classInstance, 即方法实例
-            const proxy = new Proxy(_class_, {
-                get: function (target, property, receiver) {
-                    if (property == "res") {
-                        return res;
-                    }
-                    return Reflect.get(target, property, receiver);
-                },
-            });
-            return target.call(proxy).then((resData: any) => {
-                // api method方法里面可以什么都不写，直接返回结果
-                if (resData === undefined) {
-                    return res.data;
-                }
-                return resData;
-            });
-        });
+        return proxyRequest({
+            method: target,
+            proxyObject: _class_,
+            config,
+            request
+        })
     }
 }
 

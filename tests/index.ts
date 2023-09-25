@@ -40,7 +40,7 @@ class DemoService<R = any> {
     }
 
     @fieldDecorator("timeout")
-    timeoutValue = 1000;
+    timeoutValue = 5000;
 
     @fieldDecorator("baseURL")
     baseURLValue = "https://www.github.com"

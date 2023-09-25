@@ -55,40 +55,6 @@ export interface ServiceRootConfig {
     createRequest?: () => RequestInstance;
 }
 
-/**
- * 更新方法的请求配置
- */
-interface UpdateMethodConfig {
-    (
-        /**
-         * class
-         */
-        _class_: Function,
-        /**
-         * method 函数
-         */
-        method: Function,
-        config: StorageMapValue.MethodConfigValue
-    ): void;
-}
-
-/**
- * 更新字段映射配置
- */
-interface UpdateFieldConfig {
-    (
-        /**
-         * class
-         */
-        _class_: Function,
-        /**
-         * class 实例, 如果是静态字段，该值无意义
-         */
-        instance: Object | null | undefined,
-        config: Record<PropertyKey, PropertyKey>
-    ): void;
-}
-
 export interface CreateDecoratorOptions {
     /**
      * 存储

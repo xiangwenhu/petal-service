@@ -56,7 +56,7 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
          */
         paramsDecorator: createParamsDecorator(options),
         /**
-         * 字段装饰器
+         * 字field段装饰器
          */
         fieldDecorator: createFieldDecorator(options),
         /**
@@ -67,8 +67,8 @@ export function createServiceInstance(config: ServiceRootConfig = {}) {
         setConfig: (config: RequestConfig) => setConfig(options, config),
         /**
          * 自定义装饰器
-         * @param creator 
-         * @returns 
+         * @param creator
+         * @returns
          */
         createDecorator: (creator: (options: CreateDecoratorOptions) => Function) => {
             return creator.call(null, options)
