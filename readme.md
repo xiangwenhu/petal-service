@@ -69,6 +69,8 @@ DemoService
 - [x] 支持实例属性config作为配置
 - [x] 支持静态属性config作为配置
 - [x] BaseServiceClass，快捷使用 res和config属性
+- [] 全局暴露默认实例装饰器
+- [] 打包为组件
 - [ ] 增强自定义装饰器的介入能力？
 - [ ] json配置转服务 (TODO::))
 
