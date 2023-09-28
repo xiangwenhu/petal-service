@@ -1,13 +1,29 @@
 {
+  "name": "petal-service",
+  "version": "0.0.1",
+  "description": "轻松服务,快乐编程",
   "main": "./dist/index.js",
-  "typing": "",
+  "type": "commonjs",
+  "types": "./dist/index.d.ts",
+  "typing": "./dist/index.d.ts",
+  "author": "xiangwen hu",
+  "homepage": "https://github.com/xiangwenhu/petal-service",
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.5.0",
     "lodash": "^4.17.21",
     "path-to-regexp": "^6.2.1"
   },
+  "files":[
+    "./dist",
+    "./package.json",
+    "./tsconfig.json",
+    ".gitignore",
+    "./readme.md"
+  ],
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "build": "tsc"
   },
   "devDependencies": {
     "whatwg-url": "^13.0.0",
