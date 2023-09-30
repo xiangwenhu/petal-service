@@ -69,7 +69,7 @@ export interface CreateDecoratorOptions {
      * @param config RequestConfig
      * @returns
      */
-    request: RequestInstance;
+    get request(): RequestInstance;
 }
 
 export type InnerCreateDecoratorOptions = CreateDecoratorOptions &

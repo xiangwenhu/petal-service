@@ -2,50 +2,72 @@ import { DEFAULT_CONFIG } from "./const";
 import DataStore from "./dataStore";
 import { createClassDecorator } from "./decorator/class";
 import { createFieldDecorator } from "./decorator/field";
-import { createMethodDecorator, createParamsDecorator } from "./decorator/method";
-import { CreateDecoratorOptions, InnerCreateDecoratorOptions, ServiceRootConfig } from "./types";
+import {
+    createMethodDecorator,
+    createParamsDecorator,
+} from "./decorator/method";
+import {
+    CreateDecoratorOptions,
+    InnerCreateDecoratorOptions,
+    RequestInstance,
+    ServiceRootConfig,
+} from "./types";
 import { RequestConfig } from "./types";
-import { createDefaultRequestInstance, isAsyncFunction, isFunction } from "./util";
-import  merge from "lodash/merge";
-;
+import {
+    createDefaultRequestInstance,
+    isAsyncFunction,
+    isFunction,
+} from "./util";
+import merge from "lodash/merge";
 /**
  * 更新配置
  * @param options
  * @param config
  */
-function innerSetConfig(options: CreateDecoratorOptions, config: RequestConfig) {
+function innerSetConfig(
+    options: CreateDecoratorOptions,
+    config: RequestConfig
+) {
     const oldConfig = options.defaults || {};
     merge(oldConfig, config);
 }
 
-function getDefaultRequestInstance(config: ServiceRootConfig) {
+function createRequestInstance(config: ServiceRootConfig) {
     if (isFunction(config.request) || isAsyncFunction(config.request)) {
         return config.request;
     }
     if (isFunction(config.createRequest)) {
-        return config.createRequest?.call(config)
+        return config.createRequest?.call(config);
     }
-    return createDefaultRequestInstance();
+    return undefined;
 }
 
 /**
  * 创建服务实例
- * @param config 
+ * @param config
  * @returns
  */
 export default function createInstance(config: ServiceRootConfig = {}) {
     const dataStore = new DataStore();
-    const innerOptions: InnerCreateDecoratorOptions = {
-        dataStore,
-        defaults: config.defaults || DEFAULT_CONFIG,
-        request: getDefaultRequestInstance(config)!
-    };
+
+    let requestIns: RequestInstance | undefined = createRequestInstance(config);
 
     const options: CreateDecoratorOptions = {
         dataStore,
-        defaults: innerOptions.defaults,
-        request: innerOptions.request
-    }
+        defaults: config.defaults || DEFAULT_CONFIG,
+        get request() {
+            if (requestIns == undefined) {
+                requestIns = createDefaultRequestInstance();
+            }
+            return requestIns;
+        },
+    };
+
+    // const options: CreateDecoratorOptions = {
+    //     dataStore,
+    //     defaults: innerOptions.defaults,
+    //     request: innerOptions.request,
+    // };
 
     return {
         /**
@@ -71,14 +93,21 @@ export default function createInstance(config: ServiceRootConfig = {}) {
          */
         setConfig: (config: RequestConfig) => innerSetConfig(options, config),
         /**
+         * 设置request实例
+         * @param request 
+         */
+        setRequestInstance(requestInstance: RequestInstance){
+            requestIns = requestInstance;
+        },
+        /**
          * 自定义装饰器
          * @param creator
          * @returns
          */
-        createDecorator: (creator: (options: CreateDecoratorOptions) => Function) => {
-            return creator.call(null, options)
-        }
-    }
+        createDecorator: (
+            creator: (options: CreateDecoratorOptions) => Function
+        ) => {
+            return creator.call(null, options);
+        },
+    };
 }
-
-

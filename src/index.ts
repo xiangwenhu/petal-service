@@ -28,6 +28,7 @@ declare global {
         const petalParamsDecorator: typeof instance.paramsDecorator;
 
         const setPetalConfig: typeof instance.setConfig;
+        const setPetalRequestInstance: typeof instance.setRequestInstance;
 
         const createPetalInstance: typeof createInstance;
 
@@ -43,6 +44,7 @@ g.petalMethodDecorator = instance.methodDecorator;
 g.petalParamsDecorator = instance.paramsDecorator;
 
 g.setPetalConfig = instance.setConfig;
+g.setPetalRequestInstance = instance.setRequestInstance;
 
 g.createPetalInstance = createInstance;
 
