@@ -19,7 +19,9 @@
     "./package.json",
     "./tsconfig.json",
     ".gitignore",
-    "./readme.md"
+    "./readme.md",
+    "./src",
+    "./docs"
   ],
   "scripts": {
     "test": "mocha --recursive",
@@ -33,5 +35,8 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
