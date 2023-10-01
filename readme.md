@@ -1,5 +1,20 @@
 ## 环境要求
 * 支持 Map
+* 支持装饰器新语法, 详情参见：[proposal-decorators](https://github.com/tc39/proposal-decorators)
+```typescript
+// 语法示例
+type Decorator = (value: Input, context: {
+  kind: string;
+  name: string | symbol;
+  access: {
+    get?(): unknown;
+    set?(value: unknown): void;
+  };
+  private?: boolean;
+  static?: boolean;
+  addInitializer?(initializer: () => void): void;
+}) => Output | void;
+```
 
 ## 说明
 轻量级的装饰器服务框架，快速搭建请求服务。
