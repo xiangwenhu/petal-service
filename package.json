@@ -1,6 +1,6 @@
 {
   "name": "petal-service",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "轻松服务,快乐编程",
   "main": "./dist/index.js",
   "type": "commonjs",
@@ -19,7 +19,9 @@
     "./package.json",
     "./tsconfig.json",
     ".gitignore",
-    "./readme.md"
+    "./readme.md",
+    "./src",
+    "./docs"
   ],
   "scripts": {
     "test": "mocha --recursive",
@@ -33,5 +35,8 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
