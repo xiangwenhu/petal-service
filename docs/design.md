@@ -66,22 +66,27 @@ Map {
 }
 ```
 
-## 实现
+## 目录结构和功能说明
+```
+src
+    dataStore
+        index.ts      数据存储
+    decorator
+        class.ts      装饰 class，存入默认配置
+        filed.ts      装饰 class 的属性， 进行属性映射
+        method.ts     装饰 class 的方法，这里是核心，装饰器会更改方法，合并配置，最终发送网络请求。
+        util.ts       辅助方法
+    types
+        datastore.ts  数据存储的typescript申请
+        index.ts   
+        other.ts
+        request.ts    请求相关的typescript申请
+    util
+        index.ts 
+        path.ts       路径参数相关
+    BaseService.ts    服务基类
+    const.ts          常量
+    createInstance    创建服务实例
+    index.ts          全局挂在和导出
 
-### createServiceInstance （src\index.ts）
-
-获取初始化配置，并创建装饰器。
-装饰器遵守统一的入参，是可以自行扩展装饰器的。
-
-
-### createClassDecorator (src\decorator\class.ts)
-
-装饰 class，存入默认配置
-
-### createMethodDecorator (src\decorator\method.ts)
-
-装饰 class 的方法，这里是核心，装饰器会更改方法，合并配置，最终发送网络请求。
-
-### createFieldDecorator (src\decorator\field.ts)
-
-装饰 class 的属性， 进行属性映射
+```

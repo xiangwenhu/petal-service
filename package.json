@@ -14,6 +14,9 @@
     "lodash": "^4.17.21",
     "path-to-regexp": "^6.2.1"
   },
+  "contributors": [
+    "xiangwenhu (https://github.com/xiangwenhu)"
+  ],
   "files":[
     "./dist",
     "./package.json",
@@ -38,5 +41,15 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
-  }
+  },
+  "keywords": [
+    "service",
+    "api-client",
+    "axios",
+    "api-rest",
+    "decorator",
+    "http-client",
+    "request",
+    "net"
+  ]
 }
