@@ -21,7 +21,7 @@ function innerFieldDecorator(
     _target: Function,
     context: ClassFieldDecoratorContext<Function>,
     field: keyof RequestConfig,
-    { dataStore }: CreateDecoratorOptions
+    { dataStore, logger}: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this: instance
@@ -29,7 +29,7 @@ function innerFieldDecorator(
         // context: demo {"kind":"field","name":"name","static":false,"private":false,"access":{}}
         const instance = this;
         const _class_ = instance.constructor;
-        console.log(
+        logger.log(
             `innerFieldDecorator class:${_class_.name}, filed:${String(
                 context.name
             )}`
@@ -45,14 +45,14 @@ function innerStaticFieldDecorator(
     _target: Function,
     context: ClassFieldDecoratorContext<Function>,
     field: keyof RequestConfig,
-    { dataStore }: CreateDecoratorOptions
+    { dataStore, logger }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this：class
         // target： undefined
         // context: demo {"kind":"field","name":"age","static":true,"private":false,"access":{}}
         const _class_ = this;
-        console.log(
+        logger.log(
             `innerFieldDecorator class:${_class_.name}, filed:${String(
                 context.name
             )}`

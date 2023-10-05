@@ -2,7 +2,7 @@ import { CreateDecoratorOptions } from "../types";
 import { DEFAULT_CONFIG } from "../const";
 import { RequestConfig } from "../types";
 
-export function createClassDecorator({ dataStore }: CreateDecoratorOptions) {
+export function createClassDecorator({ dataStore, logger }: CreateDecoratorOptions) {
     /**
      * 示例
      * @classDecorator({
@@ -18,7 +18,7 @@ export function createClassDecorator({ dataStore }: CreateDecoratorOptions) {
             // this: class
             // target: class
             // context: demo '{"kind":"class","name":"Class的Name"}'
-            console.log("classDecorator:", target.name);
+            logger.log("classDecorator:", target.name);
             context.addInitializer(function () {
                 const _class_ = target;
                 dataStore.updateClassConfig(_class_, config);

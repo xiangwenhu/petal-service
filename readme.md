@@ -1,5 +1,5 @@
 ## 环境要求
-* 支持 Map
+* 支持 Map, Proxy, Reflect
 * 支持装饰器新语法, 详情参见：[proposal-decorators](https://github.com/tc39/proposal-decorators)
 ```typescript
 // 语法示例
