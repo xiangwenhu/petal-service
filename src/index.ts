@@ -16,6 +16,7 @@ export const fieldDecorator = instance.fieldDecorator;
 export const methodDecorator = instance.methodDecorator;
 export const paramsDecorator = instance.paramsDecorator;
 export const setConfig = instance.setConfig;
+export const enableLog = instance.enableLog;
 
 
 // 全局属性申明
@@ -27,12 +28,12 @@ declare global {
         const petalMethodDecorator: typeof instance.methodDecorator;
         const petalParamsDecorator: typeof instance.paramsDecorator;
 
-        const setPetalConfig: typeof instance.setConfig;
-        const setPetalRequestInstance: typeof instance.setRequestInstance;
+        const petalSetConfig: typeof instance.setConfig;
+        const petalSetRequestInstance: typeof instance.setRequestInstance;
 
-        const createPetalInstance: typeof createInstance;
+        const petalCreateInstance: typeof createInstance;
 
-        const BasePetalService: typeof BaseService;
+        const PetalBaseService: typeof BaseService;
     }
 }
 // 全局属性设置
@@ -43,9 +44,10 @@ g.petalFieldDecorator = instance.fieldDecorator;
 g.petalMethodDecorator = instance.methodDecorator;
 g.petalParamsDecorator = instance.paramsDecorator;
 
-g.setPetalConfig = instance.setConfig;
-g.setPetalRequestInstance = instance.setRequestInstance;
+g.petalSetConfig = instance.setConfig;
+g.petalSetRequestInstance = instance.setRequestInstance;
+g.enablePetalLogger = instance.enableLog;
 
-g.createPetalInstance = createInstance;
+g.petalCreateInstance = createInstance;
 
-g.BasePetalService = BaseService;
+g.PetalBaseService = BaseService;

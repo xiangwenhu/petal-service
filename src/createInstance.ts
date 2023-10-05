@@ -6,6 +6,7 @@ import {
     createMethodDecorator,
     createParamsDecorator,
 } from "./decorator/method";
+import getLogger from "./logger";
 import {
     CreateDecoratorOptions,
     InnerCreateDecoratorOptions,
@@ -61,6 +62,11 @@ export default function createInstance(config: ServiceRootConfig = {}) {
             }
             return requestIns;
         },
+        get logger() {
+            return config.enableLog
+                ? config.logger || getLogger(config.enableLog || false)
+                : getLogger(false);
+        },
     };
 
     // const options: CreateDecoratorOptions = {
@@ -94,9 +100,9 @@ export default function createInstance(config: ServiceRootConfig = {}) {
         setConfig: (config: RequestConfig) => innerSetConfig(options, config),
         /**
          * 设置request实例
-         * @param request 
+         * @param request
          */
-        setRequestInstance(requestInstance: RequestInstance){
+        setRequestInstance(requestInstance: RequestInstance) {
             requestIns = requestInstance;
         },
         /**
@@ -108,6 +114,14 @@ export default function createInstance(config: ServiceRootConfig = {}) {
             creator: (options: CreateDecoratorOptions) => Function
         ) => {
             return creator.call(null, options);
+        },
+
+        /**
+         * 允许log
+         * @param enabled 
+         */
+        enableLog(enabled: boolean) {
+            config.enableLog = enabled;
         },
     };
 }

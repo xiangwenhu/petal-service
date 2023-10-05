@@ -1,5 +1,8 @@
-import { BaseService, classDecorator, methodDecorator, setConfig, fieldDecorator } from "../../src";
+import { BaseService, classDecorator, methodDecorator, setConfig, fieldDecorator, enableLog } from "../../src";
 import { RequestConfig } from "../../src/types";
+
+// 允许打印日志
+enableLog(true);
 
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
@@ -11,7 +14,7 @@ setConfig({
 // 设置baseUrl和超时时间
 @classDecorator({
     timeout: 60 * 1000,
-    baseURL: "http://www.example.com"
+    baseURL: "https://www.example.com"
 })
 class DemoService<R> extends BaseService<R>{
 
@@ -31,7 +34,7 @@ class DemoService<R> extends BaseService<R>{
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 自定义默认值
     @fieldDecorator("timeout")
-    static timeoutValue = 5 * 1000;
+    static timeoutValue = 15 * 1000;
 }
 
 DemoService

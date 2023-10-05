@@ -1,4 +1,4 @@
-import { StorageMapValue, StorageMapValueKey } from "./types/other";
+import { StorageMapValue, StorageMapValueKey } from "./types";
 import { Method, RequestConfig } from "./types/request";
 
 export const DEFAULT_CONFIG: RequestConfig = {

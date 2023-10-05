@@ -24,7 +24,7 @@ function innerMethodDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<any>,
     config: RequestConfig,
-    { defaults, dataStore, request }: CreateDecoratorOptions
+    { defaults, dataStore, request, logger }: CreateDecoratorOptions
 ) {
     let classInstance: Function;
     context.addInitializer(function () {
@@ -33,7 +33,7 @@ function innerMethodDecorator(
         // context: demo {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
         classInstance = this;
         const _class_ = classInstance.constructor;
-        console.log(
+        logger.log(
             `innerMethodDecorator class:${_class_.name}, method:${String(
                 context.name
             )}`
@@ -54,9 +54,9 @@ function innerMethodDecorator(
             target,
             classInstance,
             defaults,
-            arguments,
+            arguments
         );
-        console.log(
+        logger.log(
             `${classInstance.constructor.name} ${target.name} final config:`,
             config
         );
@@ -65,8 +65,8 @@ function innerMethodDecorator(
             method: target,
             proxyObject: classInstance,
             config,
-            request
-        })
+            request,
+        });
     }
 }
 
@@ -74,11 +74,7 @@ function innerStaticMethodDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<Function>,
     config: RequestConfig,
-    {
-        defaults,
-        dataStore,
-        request,
-    }: CreateDecoratorOptions
+    { defaults, dataStore, request, logger }: CreateDecoratorOptions
 ) {
     let _class_: Function;
     context.addInitializer(function () {
@@ -86,7 +82,7 @@ function innerStaticMethodDecorator(
         // target: 静态method
         // context: demo: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
         _class_ = this;
-        console.log(
+        logger.log(
             `innerStaticMethodDecorator class:${_class_.name}, method:${String(
                 context.name
             )}`
@@ -107,9 +103,9 @@ function innerStaticMethodDecorator(
             target,
             _class_,
             defaults,
-            arguments,
+            arguments
         );
-        console.log(
+        logger.log(
             `${_class_.constructor.name} ${target.name} final config:`,
             config
         );
@@ -118,8 +114,8 @@ function innerStaticMethodDecorator(
             method: target,
             proxyObject: _class_,
             config,
-            request
-        })
+            request,
+        });
     }
 }
 
@@ -143,15 +139,17 @@ function innerParamsDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<Function>,
     options: ParamsDecoratorOptions = {},
-    { dataStore }: CreateDecoratorOptions
+    { dataStore, logger }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this: instance
         // target: method
         // context: demo {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
         const _class_ = this.constructor;
-        console.log(
-            `paramsDecorator class:${_class_.name}, method:${String(context.name)}`
+        logger.log(
+            `paramsDecorator class:${_class_.name}, method:${String(
+                context.name
+            )}`
         );
 
         dataStore.updateMethodConfig(_class_, target, options);
@@ -162,15 +160,17 @@ function innerStaticParamsDecorator(
     target: Function,
     context: ClassMethodDecoratorContext<Function>,
     options: ParamsDecoratorOptions = {},
-    { dataStore }: CreateDecoratorOptions
+    { dataStore, logger }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this: class
         // target: 静态method
         // context: demo: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
         const _class_ = this.constructor;
-        console.log(
-            `paramsDecorator class:${_class_.name}, method:${String(context.name)}`
+        logger.log(
+            `paramsDecorator class:${_class_.name}, method:${String(
+                context.name
+            )}`
         );
 
         dataStore.updateStaticMethodConfig(_class_, target, options);

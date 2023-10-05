@@ -1,6 +1,6 @@
 {
   "name": "petal-service",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "轻松服务,快乐编程",
   "main": "./dist/index.js",
   "type": "commonjs",
@@ -14,7 +14,10 @@
     "lodash": "^4.17.21",
     "path-to-regexp": "^6.2.1"
   },
-  "files":[
+  "contributors": [
+    "xiangwenhu (https://github.com/xiangwenhu)"
+  ],
+  "files": [
     "./dist",
     "./package.json",
     "./tsconfig.json",
@@ -25,18 +28,30 @@
   ],
   "scripts": {
     "test": "mocha --recursive",
-    "build": "tsc"
+    "build": "cross-env env==prod tsc",
+    "build:test": "cross-env env==test tsc"
   },
   "devDependencies": {
-    "whatwg-url": "^13.0.0",
     "@types/lodash": "^4.14.198",
     "@types/mocha": "^10.0.1",
     "@types/whatwg-url": "^11.0.0",
+    "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "whatwg-url": "^13.0.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
-  }
+  },
+  "keywords": [
+    "service",
+    "api-client",
+    "axios",
+    "api-rest",
+    "decorator",
+    "http-client",
+    "request",
+    "net"
+  ]
 }
