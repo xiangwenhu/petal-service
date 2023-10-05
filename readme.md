@@ -20,6 +20,7 @@ type Decorator = (value: Input, context: {
 轻量级的装饰器服务框架，快速搭建请求服务。
 比如：
 ```typescript
+
 import "petal-service";
 import { RequestConfig } from "petal-service";
 import axios from "axios";
@@ -30,11 +31,12 @@ instance.interceptors.request.use(config=>{
     console.log("instance.interceptors.request config.baseUrl",  config.baseURL);
     return config;
 })
-setPetalRequestInstance(instance);
+
+petalSetRequestInstance(instance);
 
 
 // 更新配置，比如授权信息，例如jwt, cookies
-setPetalConfig({
+petalSetConfig({
     headers: {
         token: "token",
     },
@@ -43,9 +45,9 @@ setPetalConfig({
 // 设置baseUrl和超时时间
 @petalClassDecorator({
     timeout: 60 * 1000,
-    baseURL: "http://www.example.com"
+    baseURL: "https://www.example.com"
 })
-class DemoService<R> extends BasePetalService<R>{
+class DemoService<R> extends PetalBaseService<R>{
 
     // 设置 api method 请求参数，最主要的是url, params, data和额外的config
     @petalMethodDecorator({
@@ -115,6 +117,7 @@ res DemoService static getIndex: 1256
 - BaseServiceClass，快捷使用 res和config属性
 - 全局暴露默认实例装饰器
 - 打包为组件
+- 支持日志开关
 ```
 npm install petal-service
 ```
