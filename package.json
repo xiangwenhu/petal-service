@@ -1,6 +1,6 @@
 {
   "name": "petal-service",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "轻松服务,快乐编程",
   "main": "./dist/index.js",
   "type": "commonjs",
@@ -17,25 +17,14 @@
   "contributors": [
     "xiangwenhu (https://github.com/xiangwenhu)"
   ],
-  "files": [
-    "./dist",
-    "./package.json",
-    "./tsconfig.json",
-    ".gitignore",
-    "./readme.md",
-    "./src",
-    "./docs"
-  ],
   "scripts": {
     "test": "mocha --recursive",
-    "build": "cross-env env==prod tsc",
-    "build:test": "cross-env env==test tsc"
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.198",
     "@types/mocha": "^10.0.1",
     "@types/whatwg-url": "^11.0.0",
-    "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
