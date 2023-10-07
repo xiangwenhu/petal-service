@@ -9,7 +9,6 @@ import {
 import getLogger from "./logger";
 import {
     CreateDecoratorOptions,
-    InnerCreateDecoratorOptions,
     RequestInstance,
     ServiceRootConfig,
 } from "./types";

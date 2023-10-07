@@ -31,9 +31,7 @@ instance.interceptors.request.use(config=>{
     console.log("instance.interceptors.request config.baseUrl",  config.baseURL);
     return config;
 })
-
 petalSetRequestInstance(instance);
-
 
 // 更新配置，比如授权信息，例如jwt, cookies
 petalSetConfig({
@@ -102,22 +100,25 @@ res DemoService static getIndex: 1256
 ```
 
 ## 特性
-- 支持多实例
+- 支持多实例： 默认示例 + 自定义实例
 - 支持多级配置    
     实例模式： 方法配置 > 实例属性配置 > 实例config属性 > class的配置 > 自定义默认值 > 系统默认配置   
     静态模式： 方法配置 > 静态属性配置 > 静态config属性 > class的配置 > 自定义默认值 > 系统默认配置
 - 支持基于Axios自定义request
-- 支持继承
-- 支持扩展装饰器(初级)
-- 支持path参数，即 /user/:id
+- 支持服务继承
+- 支持自定义装饰器 (初级)
+- 支持path路径参数，即 /user/:id 格式
 - 支持拦截器, 可以通过基于Axios自定义request实现
 - 支持静态方法和静态属性
 - 支持实例属性config作为配置
 - 支持静态属性config作为配置
 - BaseServiceClass，快捷使用 res和config属性
 - 全局暴露默认实例装饰器
-- 打包为组件
 - 支持日志开关
+```typescript
+enableLog(true)
+```
+- 支持npm安装
 ```
 npm install petal-service
 ```
@@ -126,6 +127,9 @@ npm install petal-service
 
 
 ## 使用示例
+
+更多示例 [petal-service-test](https://github.com/xiangwenhu/petal-service-test/)
+
 ### 示例1  多级配置
 ```typescript
 import {
