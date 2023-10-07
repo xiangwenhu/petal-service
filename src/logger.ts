@@ -1,5 +1,3 @@
-import { env } from "./env";
-
 const noop = function () {};
 
 const emptyLog = {
