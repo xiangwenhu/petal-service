@@ -1,10 +1,12 @@
 import {
     classDecorator,
     paramsDecorator,
-    methodDecorator
+    methodDecorator,
+    enableLog
 } from "../../src";
 import { ApiResponse, RequestConfig } from "../../src/types";
 
+enableLog();
 // 设置baseUrl和超时时间
 @classDecorator({
     baseURL: "https://juejin.cn",

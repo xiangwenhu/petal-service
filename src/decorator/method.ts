@@ -11,6 +11,10 @@ export function createMethodDecorator(
             target: Function,
             context: ClassMethodDecoratorContext<any>
         ) {
+            if (context.kind !== "method") {
+                throw new Error("methodDecorator 只能用于装饰class的method");
+            }
+
             const method = context.static
                 ? innerStaticMethodDecorator
                 : innerMethodDecorator;
@@ -166,7 +170,7 @@ function innerStaticParamsDecorator(
         // this: class
         // target: 静态method
         // context: demo: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
-        const _class_ = this.constructor;
+        const _class_ = this;
         logger.log(
             `paramsDecorator class:${_class_.name}, method:${String(
                 context.name

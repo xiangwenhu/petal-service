@@ -15,6 +15,10 @@ export function createClassDecorator({ dataStore, logger }: CreateDecoratorOptio
             target: Function,
             context: ClassDecoratorContext<any>
         ) {
+            if (context.kind !== "class") {
+                throw new Error("classDecorator 只能用于装饰class");
+            }
+
             // this: class
             // target: class
             // context: demo '{"kind":"class","name":"Class的Name"}'

@@ -2,13 +2,13 @@ import createInstance from "../../src/createInstance"
 import { ApiResponse, RequestConfig } from "../../src/types";
 
 const {
-    classDecorator, methodDecorator, paramsDecorator, fieldDecorator
+    classDecorator, methodDecorator, enableLog, fieldDecorator
 } = createInstance({
     defaults: {
         baseURL: "https://juejin.cn"
     }
 });
-
+enableLog();
 // 设置baseUrl和超时时间
 @classDecorator({
     timeout: 60 * 1000
@@ -20,9 +20,6 @@ class DemoService {
     @methodDecorator({
         method: "get",
         url: "/course/:type",
-    })
-    @paramsDecorator({
-        hasParams: false
     })
     static async getCourse(
         this: typeof DemoService,

@@ -7,7 +7,6 @@ export {
 }
 export * from "./types";
 
-
 // 默认实例导出
 const instance = createInstance();
 export const classDecorator = instance.classDecorator;
@@ -17,7 +16,7 @@ export const methodDecorator = instance.methodDecorator;
 export const paramsDecorator = instance.paramsDecorator;
 export const setConfig = instance.setConfig;
 export const enableLog = instance.enableLog;
-
+export const accessorDecorator = instance.accessorDecorator;
 
 // 全局属性申明
 declare global {
@@ -27,6 +26,7 @@ declare global {
         const petalFieldDecorator: typeof instance.fieldDecorator;
         const petalMethodDecorator: typeof instance.methodDecorator;
         const petalParamsDecorator: typeof instance.paramsDecorator;
+        const petalAccessorDecorator: typeof instance.accessorDecorator;
 
         const petalSetConfig: typeof instance.setConfig;
         const petalSetRequestInstance: typeof instance.setRequestInstance;
@@ -43,6 +43,7 @@ g.petalCreateDecorator = instance.createDecorator;
 g.petalFieldDecorator = instance.fieldDecorator;
 g.petalMethodDecorator = instance.methodDecorator;
 g.petalParamsDecorator = instance.paramsDecorator;
+g.petalAccessorDecorator = instance.accessorDecorator;
 
 g.petalSetConfig = instance.setConfig;
 g.petalSetRequestInstance = instance.setRequestInstance;

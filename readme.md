@@ -1,6 +1,7 @@
 ## 环境要求
 * 支持 Map, Proxy, Reflect
 * 支持装饰器新语法, 详情参见：[proposal-decorators](https://github.com/tc39/proposal-decorators)
+* 支持装饰器新语法: accessor
 ```typescript
 // 语法示例
 type Decorator = (value: Input, context: {
@@ -104,15 +105,20 @@ res DemoService static getIndex: 1256
 - 支持多级配置    
     实例模式： 方法配置 > 实例属性配置 > 实例config属性 > class的配置 > 自定义默认值 > 系统默认配置   
     静态模式： 方法配置 > 静态属性配置 > 静态config属性 > class的配置 > 自定义默认值 > 系统默认配置
-- 支持基于Axios自定义request
 - 支持服务继承
 - 支持自定义装饰器 (初级)
 - 支持path路径参数，即 /user/:id 格式
-- 支持拦截器, 可以通过基于Axios自定义request实现
+- 支持accessor 
+```typescript
+     @accessorDecorator()
+     accessor timeout: number = 15 * 1000;
+```
 - 支持静态方法和静态属性
+- 支持基于Axios自定义request
+- 支持拦截器, 可以通过基于Axios自定义request实现
 - 支持实例属性config作为配置
 - 支持静态属性config作为配置
-- BaseServiceClass，快捷使用 res和config属性
+- 内置BaseServiceClass，快捷使用 res和config属性
 - 全局暴露默认实例装饰器
 - 支持日志开关
 ```typescript
