@@ -3,10 +3,12 @@ import {
     methodDecorator,
     setConfig,
     fieldDecorator,
+    enableLog
 } from "../../src";
 import { ApiResponse, RequestConfig } from "../../src/types";
 
 
+enableLog();
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
     headers: {

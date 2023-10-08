@@ -17,3 +17,39 @@ export const STORE_KEYS: Record<StorageMapValueKey, StorageMapValueKey> = {
 }
 
 export const NOT_USE_BODY_METHODS: Method[] = ["get", "head", "GET", "HEAD"];
+
+/**
+ * https://axios-http.com/docs/req_config
+ */
+export const REQUEST_CONFIG_KEYS = [
+    "url",
+    "method",
+    "baseURL",
+    "transformRequest",
+    "transformResponse",
+    "headers",
+    "params",
+    "paramsSerializer",
+    "data",
+    "timeout",
+    "withCredentials",
+    "adapter",
+    "auth",
+    "responseType",
+    "responseEncoding",
+    "xsrfCookieName",
+    "xsrfHeaderName",
+    "onUploadProgress",
+    "onDownloadProgress",
+    "maxContentLength",
+    "maxBodyLength",
+    "validateStatus",
+    "maxRedirects",
+    "socketPath",
+    "httpAgent",
+    "httpsAgent",
+    "proxy",
+    "cancelToken",
+    "decompress"
+];
+

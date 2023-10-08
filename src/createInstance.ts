@@ -1,5 +1,6 @@
 import { DEFAULT_CONFIG } from "./const";
 import DataStore from "./dataStore";
+import { createAccessorDecorator } from "./decorator/accessor";
 import { createClassDecorator } from "./decorator/class";
 import { createFieldDecorator } from "./decorator/field";
 import {
@@ -11,8 +12,8 @@ import {
     CreateDecoratorOptions,
     RequestInstance,
     ServiceRootConfig,
+    RequestConfig
 } from "./types";
-import { RequestConfig } from "./types";
 import {
     createDefaultRequestInstance,
     isAsyncFunction,
@@ -88,9 +89,13 @@ export default function createInstance(config: ServiceRootConfig = {}) {
          */
         paramsDecorator: createParamsDecorator(options),
         /**
-         * 字field段装饰器
+         * field字段装饰器
          */
         fieldDecorator: createFieldDecorator(options),
+        /**
+         * accessor装饰器
+         */
+        accessorDecorator: createAccessorDecorator(options),
         /**
          * 更新配置，用户动态设置授权信息等，例如jwt
          * @param config
@@ -119,7 +124,7 @@ export default function createInstance(config: ServiceRootConfig = {}) {
          * 允许log
          * @param enabled 
          */
-        enableLog(enabled: boolean) {
+        enableLog(enabled: boolean = true) {
             config.enableLog = enabled;
         },
     };

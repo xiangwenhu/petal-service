@@ -28,6 +28,14 @@ export function getOwnProperty(obj: any, propertyName: PropertyKey, defaultValue
     return defaultValue || undefined;
 }
 
+export function getProperty(obj: any, propertyName: PropertyKey, defaultValue?: any){
+      //  Cannot convert undefined or null to object
+      if (obj != null) {
+        return obj[propertyName]
+    }
+    return defaultValue || undefined;
+}
+
 export function hasOwnProperty(obj: any, propertyName: PropertyKey){
     if(obj === null || obj === undefined){
         return false;

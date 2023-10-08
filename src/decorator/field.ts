@@ -1,18 +1,30 @@
 import { CreateDecoratorOptions } from "../types";
 import { RequestConfig } from "../types";
+import { isRequestConfigKey } from "./util";
 
 export function createFieldDecorator(
     createDecoratorOptions: CreateDecoratorOptions
 ) {
-    return function fieldDecorator(field: keyof RequestConfig) {
+    return function fieldDecorator(field?: keyof RequestConfig) {
         return function (
             target: any,
             context: ClassFieldDecoratorContext<Object>
         ) {
+
+            if (context.kind !== "field") {
+                throw new Error("fieldDecorator 只能用于装饰class的field");
+            }
+
+            const sName = `${String(context.name)}`
+            if (!field && !isRequestConfigKey(sName)) {
+                throw new Error("accessorDecorator field 不是有效的键");
+            }
+
             const method = context.static
                 ? innerStaticFieldDecorator
                 : innerFieldDecorator;
-            method(target, context, field, createDecoratorOptions);
+
+            method(target, context, (field || sName) as any, createDecoratorOptions);
         };
     };
 }

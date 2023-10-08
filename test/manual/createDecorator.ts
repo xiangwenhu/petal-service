@@ -1,10 +1,12 @@
 import {
     classDecorator,
     createDecorator,
-    methodDecorator
+    methodDecorator,
+    enableLog
 } from "../../src";
 import { ApiResponse, RequestConfig } from "../../src/types";
 
+enableLog();
 /**
  * 通过filed自定义headers
  */

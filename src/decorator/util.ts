@@ -1,3 +1,4 @@
+import { REQUEST_CONFIG_KEYS } from "../const";
 import { RequestConfig, RequestInstance } from "../types";
 
 export function proxyRequest({
@@ -10,7 +11,7 @@ export function proxyRequest({
     config: RequestConfig,
     request: RequestInstance,
     proxyObject: Object
-}){
+}) {
     return request!(config as any).then((res) => {
         // 代理 classInstance, 即方法实例
         const proxy = new Proxy(proxyObject, {
@@ -29,4 +30,8 @@ export function proxyRequest({
             return resData;
         });
     });
+}
+
+export function isRequestConfigKey(key: string) {
+    return REQUEST_CONFIG_KEYS.indexOf(key) >= 0;
 }

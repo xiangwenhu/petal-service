@@ -6,13 +6,14 @@ const {
     methodDecorator,
     setConfig,
     fieldDecorator,
-    paramsDecorator
+    enableLog
 } = createInstance({
     defaults: {
         timeout: 30 * 1000
     }
 });
 
+enableLog();
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
     headers: {
@@ -48,11 +49,11 @@ class DemoService<R = any> {
     }
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
-    @fieldDecorator("timeout")
-    timeoutValue = 10 * 1000;
+    // @fieldDecorator("timeout")
+    // timeoutValue = 10 * 1000;
 
     // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
-    // @fieldDecorator("baseURL")
+    @fieldDecorator("baseURL")
     baseURLValue = "https://www.google.com"
 }
 

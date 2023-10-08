@@ -2,8 +2,8 @@ import merge from "lodash/merge";
 import { StorageMap, StorageMapValue } from "../types";
 import { Method, RequestConfig } from "../types";
 import {
+    getProperty,
     getOwnProperty,
-    hasOwnProperty,
     isAsyncFunction,
     isFunction,
     isObject,
@@ -12,6 +12,9 @@ import { hasPathParams, pathToUrl } from "../util/path";
 import { NOT_USE_BODY_METHODS, STORE_KEYS } from "../const";
 
 function shouldUseBody(method: Method) {
+    if (method == null) {
+        return true;
+    }
     return !NOT_USE_BODY_METHODS.includes(method.toLowerCase() as Method);
 }
 
@@ -58,14 +61,14 @@ export default class DataStore {
         // @ts-ignore
         const instanceConfig = instance["config"] || {};
 
-        // 示例上的字段属性映射
+        // 字段属性映射, 如果木有，会从原型上找
         const instancePropertyMap = instanceMapValue.fieldPropertyMap || {};
         const fieldConfig = Object.entries(instancePropertyMap).reduce(
             (obj: RequestConfig, [key, value]) => {
-                if (hasOwnProperty(instance, value)) {
-                    // @ts-ignore
-                    obj[key] = getOwnProperty(instance, value);
-                }
+                // if (hasOwnProperty(instance, value)) {
+                // @ts-ignore
+                obj[key] = getProperty(instance, value);
+                // }
                 return obj;
             },
             {}
@@ -128,13 +131,13 @@ export default class DataStore {
 
         // 静态属性映射
         const staticPropertyMap = commonConfig.fieldPropertyMap || {};
-        // 映射组合成为 config
+        // 映射组合成为 config ， 如果木有，会从原型上找
         const staticFiledConfig = Object.entries(staticPropertyMap).reduce(
             (obj: RequestConfig, [key, value]) => {
-                if (hasOwnProperty(_class_, value)) {
-                    // @ts-ignore
-                    obj[key] = getOwnProperty(_class_, value);
-                }
+                // if (hasOwnProperty(_class_, value)) {
+                // @ts-ignore
+                obj[key] = getProperty(_class_, value);
+                // }
                 return obj;
             },
             {}
@@ -169,13 +172,13 @@ export default class DataStore {
             return {
                 hasBody: true,
                 hasConfig: true,
-                hasParams: true,
+                hasParams: false,
             };
         }
         return {
             hasBody: false,
             hasConfig: true,
-            hasParams: true,
+            hasParams: false,
         };
     }
 

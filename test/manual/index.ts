@@ -1,8 +1,9 @@
 import {
-    classDecorator, methodDecorator, setConfig, paramsDecorator, fieldDecorator
+    classDecorator, methodDecorator, setConfig, paramsDecorator, fieldDecorator, enableLog
 } from "../../src";
 import { ApiResponse, RequestConfig } from "../../src/types";
 
+enableLog();
 setConfig({
     headers: {
         token: "token",
@@ -19,6 +20,9 @@ class DemoService<R = any> {
         method: "get",
         url: "",
     })
+    @paramsDecorator({
+        hasParams: true
+    })
     public async getIndex(
         this: DemoService,
         _params: any,
@@ -29,9 +33,9 @@ class DemoService<R = any> {
     }
 
     @fieldDecorator("timeout")
-    timeoutValue = 5000;
+    timeoutValue = 15 * 1000;
 
-    @fieldDecorator("baseURL")
+    // @fieldDecorator("baseURL")
     baseURLValue = "https://www.github.com"
 }
 
@@ -61,35 +65,35 @@ class SubDemoService extends DemoService {
 
 
 const serviceA = new DemoService();
-serviceA
-    .getIndex(
-        { since: "monthly" },
-        undefined,
-        {
-            headers: { userId: 1 },
-        }
-    )
-    .then((res) => {
-        console.log("res serviceA getIndex:", res.length);
-    })
-    .catch((err) => {
-        console.log("error serviceA getIndex:", err);
-    });
+// serviceA
+//     .getIndex(
+//         { since: "monthly" },
+//         undefined,
+//         {
+//             headers: { userId: 1 },
+//         }
+//     )
+//     .then((res) => {
+//         console.log("res serviceA getIndex:", res.length);
+//     })
+//     .catch((err) => {
+//         console.log("error serviceA getIndex:", err);
+//     });
 
 const subService = new SubDemoService();
-subService
-    .getBingIndex(
-        { since: "monthly" },
-        {
-            headers: { a: 1 },
-        }
-    )
-    .then((res) => {
-        console.log("res subService getBingIndex:", res.length);
-    })
-    .catch((err) => {
-        console.log("res subService getBingIndex error:", err);
-    });
+// subService
+//     .getBingIndex(
+//         { since: "monthly" },
+//         {
+//             headers: { a: 1 },
+//         }
+//     )
+//     .then((res) => {
+//         console.log("res subService getBingIndex:", res.length);
+//     })
+//     .catch((err) => {
+//         console.log("res subService getBingIndex error:", err);
+//     });
 
 subService
     .getIndex(

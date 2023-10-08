@@ -1,4 +1,4 @@
-import { BaseService, classDecorator, methodDecorator, setConfig, fieldDecorator, enableLog } from "../../src";
+import { BaseService, classDecorator, methodDecorator, setConfig, fieldDecorator, enableLog, paramsDecorator } from "../../src";
 import { RequestConfig } from "../../src/types";
 
 // 允许打印日志
@@ -23,11 +23,12 @@ class DemoService<R> extends BaseService<R>{
         method: "get",
         url: "",
     })
+    @paramsDecorator({ hasParams: true })
     static async getIndex(
         this: DemoService<string>,
         _params: any,
         _config: RequestConfig,
-    ){
+    ) {
         // 不写任何返回， 默认会返回 this.res.data
         return this.res.data
     }
