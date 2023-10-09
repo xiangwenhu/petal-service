@@ -26,21 +26,6 @@ import "petal-service";
 import { RequestConfig } from "petal-service";
 import axios from "axios";
 
-// 自定义 request
-const instance = axios.create();
-instance.interceptors.request.use(config=>{
-    console.log("instance.interceptors.request config.baseUrl",  config.baseURL);
-    return config;
-})
-petalSetRequestInstance(instance);
-
-// 更新配置，比如授权信息，例如jwt, cookies
-petalSetConfig({
-    headers: {
-        token: "token",
-    },
-});
-
 // 设置baseUrl和超时时间
 @petalClassDecorator({
     timeout: 60 * 1000,
@@ -62,7 +47,7 @@ class DemoService<R> extends PetalBaseService<R>{
         return this.res.data
     }
 
-    // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 自定义默认值
+    // 设置 实例的timeout 
     @petalFieldDecorator("timeout")
     static timeoutValue = 5 * 1000;
 }
@@ -108,6 +93,7 @@ res DemoService static getIndex: 1256
 - 支持服务继承
 - 支持自定义装饰器 (初级)
 - 支持path路径参数，即 /user/:id 格式
+- 支持getter
 - 支持accessor 
 ```typescript
      @accessorDecorator()
@@ -145,7 +131,7 @@ enableLog();
 class DemoService<R = any> extends BaseService<R>{
 
     @methodDecorator({
-        url: "https://baidu.com/"  //  url: "https://baidu.com 会报错
+        url: "https://baidu.com"
     })
     async getIndex(this: DemoService<string>): Promise<string> {
         return this.res.data;
@@ -251,6 +237,24 @@ const headersDecorator = createDecorator(({ dataStore }) => {
     };
 });
 
+enableLog();
+/**
+ * 通过filed自定义headers
+ */
+const headersDecorator = createDecorator(({ dataStore }) => {
+    return function (target: any, context: ClassFieldDecoratorContext<Function>) {
+        context.addInitializer(function () {
+            // this 是实例对象, this.constructor 是 class, target 为 undefined
+            const instance = this;
+            const _class_ = instance.constructor;
+            dataStore.updateFieldConfig(_class_, instance, {
+                headers: context.name
+            });
+        })
+    }
+
+})
+
 // 设置baseUrl和超时时间
 @classDecorator({
     baseURL: "https://www.baidu.com",
@@ -264,24 +268,22 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        _params: any,
-        _config: RequestConfig
+        _config: RequestConfig,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
-        return this.res.data;
+        return this.res.data
     }
     @headersDecorator headers = {
-        AppId: 5000,
-    };
+        "AppId": 5000
+    }
 }
 
 const serviceA = new DemoService();
 serviceA
     .getIndex(
-        { since: "monthly" },
         {
-            headers: { secId: "xx-xx" },
-        }
+            headers: { secId: 'xx-xx' },
+        },
     )
     .then((res) => {
         console.log("res serviceA getIndex:", res.length);
@@ -301,7 +303,6 @@ DemoService getIndex final config: {
   headers: { AppId: 5000, a: 1 },
   method: 'get',
   url: '',
-  params: { since: 'monthly' }
 }
 res serviceA getIndex: 227
 ```
@@ -314,10 +315,13 @@ import {
     methodDecorator,
     setConfig,
     fieldDecorator,
-    ApiResponse, RequestConfig
+    enableLog,
+    ApiResponse,
+    RequestConfig
 } from "petal-service";
 
 
+enableLog();
 // 更新配置，比如授权信息，例如jwt, cookies
 setConfig({
     headers: {
@@ -329,7 +333,7 @@ setConfig({
 // 设置baseUrl和超时时间
 @classDecorator({
     timeout: 60 * 1000,
-    baseURL: "http://www.example.com"
+    baseURL: "https://www.example.com"
 })
 class DemoService {
 
@@ -344,7 +348,6 @@ class DemoService {
         url: "",
     })
     static async getIndex(
-        params: any,
         config: RequestConfig,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
@@ -353,16 +356,11 @@ class DemoService {
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
     @fieldDecorator("timeout")
-    static timeoutValue = 1000;
-
-    // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
-    // @fieldDecorator("baseURL")
-    static baseURLValue = "https://www.google.com"
+    static timeoutValue = 10 * 1000;
 }
 
 DemoService
     .getIndex(
-        { since: "monthly" },
         {
             headers: { userId: 1 },
         },
@@ -376,6 +374,40 @@ DemoService
 
 ```
 
+### 示例5 getter
+```typescript
+import { enableLog, BaseService, methodDecorator, getterDecorator } from "petal-service";
+
+enableLog();
+
+class DemoService<R = any> extends BaseService<R> {
+
+    @methodDecorator({
+        url: "https://www.baidu.com/"
+    })
+    async getIndex(this: DemoService<string>) {
+        return this.res.data;
+    }
+
+    @getterDecorator()
+    get timeout() {
+        return 10 * 1000
+    }
+
+    @getterDecorator()
+    get withCredentials() {
+        return false;
+    }
+
+}
+
+const s = new DemoService();
+s.getIndex().then((res) => {
+    console.log("res:", res.length);
+}).catch(err => {
+    console.log("err:", err);
+})
+```
 
 ### 示例5 继承
 ```typescript
@@ -383,7 +415,7 @@ import {
     classDecorator, methodDecorator, setConfig, paramsDecorator, fieldDecorator,
     ApiResponse, RequestConfig
 } from "petal-service";
-
+enableLog();
 setConfig({
     headers: {
         token: "token",
@@ -400,19 +432,21 @@ class DemoService<R = any> {
         method: "get",
         url: "",
     })
+    @paramsDecorator({
+        hasParams: true
+    })
     public async getIndex(
         this: DemoService,
         _params: any,
-        _data: any,
         _config: RequestConfig
     ) {
         return this.res.data;
     }
 
     @fieldDecorator("timeout")
-    timeoutValue = 5000;
+    timeoutValue = 15 * 1000;
 
-    @fieldDecorator("baseURL")
+    // @fieldDecorator("baseURL")
     baseURLValue = "https://www.github.com"
 }
 
@@ -426,8 +460,6 @@ class SubDemoService extends DemoService {
     })
     @paramsDecorator({
         hasParams: true,
-        hasConfig: true,
-        hasBody: false,
     })
     async getBingIndex<R = string>(
         this: SubDemoService,
@@ -439,7 +471,6 @@ class SubDemoService extends DemoService {
     @fieldDecorator("timeout")
     timeoutValue = 30 * 1000;
 }
-
 
 const serviceA = new DemoService();
 serviceA
@@ -488,7 +519,6 @@ subService
     });
 
 ```
-
 
 
 ## 代码思路和存储

@@ -7,9 +7,10 @@ export function createAccessorDecorator(
 ) {
     return function accessorDecorator(field?: keyof RequestConfig) {
         return function (
-            target: any,
+            target: ClassAccessorDecoratorTarget<any, any>,
             context: ClassAccessorDecoratorContext<any, any>
         ) {
+            // target: {get, set}
             if (context.kind !== "accessor") {
                 throw new Error("accessorDecorator 只能用于装饰class的accessor");
             }
@@ -43,7 +44,7 @@ function innerAccessorDecorator(
         init(initialValue) {
             const instance = this;
             const _class_ = this.constructor;
-            logger.log(`innerFieldDecorator class:${_class_.name}, filed:${String(
+            logger.log(`innerAccessorDecorator class:${_class_.name}, filed:${String(
                 context.name
             )}`);
             dataStore.updateFieldConfig(_class_, instance, {
@@ -70,7 +71,7 @@ function innerStaticAccessorDecorator(
         },
         init(initialValue) {
             const _class_ = this;
-            logger.log(`innerFieldDecorator class:${_class_.name}, filed:${String(
+            logger.log(`innerStaticAccessorDecorator class:${_class_.name}, filed:${String(
                 context.name
             )}`);
             dataStore.updateStaticFieldConfig(_class_, undefined, {

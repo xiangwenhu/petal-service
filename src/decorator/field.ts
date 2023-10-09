@@ -36,7 +36,7 @@ function innerFieldDecorator(
     { dataStore, logger}: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
-        // this: instance
+        // this: class instance
         // target: undefined
         // context: demo {"kind":"field","name":"name","static":false,"private":false,"access":{}}
         const instance = this;

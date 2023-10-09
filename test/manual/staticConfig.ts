@@ -3,10 +3,10 @@ import {
     methodDecorator,
     setConfig,
     fieldDecorator,
-    enableLog
+    enableLog,
+    ApiResponse,
+    RequestConfig
 } from "../../src";
-import { ApiResponse, RequestConfig } from "../../src/types";
-
 
 enableLog();
 // 更新配置，比如授权信息，例如jwt, cookies
@@ -35,7 +35,6 @@ class DemoService {
         url: "",
     })
     static async getIndex(
-        params: any,
         config: RequestConfig,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
@@ -44,16 +43,11 @@ class DemoService {
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
     @fieldDecorator("timeout")
-    static timeoutValue = 1000;
-
-    // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
-    // @fieldDecorator("baseURL")
-    static baseURLValue = "https://www.google.com"
+    static timeoutValue = 10 * 1000;
 }
 
 DemoService
     .getIndex(
-        { since: "monthly" },
         {
             headers: { userId: 1 },
         },

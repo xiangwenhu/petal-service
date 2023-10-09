@@ -37,7 +37,6 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        _params: any,
         _config: RequestConfig,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
@@ -51,7 +50,6 @@ class DemoService<R = any> {
 const serviceA = new DemoService();
 serviceA
     .getIndex(
-        { since: "monthly" },
         {
             headers: { secId: 'xx-xx' },
         },

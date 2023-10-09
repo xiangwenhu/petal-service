@@ -1,4 +1,3 @@
-import merge from "lodash/merge";
 import { StorageMap, StorageMapValue } from "../types";
 import { Method, RequestConfig } from "../types";
 import {
@@ -10,6 +9,7 @@ import {
 } from "../util";
 import { hasPathParams, pathToUrl } from "../util/path";
 import { NOT_USE_BODY_METHODS, STORE_KEYS } from "../const";
+import { merge } from "../lib/merge";
 
 function shouldUseBody(method: Method) {
     if (method == null) {
@@ -74,7 +74,7 @@ export default class DataStore {
             {}
         );
 
-        let mConfig: RequestConfig = merge(
+        let mConfig: RequestConfig = merge([
             {},
             // 自定义默认config
             defaultConfig,
@@ -86,7 +86,7 @@ export default class DataStore {
             fieldConfig,
             // method 上的config
             methodConfig.config || {}
-        );
+        ]);
 
         mConfig = this.adjustConfig(mConfig, argumentsObj, methodConfig);
         return mConfig;
@@ -143,7 +143,7 @@ export default class DataStore {
             {}
         );
 
-        let mConfig: RequestConfig = merge(
+        let mConfig: RequestConfig = merge([
             {},
             // 初始化默认值
             defaultConfig,
@@ -155,7 +155,7 @@ export default class DataStore {
             staticFiledConfig,
             // method 上配置的默认值
             methodConfig.config || {}
-        );
+        ]);
         mConfig = this.adjustConfig(mConfig, argumentsObj, methodConfig);
         return mConfig;
     }
@@ -237,7 +237,7 @@ export default class DataStore {
         if (argLength > 0 && hasExtraConfig) {
             expectedLength++;
             if (argLength >= expectedLength) {
-                mergedConfig = merge(mergedConfig, argumentsObj[expectedLength - 1]);
+                mergedConfig = merge([mergedConfig, argumentsObj[expectedLength - 1]]);
             }
         }
         return mergedConfig;
@@ -265,10 +265,10 @@ export default class DataStore {
             instances = new Map();
             val.set(instancesKey, instances);
         }
-        const commonConfig: StorageMapValue.CommonConfigValue =
+        let commonConfig: StorageMapValue.CommonConfigValue =
             instances.get(instance!) || {};
-        commonConfig.fieldPropertyMap = commonConfig.fieldPropertyMap || {};
-        merge(commonConfig.fieldPropertyMap, config);
+
+        commonConfig.fieldPropertyMap = merge([commonConfig.fieldPropertyMap || {}, config]);
         instances.set(instance!, commonConfig);
         storeMap.set(_class_, val);
     }
@@ -291,8 +291,7 @@ export default class DataStore {
         let commonConfig: StorageMapValue.CommonConfigValue =
             val.get(staticConfigKey) as StorageMapValue.CommonConfigValue || {};
 
-        commonConfig.fieldPropertyMap = commonConfig.fieldPropertyMap || {};
-        merge(commonConfig.fieldPropertyMap, mapConfig);
+        commonConfig.fieldPropertyMap = merge([commonConfig.fieldPropertyMap || {}, mapConfig]);
         val.set(staticConfigKey, commonConfig);
         storeMap.set(_class_, val);
     }
@@ -345,9 +344,9 @@ export default class DataStore {
             methodsMapValue = new Map();
             val.set(key, methodsMapValue);
         }
-        const oldConfig: StorageMapValue.MethodConfigValue =
+        let oldConfig: StorageMapValue.MethodConfigValue =
             methodsMapValue.get(method) || {};
-        merge(oldConfig, config);
+        oldConfig = merge([oldConfig, config]);
         methodsMapValue.set(method, oldConfig);
         storeMap.set(_class_, val);
     }

@@ -3,10 +3,12 @@ import DataStore from "./dataStore";
 import { createAccessorDecorator } from "./decorator/accessor";
 import { createClassDecorator } from "./decorator/class";
 import { createFieldDecorator } from "./decorator/field";
+import { createGetterDecorator } from "./decorator/getter";
 import {
     createMethodDecorator,
     createParamsDecorator,
 } from "./decorator/method";
+import { merge } from "./lib/merge";
 import getLogger from "./logger";
 import {
     CreateDecoratorOptions,
@@ -19,7 +21,6 @@ import {
     isAsyncFunction,
     isFunction,
 } from "./util";
-import merge from "lodash/merge";
 /**
  * 更新配置
  * @param options
@@ -30,7 +31,7 @@ function innerSetConfig(
     config: RequestConfig
 ) {
     const oldConfig = options.defaults || {};
-    merge(oldConfig, config);
+    options.defaults = merge([oldConfig, config]);
 }
 
 function createRequestInstance(config: ServiceRootConfig) {
@@ -92,6 +93,10 @@ export default function createInstance(config: ServiceRootConfig = {}) {
          * field字段装饰器
          */
         fieldDecorator: createFieldDecorator(options),
+        /**
+         * getter函数装饰器
+         */
+        getterDecorator: createGetterDecorator(options),
         /**
          * accessor装饰器
          */
