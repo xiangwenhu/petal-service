@@ -21,11 +21,10 @@ type Decorator = (value: Input, context: {
 轻量级的装饰器服务框架，快速搭建请求服务。
 比如：
 ```typescript
-
 import "petal-service";
-import { RequestConfig } from "petal-service";
-import axios from "axios";
+import { RequestConfig, enableLog } from "petal-service";
 
+enableLog();
 // 设置baseUrl和超时时间
 @petalClassDecorator({
     timeout: 60 * 1000,
@@ -38,6 +37,9 @@ class DemoService<R> extends PetalBaseService<R>{
         method: "get",
         url: "",
     })
+    @petalParamsDecorator({
+        hasParams: true
+    })
     static async getIndex(
         this: DemoService<string>,
         _params: any,
@@ -47,7 +49,7 @@ class DemoService<R> extends PetalBaseService<R>{
         return this.res.data
     }
 
-    // 设置 实例的timeout 
+    // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 自定义默认值
     @petalFieldDecorator("timeout")
     static timeoutValue = 5 * 1000;
 }
@@ -65,23 +67,21 @@ DemoService
     .catch((err) => {
         console.log("error DemoService static getIndex:", err);
     });
-
 ```
 输出
 ```shell
-classDecorator: DemoService
+innerStaticParamsDecorator class:DemoService, method:getIndex
 innerStaticMethodDecorator class:DemoService, method:getIndex
 innerFieldDecorator class:DemoService, filed:timeoutValue
 Function getIndex final config: {
   timeout: 5000,
   responseType: 'json',
-  headers: { token: 'token', userId: 1 },
-  baseURL: 'http://www.example.com',
+  baseURL: 'https://www.example.com',
   method: 'get',
   url: '',
-  params: { since: 'monthly' }
+  params: { since: 'monthly' },
+  headers: { userId: 1 }
 }
-instance.interceptors.request config.baseUrl http://www.example.com
 res DemoService static getIndex: 1256
 ```
 
@@ -173,9 +173,6 @@ class DemoService<R = any> {
     @methodDecorator({
         method: "get",
         url: "/course/:type",
-    })
-    @paramsDecorator({
-        hasParams: false,
     })
     public async getIndex(
         this: DemoService<string>,
