@@ -3,10 +3,10 @@ import {
     methodDecorator,
     setConfig,
     fieldDecorator,
-    enableLog
+    enableLog,
+    ApiResponse,
+    RequestConfig
 } from "../../src";
-import { ApiResponse, RequestConfig } from "../../src/types";
-
 
 enableLog();
 // 更新配置，比如授权信息，例如jwt, cookies
@@ -44,10 +44,6 @@ class DemoService {
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
     @fieldDecorator("timeout")
     static timeoutValue = 10 * 1000;
-
-    // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
-    @fieldDecorator()
-    static baseURL = "https://www.google.com"
 }
 
 DemoService
