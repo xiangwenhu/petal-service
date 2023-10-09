@@ -26,7 +26,6 @@ class DemoService<R = any> {
     public async getIndex(
         this: DemoService,
         _params: any,
-        _data: any,
         _config: RequestConfig
     ) {
         return this.res.data;
@@ -49,8 +48,6 @@ class SubDemoService extends DemoService {
     })
     @paramsDecorator({
         hasParams: true,
-        hasConfig: true,
-        hasBody: false,
     })
     async getBingIndex<R = string>(
         this: SubDemoService,
@@ -81,31 +78,30 @@ const serviceA = new DemoService();
 //     });
 
 const subService = new SubDemoService();
+subService
+    .getBingIndex(
+        { since: "monthly" },
+        {
+            headers: { a: 1 },
+        }
+    )
+    .then((res) => {
+        console.log("res subService getBingIndex:", res.length);
+    })
+    .catch((err) => {
+        console.log("res subService getBingIndex error:", err);
+    });
+
 // subService
-//     .getBingIndex(
+//     .getIndex(
 //         { since: "monthly" },
 //         {
 //             headers: { a: 1 },
 //         }
 //     )
 //     .then((res) => {
-//         console.log("res subService getBingIndex:", res.length);
+//         console.log("res subService getIndex :", res.length);
 //     })
 //     .catch((err) => {
-//         console.log("res subService getBingIndex error:", err);
+//         console.log("res subService getIndex  error:", err);
 //     });
-
-subService
-    .getIndex(
-        { since: "monthly" },
-        undefined,
-        {
-            headers: { a: 1 },
-        }
-    )
-    .then((res) => {
-        console.log("res subService getIndex :", res.length);
-    })
-    .catch((err) => {
-        console.log("res subService getIndex  error:", err);
-    });

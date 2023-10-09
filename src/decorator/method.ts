@@ -32,7 +32,7 @@ function innerMethodDecorator(
 ) {
     let classInstance: Function;
     context.addInitializer(function () {
-        // this: instance
+        // this: class instance
         // target: method
         // context: demo {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
         classInstance = this;
@@ -146,12 +146,12 @@ function innerParamsDecorator(
     { dataStore, logger }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
-        // this: instance
+        // this: class instance
         // target: method
         // context: demo {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
         const _class_ = this.constructor;
         logger.log(
-            `paramsDecorator class:${_class_.name}, method:${String(
+            `innerParamsDecorator class:${_class_.name}, method:${String(
                 context.name
             )}`
         );
@@ -172,7 +172,7 @@ function innerStaticParamsDecorator(
         // context: demo: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
         const _class_ = this;
         logger.log(
-            `paramsDecorator class:${_class_.name}, method:${String(
+            `innerStaticParamsDecorator class:${_class_.name}, method:${String(
                 context.name
             )}`
         );
