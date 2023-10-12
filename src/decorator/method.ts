@@ -14,7 +14,9 @@ export function createMethodDecorator(
             if (context.kind !== "method") {
                 throw new Error("methodDecorator 只能用于装饰class的method");
             }
-
+            if (context.private) {
+                throw new Error(`methodDecorator 不能用于装饰class的private method: ${String(context.name)}`);
+            }
             const method = context.static
                 ? innerStaticMethodDecorator
                 : innerMethodDecorator;
@@ -44,12 +46,17 @@ function innerMethodDecorator(
         );
 
         dataStore.updateMethodConfig(_class_, target, { config });
-        // 防止被串改
-        Object.defineProperty(classInstance, context.name, {
-            configurable: false,
-            writable: false,
-            value: proxyMethod,
-        });
+
+        try {
+            // 防止被串改
+            Object.defineProperty(classInstance, context.name, {
+                configurable: false,
+                writable: false,
+                value: proxyMethod,
+            });
+        } catch (err) {
+            logger.error("innerMethodDecorator defineProperty error:", err);
+        }
     });
 
     function proxyMethod() {
@@ -93,12 +100,17 @@ function innerStaticMethodDecorator(
         );
 
         dataStore.updateStaticMethodConfig(_class_, target, { config });
-        // 防止被串改
-        Object.defineProperty(_class_, context.name, {
-            configurable: false,
-            writable: false,
-            value: proxyMethod,
-        });
+
+        try {
+            // 防止被串改
+            Object.defineProperty(_class_, context.name, {
+                configurable: false,
+                writable: false,
+                value: proxyMethod,
+            });
+        } catch (err) {
+            logger.error("innerStaticMethodDecorator defineProperty error:", err);
+        }
     });
 
     function proxyMethod() {

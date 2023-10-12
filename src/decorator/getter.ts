@@ -14,6 +14,9 @@ export function createGetterDecorator(
             if (context.kind !== "getter") {
                 throw new Error("getterDecorator 只能用于装饰class的getter");
             }
+            if (context.private) {
+                throw new Error(`getterDecorator 不能用于装饰class的private getter: ${String(context.name)}`);
+            }
 
             const sName = `${String(context.name)}`
             if (!field && !isRequestConfigKey(sName)) {
