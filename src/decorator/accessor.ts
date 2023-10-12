@@ -14,6 +14,9 @@ export function createAccessorDecorator(
             if (context.kind !== "accessor") {
                 throw new Error("accessorDecorator 只能用于装饰class的accessor");
             }
+            if (context.private) {
+                throw new Error(`accessorDecorator 不能用于装饰class的private accessor: ${String(context.name)}`);
+            }
 
             const sName = `${String(context.name)}`
             if (!field && !isRequestConfigKey(sName)) {

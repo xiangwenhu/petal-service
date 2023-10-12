@@ -10,11 +10,12 @@ export function createFieldDecorator(
             target: any,
             context: ClassFieldDecoratorContext<Object>
         ) {
-
             if (context.kind !== "field") {
                 throw new Error("fieldDecorator 只能用于装饰class的field");
             }
-
+            if (context.private) {
+                throw new Error(`fieldDecorator 不能用于装饰class的private field: ${String(context.name)}`);
+            }
             const sName = `${String(context.name)}`
             if (!field && !isRequestConfigKey(sName)) {
                 throw new Error("accessorDecorator field 不是有效的键");
@@ -33,7 +34,7 @@ function innerFieldDecorator(
     _target: Function,
     context: ClassFieldDecoratorContext<Function>,
     field: keyof RequestConfig,
-    { dataStore, logger}: CreateDecoratorOptions
+    { dataStore, logger }: CreateDecoratorOptions
 ) {
     context.addInitializer(function () {
         // this: class instance

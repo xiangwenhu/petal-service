@@ -523,3 +523,4 @@ subService
 
 ## 注意
 1. TypeScript 5.0 的修饰器标准跟之前的修饰器是不兼容的。旧版的 --experimentalDecorators 选项将会仍然保留，如果启用此配置，则仍然会将装饰器视为旧版，新版的装饰器无需任何配置就能够默认启用。
+2. 不能装饰私有的属性，方法，getter,accessor，否则会报错
