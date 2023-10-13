@@ -16,8 +16,8 @@ export function proxyRequest({
     logger: Logger
 }) {
     return request!(config as any).then((res) => {
-        // Proxy.revocable vs Proxy??
-        let rProxy = Proxy.revocable(proxyObject, {
+        // 代理 classInstance, 即方法实例
+        const proxy = new Proxy(proxyObject, {
             get: function (target, property, receiver) {
                 if (property == "res") {
                     return res;
@@ -25,24 +25,13 @@ export function proxyRequest({
                 return Reflect.get(target, property, receiver);
             },
         });
-        return method.call(rProxy.proxy)
-            .then((resData: any) => {
-                try {
-                    rProxy.revoke();
-                    // @ts-ignore
-                    rProxy = null;
-                } catch (err) {
-                    logger.error("proxyRequest proxy.revoke error:", err)
-                }
-                return resData;
-            })
-            .then((resData: any) => {
-                // api method方法里面可以什么都不写，直接返回结果
-                if (resData === undefined) {
-                    return res.data;
-                }
-                return resData;
-            });
+        return method.call(proxy).then((resData: any) => {
+            // api method方法里面可以什么都不写，直接返回结果
+            if (resData === undefined) {
+                return res.data;
+            }
+            return resData;
+        });
     });
 }
 
