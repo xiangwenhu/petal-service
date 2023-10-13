@@ -53,3 +53,5 @@ export const REQUEST_CONFIG_KEYS = [
     "decompress"
 ];
 
+
+export const SYMBOL_ORIGIN_FUNCTION = Symbol("OriginFunction");

@@ -1,4 +1,4 @@
-import { DEFAULT_CONFIG } from "./const";
+import { SYMBOL_ORIGIN_FUNCTION } from "./const";
 import DataStore from "./dataStore";
 import { createAccessorDecorator } from "./decorator/accessor";
 import { createClassDecorator } from "./decorator/class";
@@ -12,12 +12,13 @@ import { merge } from "./lib/merge";
 import getLogger from "./logger";
 import {
     CreateDecoratorOptions,
+    RequestConfig,
     RequestInstance,
-    ServiceRootConfig,
-    RequestConfig
+    ServiceRootConfig
 } from "./types";
 import {
     createDefaultRequestInstance,
+    getProperty,
     isAsyncFunction,
     isFunction,
 } from "./util";
@@ -56,7 +57,7 @@ export default function createInstance(config: ServiceRootConfig = {}) {
 
     const options: CreateDecoratorOptions = {
         dataStore,
-        defaults: config.defaults || DEFAULT_CONFIG,
+        defaults: config.defaults || {},
         get request() {
             if (requestIns == undefined) {
                 requestIns = createDefaultRequestInstance();
@@ -127,10 +128,28 @@ export default function createInstance(config: ServiceRootConfig = {}) {
 
         /**
          * 允许log
-         * @param enabled 
+         * @param enabled
          */
         enableLog(enabled: boolean = true) {
             config.enableLog = enabled;
         },
+
+        /**
+         * 获取配置
+         * @param classOrInstance
+         * @param method
+         * @returns
+         */
+        getMethodConfig(classOrInstance: Object | Function, method: Function) {
+            const oriFun = getProperty(method, SYMBOL_ORIGIN_FUNCTION);
+            if (!oriFun) {
+                return {}
+            }
+            const mountConfig = dataStore.getMountConfigs(classOrInstance, oriFun);
+            return {
+                ...mountConfig,
+                defaultConfig: options.defaults
+            }
+        }
     };
 }

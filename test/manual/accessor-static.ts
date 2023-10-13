@@ -1,4 +1,4 @@
-import { accessorDecorator, enableLog, BaseService, methodDecorator } from "../../src";
+import { accessorDecorator, enableLog, BaseService, methodDecorator,  getMethodConfig} from "../../src";
 
 enableLog();
 
@@ -16,6 +16,7 @@ class DemoService<R = any> extends BaseService<R>{
 
 }
 
+console.log("getIndex config:", getMethodConfig(DemoService, DemoService.getIndex));
 
 DemoService.getIndex().then(res => {
     console.log("res:", res.length);
