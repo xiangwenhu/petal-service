@@ -519,7 +519,7 @@ subService
 
 
 ## 代码思路和存储
-参见 [design.md](/docs/design.md)
+参见 [design.md](https://github.com/xiangwenhu/petal-service/blob/master/docs/design.md)
 
 ## 注意
 1. TypeScript 5.0 的修饰器标准跟之前的修饰器是不兼容的。旧版的 --experimentalDecorators 选项将会仍然保留，如果启用此配置，则仍然会将装饰器视为旧版，新版的装饰器无需任何配置就能够默认启用。
@@ -539,10 +539,10 @@ subService
     @fieldDecorator("baseURL")
     #baseURLValue = "https://www.google.com"
 ```
-- [ ] 优化代理
+- [x] 优化代理 (无需)
     * Proxy.revocable，方法执行前进行代理，执行完毕后，取消代理
     * Proxy
-- [ ] 实例销毁
+- [ ] 统计
 - [ ] dataStore存储关系图
 - [ ] 服务请求TypeScript提示问题
 - [ ] 编写文档

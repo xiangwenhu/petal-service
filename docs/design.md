@@ -61,11 +61,6 @@ Map {
                 hasBody?: boolean;
                 hasConfig?: boolean;
             }
-        },
-        "proxies": Map {   // 暂时没用，采用可取消代理，方法执行前代理，执行后取消代理
-            // instance class实例Proxy，用于实例方法
-            // class class的Proxy， 用于静态方法
-            [instance | class ]: Map<Object, typeof Proxy>,
         }
     }
 }
@@ -77,21 +72,23 @@ src
     dataStore
         index.ts      数据存储
     decorator
+        accessor.ts   装饰 accessor
         class.ts      装饰 class，存入默认配置
         filed.ts      装饰 class 的属性， 进行属性映射
+        getter.ts     装饰 class getter
         method.ts     装饰 class 的方法，这里是核心，装饰器会更改方法，合并配置，最终发送网络请求。
         util.ts       辅助方法
     types
         datastore.ts  数据存储的typescript申请
-        index.ts   
+        index.ts
         other.ts
         request.ts    请求相关的typescript申请
     util
-        index.ts 
+        index.ts
         path.ts       路径参数相关
     BaseService.ts    服务基类
     const.ts          常量
     createInstance    创建服务实例
     index.ts          全局挂在和导出
-
+    logger.ts         日志
 ```
