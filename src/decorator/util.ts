@@ -1,16 +1,19 @@
 import { REQUEST_CONFIG_KEYS } from "../const";
 import { RequestConfig, RequestInstance } from "../types";
+import Logger from "../types/logger";
 
 export function proxyRequest({
     method,
     config,
     request,
-    proxyObject
+    proxyObject,
+    logger
 }: {
     method: Function,
     config: RequestConfig,
     request: RequestInstance,
-    proxyObject: Object
+    proxyObject: Object,
+    logger: Logger
 }) {
     return request!(config as any).then((res) => {
         // 代理 classInstance, 即方法实例

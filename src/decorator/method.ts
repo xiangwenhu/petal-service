@@ -77,6 +77,7 @@ function innerMethodDecorator(
             proxyObject: classInstance,
             config,
             request,
+            logger
         });
     }
 }
@@ -131,6 +132,7 @@ function innerStaticMethodDecorator(
             proxyObject: _class_,
             config,
             request,
+            logger
         });
     }
 }
