@@ -1,4 +1,4 @@
-import { StorageMap, StorageMapValue } from "../types";
+import { StorageMap, StorageMapValue, StorageMapValueKey } from "../types";
 import { Method, RequestConfig } from "../types";
 import {
     getProperty,
@@ -20,17 +20,83 @@ function shouldUseBody(method: Method) {
 
 export default class DataStore {
     public storeMap: StorageMap = new Map<Function, StorageMapValue>();
+
+    /**
+     * 获取挂载的配置，不包括创建实例的配置
+     * @param method
+     * @param classOrInstance
+     * @returns
+     */
+    getMountConfigs(classOrInstance: Object | Function, method: Function) {
+        // 如果instanceOrClass是class, 可以任务method是静态方法
+        // 反之，是实例属性
+        const isStatic = isFunction(classOrInstance);
+
+        const { storeMap } = this;
+        const _class_: Function = isStatic ? classOrInstance as Function : classOrInstance.constructor;
+        const rootConfig: StorageMapValue = storeMap.get(_class_) || new Map();
+
+        // 挂载class身上的config
+        const classConfig = rootConfig.get(STORE_KEYS.classConfig) || {};
+
+        // 方法上的config
+        const methodKey: StorageMapValueKey = isStatic ? "staticMethods" :"methods";
+        const methodConfig =
+            (rootConfig.get(methodKey) as StorageMapValue.MethodsMap).get(method) || {};
+
+        // 实例或者class config 属性对应着的config
+        const propertyConfig = getProperty(classOrInstance, "config", {}) || {};
+
+        // fieldConfig
+        let propertyMap;
+        if (isStatic) {
+            const commonConfig = (rootConfig.get(
+                STORE_KEYS.staticConfig
+            ) as StorageMapValue.CommonConfigValue) || {}
+            propertyMap = commonConfig.fieldPropertyMap || {};
+        } else {
+            const instancesMap: StorageMapValue.InstancesMap =
+                (rootConfig.get(STORE_KEYS.instances) as StorageMapValue.InstancesMap) ||
+                new Map();
+            // 从示例map中查找示例对应的配置
+            const commonConfig: StorageMapValue.CommonConfigValue =
+                instancesMap.get(classOrInstance) || {};
+
+            // 字段属性映射, 如果木有，会从原型上找
+            propertyMap = commonConfig.fieldPropertyMap || {};
+        }
+
+        const fieldConfig = Object.entries(propertyMap).reduce(
+            (obj: RequestConfig, [key, value]) => {
+                // if (hasOwnProperty(instance, value)) {
+                // @ts-ignore
+                obj[key] = getProperty(classOrInstance, value);
+                // }
+                return obj;
+            },
+            {}
+        );
+
+        return {
+            classConfig,
+            methodConfig,
+            propertyConfig,
+            fieldConfig
+        }
+
+    }
+
     /**
      * 获取最终的配置
      * @param method method的函数
-     * @param instance class的实例
+     * @param instanceOrClass class的实例
      * @param defaultConfig 默认值
      * @param argumentsObj method实参
      * @returns
      */
     getMethodMergedConfig(
+        instanceOrClass: Object,
         method: Function,
-        instance: Object,
         defaultConfig: RequestConfig = {},
         argumentsObj: ArrayLike<any>
     ) {
@@ -39,126 +105,26 @@ export default class DataStore {
                 "methodFunction must be a/an Object|Function|AsyncFunction"
             );
         }
-        const { storeMap } = this;
-        const _class_ = instance.constructor;
-        const config: StorageMapValue = storeMap.get(_class_) || new Map();
-        // 挂载class身上的config
-        const classConfig = config.get(STORE_KEYS.classConfig) || {};
-
-        // 方法上的config
-        const methodConfig =
-            (config.get("methods") as StorageMapValue.MethodsMap).get(method) || {};
-
-        // 实例
-        const instancesMap: StorageMapValue.InstancesMap =
-            (config.get(STORE_KEYS.instances) as StorageMapValue.InstancesMap) ||
-            new Map();
-        // 从示例map中查找示例对应的配置
-        const instanceMapValue: StorageMapValue.CommonConfigValue =
-            instancesMap.get(instance) || {};
-
-        // 实例的config属性, 支持原型上查找
-        // @ts-ignore
-        const instanceConfig = instance["config"] || {};
-
-        // 字段属性映射, 如果木有，会从原型上找
-        const instancePropertyMap = instanceMapValue.fieldPropertyMap || {};
-        const fieldConfig = Object.entries(instancePropertyMap).reduce(
-            (obj: RequestConfig, [key, value]) => {
-                // if (hasOwnProperty(instance, value)) {
-                // @ts-ignore
-                obj[key] = getProperty(instance, value);
-                // }
-                return obj;
-            },
-            {}
-        );
+        const mountConfigs = this.getMountConfigs(instanceOrClass, method);
 
         let mConfig: RequestConfig = merge([
             {},
             // 自定义默认config
             defaultConfig,
             // class上的config
-            classConfig,
+            mountConfigs.classConfig,
             // 实例 config 属性的值
-            instanceConfig,
+            mountConfigs.propertyConfig,
             // class filed map后组成的config
-            fieldConfig,
+            mountConfigs.fieldConfig,
             // method 上的config
-            methodConfig.config || {}
+            mountConfigs.methodConfig.config || {}
         ]);
 
-        mConfig = this.adjustConfig(mConfig, argumentsObj, methodConfig);
+        mConfig = this.adjustConfig(mConfig, argumentsObj, mountConfigs.methodConfig);
         return mConfig;
     }
 
-    /**
-     * 获取最终的配置
-     * @param method method的函数
-     * @param _class_ class的实例
-     * @param defaultConfig 默认值
-     * @param argumentsObj api实参
-     * @returns
-     */
-    getStaticMethodMergedConfig(
-        method: Function,
-        _class_: Function,
-        defaultConfig: RequestConfig = {},
-        argumentsObj: ArrayLike<any>
-    ) {
-        if (!isObject(method) && !isFunction(method) && !isAsyncFunction(method)) {
-            throw new Error(
-                "methodFunction must be a/an Object|Function|AsyncFunction"
-            );
-        }
-        const { storeMap } = this;
-        const config: StorageMapValue = storeMap.get(_class_) || new Map();
-        // class的请求配置
-        const classConfig = config.get(STORE_KEYS.classConfig) || {};
-        // 方法上的请求配置
-        const methodConfig: StorageMapValue.MethodConfigValue =
-            (config.get("staticMethods") as StorageMapValue.MethodsMap).get(
-                method
-            ) || {};
-
-        const commonConfig: StorageMapValue.CommonConfigValue =
-            (config.get(
-                STORE_KEYS.staticConfig
-            ) as StorageMapValue.CommonConfigValue) || {};
-
-        // 静态属性 config 会被读取为配置
-        const staticConfig = getOwnProperty(_class_, "config", {});
-
-        // 静态属性映射
-        const staticPropertyMap = commonConfig.fieldPropertyMap || {};
-        // 映射组合成为 config ， 如果木有，会从原型上找
-        const staticFiledConfig = Object.entries(staticPropertyMap).reduce(
-            (obj: RequestConfig, [key, value]) => {
-                // if (hasOwnProperty(_class_, value)) {
-                // @ts-ignore
-                obj[key] = getProperty(_class_, value);
-                // }
-                return obj;
-            },
-            {}
-        );
-
-        let mConfig: RequestConfig = merge([
-            {},
-            // 初始化默认值
-            defaultConfig,
-            // class装饰器上的config
-            classConfig,
-            // 静态属性 config
-            staticConfig,
-            // class 静态field 映射后的 config
-            staticFiledConfig,
-            // method 上配置的默认值
-            methodConfig.config || {}
-        ]);
-        mConfig = this.adjustConfig(mConfig, argumentsObj, methodConfig);
-        return mConfig;
-    }
 
     /**
      * 根据调用method的值，获取调用的默认参数

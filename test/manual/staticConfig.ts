@@ -1,11 +1,9 @@
 import {
-    classDecorator,
-    methodDecorator,
-    setConfig,
-    fieldDecorator,
-    enableLog,
     ApiResponse,
     RequestConfig,
+    enableLog,
+    fieldDecorator,
+    methodDecorator,
     paramsDecorator
 } from "../../src";
 
@@ -36,7 +34,7 @@ class DemoService {
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 
     @fieldDecorator("timeout")
-    static timeoutValue = 1000;
+    static timeoutValue = 5000;
 
     // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 
     // @fieldDecorator("baseURL")

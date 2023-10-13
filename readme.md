@@ -110,6 +110,18 @@ res DemoService static getIndex: 1256
 ```typescript
 enableLog(true)
 ```
+- 支持查询方法配置
+```typescript
+console.log("getIndex config", getMethodConfig(DemoService, DemoService.getIndex));
+// 输出
+getIndex config: {
+  classConfig: {},
+  methodConfig: { config: { url: 'https://baidu.com/' } },
+  propertyConfig: {},
+  fieldConfig: { timeout: 20000 },
+  defaultConfig: {}
+}
+```
 - 支持npm安装
 ```
 npm install petal-service
@@ -542,6 +554,9 @@ subService
 - [x] 优化代理 (无需)
     * Proxy.revocable，方法执行前进行代理，执行完毕后，取消代理
     * Proxy
+- [x] 查询方法的各个配置, 入参 class|instance, method
+    * 实例方法 {defaultConfig, classConfig, methodConfig, propertyConfig, fieldConfig}
+    * 静态方法 {defaultConfig, classConfig, methodConfig, propertyConfig, fieldConfig }
 - [ ] 统计
 - [ ] dataStore存储关系图
 - [ ] 服务请求TypeScript提示问题

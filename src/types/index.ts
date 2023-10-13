@@ -34,7 +34,7 @@ export namespace StorageMapValue {
     }
     export type InstancesMap = Map<Object, CommonConfigValue>;
     export type CommonConfigValue = {
-        config?: ConfigValue,
+        config?: ConfigValue,  // 暂时无用
         fieldPropertyMap?: FieldPropertyMapValue;
     };
     export type FieldPropertyMapValue = Record<PropertyKey, PropertyKey>;

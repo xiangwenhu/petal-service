@@ -18,6 +18,7 @@ export const getterDecorator = instance.getterDecorator;
 export const setConfig = instance.setConfig;
 export const enableLog = instance.enableLog;
 export const accessorDecorator = instance.accessorDecorator;
+export const getMethodConfig  = instance.getMethodConfig;
 
 // 全局属性申明
 declare global {
@@ -33,6 +34,7 @@ declare global {
         const petalSetConfig: typeof instance.setConfig;
         const petalSetRequestInstance: typeof instance.setRequestInstance;
         const petalEnableLog: typeof instance.enableLog;
+        const petalGetMethodConfig: typeof instance.getMethodConfig
 
         const petalCreateInstance: typeof createInstance;
 
@@ -52,6 +54,7 @@ g.petalGetterDecorator = instance.getterDecorator;
 g.petalSetConfig = instance.setConfig;
 g.petalSetRequestInstance = instance.setRequestInstance;
 g.petalEnableLog = instance.enableLog;
+g.petalGetMethodConfig = instance.getMethodConfig
 
 g.petalCreateInstance = createInstance;
 

@@ -1,4 +1,4 @@
-import { DEFAULT_CONFIG } from "../const";
+import { DEFAULT_CONFIG, SYMBOL_ORIGIN_FUNCTION } from "../const";
 import { CreateDecoratorOptions, ParamsDecoratorOptions } from "../types";
 import { RequestConfig } from "../types";
 import { proxyRequest } from "./util";
@@ -26,8 +26,9 @@ export function createMethodDecorator(
     };
 }
 
+
 function innerMethodDecorator(
-    target: Function,
+    method: Function,
     context: ClassMethodDecoratorContext<any>,
     config: RequestConfig,
     { defaults, dataStore, request, logger }: CreateDecoratorOptions
@@ -45,7 +46,7 @@ function innerMethodDecorator(
             )}`
         );
 
-        dataStore.updateMethodConfig(_class_, target, { config });
+        dataStore.updateMethodConfig(_class_, method, { config });
 
         try {
             // 防止被串改
@@ -62,28 +63,35 @@ function innerMethodDecorator(
     function proxyMethod() {
         // 读取最终合并后的配置
         const config = dataStore.getMethodMergedConfig(
-            target,
             classInstance,
+            method,
             defaults,
             arguments
         );
         logger.log(
-            `${classInstance.constructor.name} ${target.name} final config:`,
+            `${classInstance.constructor.name} ${method.name} final config:`,
             config
         );
 
         return proxyRequest({
-            method: target,
+            method,
             proxyObject: classInstance,
             config,
             request,
             logger
         });
     }
+
+    Object.defineProperty(proxyMethod, SYMBOL_ORIGIN_FUNCTION, {
+        configurable: false,
+        get() {
+            return method
+        }
+    })
 }
 
 function innerStaticMethodDecorator(
-    target: Function,
+    method: Function,
     context: ClassMethodDecoratorContext<Function>,
     config: RequestConfig,
     { defaults, dataStore, request, logger }: CreateDecoratorOptions
@@ -100,7 +108,7 @@ function innerStaticMethodDecorator(
             )}`
         );
 
-        dataStore.updateStaticMethodConfig(_class_, target, { config });
+        dataStore.updateStaticMethodConfig(_class_, method, { config });
 
         try {
             // 防止被串改
@@ -116,25 +124,32 @@ function innerStaticMethodDecorator(
 
     function proxyMethod() {
         // 读取最终合并后的配置
-        const config = dataStore.getStaticMethodMergedConfig(
-            target,
+        const config = dataStore.getMethodMergedConfig(
             _class_,
+            method,
             defaults,
             arguments
         );
         logger.log(
-            `${_class_.constructor.name} ${target.name} final config:`,
+            `${_class_.constructor.name} ${method.name} final config:`,
             config
         );
 
         return proxyRequest({
-            method: target,
+            method: method,
             proxyObject: _class_,
             config,
             request,
             logger
         });
     }
+
+    Object.defineProperty(proxyMethod, SYMBOL_ORIGIN_FUNCTION, {
+        configurable: false,
+        get() {
+            return method
+        }
+    })
 }
 
 export function createParamsDecorator(
