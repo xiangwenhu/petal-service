@@ -8,7 +8,7 @@ export function isType(obj: any, type: string) {
 }
 
 export function isFunction(obj: any) {
-    return isType(obj, "Function")
+    return typeof obj === 'function' || isType(obj, "Function")
 }
 
 export function isAsyncFunction(obj: any) {
@@ -28,21 +28,21 @@ export function getOwnProperty(obj: any, propertyName: PropertyKey, defaultValue
     return defaultValue || undefined;
 }
 
-export function getProperty(obj: any, propertyName: PropertyKey, defaultValue?: any){
-      //  Cannot convert undefined or null to object
-      if (obj != null) {
+export function getProperty(obj: any, propertyName: PropertyKey, defaultValue?: any) {
+    //  Cannot convert undefined or null to object
+    if (obj != null) {
         return obj[propertyName]
     }
     return defaultValue || undefined;
 }
 
-export function hasOwnProperty(obj: any, propertyName: PropertyKey){
-    if(obj === null || obj === undefined){
+export function hasOwnProperty(obj: any, propertyName: PropertyKey) {
+    if (obj === null || obj === undefined) {
         return false;
     }
     return hasOwnProp.call(obj, propertyName);
 }
 
-export function createDefaultRequestInstance(){
+export function createDefaultRequestInstance() {
     return axios.create();
 }

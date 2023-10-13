@@ -62,6 +62,11 @@ Map {
                 hasConfig?: boolean;
             }
         },
+        "proxies": Map {   // 暂时没用，采用可取消代理，方法执行前代理，执行后取消代理
+            // instance class实例Proxy，用于实例方法
+            // class class的Proxy， 用于静态方法
+            [instance | class ]: Map<Object, typeof Proxy>,
+        }
     }
 }
 ```

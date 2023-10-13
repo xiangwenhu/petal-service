@@ -14,10 +14,11 @@ export type StorageMapValueKey =
 
 export type StorageMapValue = Map<
     StorageMapValueKey,
-    | StorageMapValue.ConfigValue // classConfig
-    | StorageMapValue.MethodsMap // methods staticMethods
-    | StorageMapValue.InstancesMap // instances
+    | StorageMapValue.ConfigValue       // classConfig
+    | StorageMapValue.MethodsMap        // methods staticMethods
+    | StorageMapValue.InstancesMap      // instances
     | StorageMapValue.CommonConfigValue // staticConfig
+    | StorageMapValue.ProxiesValue      // proxies
 >;
 
 export namespace StorageMapValue {
@@ -37,7 +38,10 @@ export namespace StorageMapValue {
         fieldPropertyMap?: FieldPropertyMapValue;
     };
     export type FieldPropertyMapValue = Record<PropertyKey, PropertyKey>;
+
+    export type ProxiesValue = Map<Object | Function, Object | Function>
 }
+
 
 export type StorageMap = Map<Function, StorageMapValue>;
 
