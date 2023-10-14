@@ -21,6 +21,5 @@ class DemoService<R = any> extends BaseService<R>{
 }
 
 const ins = new DemoService();
-
 const result = getStatistics(ins);
 console.log(JSON.stringify(result, undefined , "\t"));
