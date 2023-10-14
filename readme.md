@@ -559,6 +559,7 @@ subService
     * 静态方法 {defaultConfig, classConfig, methodConfig, propertyConfig, fieldConfig }
 - [ ] 统计
 - [ ] dataStore存储关系图
+- [ ] 下移mergeConfig,在调用中合并config，然后再发http请求，解决访问私有变量|属性？？？
 - [ ] 服务请求TypeScript提示问题
 - [ ] 编写文档
 - [ ] 编写文章

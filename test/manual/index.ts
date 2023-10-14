@@ -1,9 +1,9 @@
 import {
-    classDecorator, methodDecorator, setConfig, paramsDecorator, fieldDecorator, enableLog
+    classDecorator, methodDecorator, setConfig, paramsDecorator, fieldDecorator, enableLog, getStatistics
 } from "../../src";
 import { ApiResponse, RequestConfig } from "../../src/types";
 
-enableLog();
+// enableLog();
 setConfig({
     headers: {
         token: "token",
@@ -78,19 +78,19 @@ const serviceA = new DemoService();
 //     });
 
 const subService = new SubDemoService();
-subService
-    .getBingIndex(
-        { since: "monthly" },
-        {
-            headers: { a: 1 },
-        }
-    )
-    .then((res) => {
-        console.log("res subService getBingIndex:", res.length);
-    })
-    .catch((err) => {
-        console.log("res subService getBingIndex error:", err);
-    });
+// subService
+//     .getBingIndex(
+//         { since: "monthly" },
+//         {
+//             headers: { a: 1 },
+//         }
+//     )
+//     .then((res) => {
+//         console.log("res subService getBingIndex:", res.length);
+//     })
+//     .catch((err) => {
+//         console.log("res subService getBingIndex error:", err);
+//     });
 
 // subService
 //     .getIndex(
@@ -105,3 +105,6 @@ subService
 //     .catch((err) => {
 //         console.log("res subService getIndex  error:", err);
 //     });
+
+
+console.log(JSON.stringify(getStatistics(), undefined, "\t"));
