@@ -14,7 +14,7 @@ import {
     CreateDecoratorOptions,
     RequestConfig,
     RequestInstance,
-    ServiceRootConfig
+    ServiceRootConfig,
 } from "./types";
 import {
     createDefaultRequestInstance,
@@ -22,6 +22,9 @@ import {
     isAsyncFunction,
     isFunction,
 } from "./util";
+
+import Statistics from "./dataStore/statistics";
+
 /**
  * 更新配置
  * @param options
@@ -52,6 +55,7 @@ function createRequestInstance(config: ServiceRootConfig) {
  */
 export default function createInstance(config: ServiceRootConfig = {}) {
     const dataStore = new DataStore();
+    const statistics = new Statistics(dataStore.storeMap);
 
     let requestIns: RequestInstance | undefined = createRequestInstance(config);
 
@@ -143,13 +147,19 @@ export default function createInstance(config: ServiceRootConfig = {}) {
         getMethodConfig(classOrInstance: Object | Function, method: Function) {
             const oriFun = getProperty(method, SYMBOL_ORIGIN_FUNCTION);
             if (!oriFun) {
-                return {}
+                return {};
             }
-            const mountConfig = dataStore.getMountConfigs(classOrInstance, oriFun);
+            const mountConfig = dataStore.getMountConfigs(
+                classOrInstance,
+                oriFun
+            );
             return {
                 ...mountConfig,
-                defaultConfig: options.defaults
-            }
-        }
+                defaultConfig: options.defaults,
+            };
+        },
+        getStatistics(classOrInstance?: Object | Function | null | undefined) {
+            return statistics.getStatistics(classOrInstance);
+        },
     };
 }
