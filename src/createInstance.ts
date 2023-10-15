@@ -17,7 +17,7 @@ import {
     ServiceRootConfig,
 } from "./types";
 import {
-    createDefaultRequestInstance,
+    createRequestInstance,
     getProperty,
     isAsyncFunction,
     isFunction,
@@ -38,7 +38,7 @@ function innerSetConfig(
     options.defaults = merge([oldConfig, config]);
 }
 
-function createRequestInstance(config: ServiceRootConfig) {
+function initRequestInstance(config: ServiceRootConfig) {
     if (isFunction(config.request) || isAsyncFunction(config.request)) {
         return config.request;
     }
@@ -57,16 +57,16 @@ export default function createInstance(config: ServiceRootConfig = {}) {
     const dataStore = new DataStore();
     const statistics = new Statistics(dataStore.storeMap);
 
-    let requestIns: RequestInstance | undefined = createRequestInstance(config);
+    let requestInstance: RequestInstance | undefined = initRequestInstance(config);
 
     const options: CreateDecoratorOptions = {
         dataStore,
         defaults: config.defaults || {},
         get request() {
-            if (requestIns == undefined) {
-                requestIns = createDefaultRequestInstance();
+            if (requestInstance == undefined) {
+                requestInstance = createRequestInstance(options.defaults);
             }
-            return requestIns;
+            return requestInstance;
         },
         get logger() {
             return config.enableLog
@@ -116,8 +116,18 @@ export default function createInstance(config: ServiceRootConfig = {}) {
          * 设置request实例
          * @param request
          */
-        setRequestInstance(requestInstance: RequestInstance) {
-            requestIns = requestInstance;
+        setRequestInstance(
+            create: (options: {
+                createRequestInstance: typeof createRequestInstance;
+                defaults: RequestConfig,
+                instance?: RequestInstance
+            }) => RequestInstance
+        ) {
+            requestInstance = create({
+                createRequestInstance, 
+                defaults: options.defaults, 
+                instance: requestInstance
+            })
         },
         /**
          * 自定义装饰器

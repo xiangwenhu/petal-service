@@ -80,7 +80,7 @@ export interface CreateDecoratorOptions {
     /**
      * 默认配置
      */
-    defaults?: RequestConfig;
+    defaults: RequestConfig;
     /**
      * 请求方法
      * @param config RequestConfig

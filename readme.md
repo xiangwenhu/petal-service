@@ -586,6 +586,7 @@ subService
     * 实例方法 {defaultConfig, classConfig, methodConfig, propertyConfig, fieldConfig}
     * 静态方法 {defaultConfig, classConfig, methodConfig, propertyConfig, fieldConfig }
 - [x] 统计
+- [x] setRequestInstance参数修改为函数，传入内置的创建实例的函数，配置，实例等
 - [ ] dataStore存储关系图
 - [ ] 下移mergeConfig,在调用中合并config，然后再发http请求，解决访问私有变量|属性？？？
 - [ ] 服务请求TypeScript提示问题

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { RequestConfig } from "../types";
 
 const toString = Object.prototype.toString;
 const hasOwnProp = Object.prototype.hasOwnProperty;
@@ -50,8 +51,8 @@ export function hasOwnProperty(obj: any, propertyName: PropertyKey) {
     return hasOwnProp.call(obj, propertyName);
 }
 
-export function createDefaultRequestInstance() {
-    return axios.create();
+export function createRequestInstance(config: RequestConfig) {
+    return axios.create(config);
 }
 
 export function cloneJSON<T>(obj: any, defaultValue: any = {}) {
