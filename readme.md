@@ -122,6 +122,34 @@ getIndex config: {
   defaultConfig: {}
 }
 ```
+- 支持统计
+```typescript
+const ins = new DemoService();
+const result = getStatistics(ins);
+console.log(JSON.stringify(result, undefined , "\t"));
+
+//输出
+{
+	"instanceMethods": {
+		"count": 1,
+		"methods": [
+			{
+				"name": "getIndex",
+				"class": "DemoService"
+			}
+		]
+	},
+	"staticMethods": {
+		"count": 1,
+		"methods": [
+			{
+				"name": "getStaticIndex",
+				"class": "DemoService"
+			}
+		]
+	}
+}
+```
 - 支持npm安装
 ```
 npm install petal-service
@@ -557,7 +585,7 @@ subService
 - [x] 查询方法的各个配置, 入参 class|instance, method
     * 实例方法 {defaultConfig, classConfig, methodConfig, propertyConfig, fieldConfig}
     * 静态方法 {defaultConfig, classConfig, methodConfig, propertyConfig, fieldConfig }
-- [ ] 统计
+- [x] 统计
 - [ ] dataStore存储关系图
 - [ ] 下移mergeConfig,在调用中合并config，然后再发http请求，解决访问私有变量|属性？？？
 - [ ] 服务请求TypeScript提示问题

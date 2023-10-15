@@ -1,6 +1,5 @@
-import { isObject } from "lodash";
-import { RequestConfig, StorageMap, StorageMapValue } from "../types";
-import { cloneJSON, hasOwnProperty, isFunction } from "../util";
+import { StorageMap, StorageMapValue } from "../types";
+import { cloneJSON, isFunction, isObject } from "../util";
 
 interface DMethodInfo {
     name: string;
@@ -40,8 +39,10 @@ export default class Statistics {
         // TODO::
         if (
             isObject(classOrInstance) &&
+            // @ts-ignore
             isFunction(classOrInstance.constructor)
         ) {
+             // @ts-ignore
             return this.countSingleClass(classOrInstance.constructor);
         }
         if (classOrInstance === null || classOrInstance === undefined) {
