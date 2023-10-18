@@ -8,7 +8,7 @@ import { ApiResponse, RequestConfig } from "../../src/types";
 
 enableLog();
 /**
- * 通过filed自定义headers
+ * 通过field自定义headers
  */
 const headersDecorator = createDecorator(({ dataStore }) => {
     return function (target: any, context: ClassFieldDecoratorContext<Function>) {

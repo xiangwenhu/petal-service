@@ -24,12 +24,14 @@ class DemoService<R> extends BaseService<R>{
         url: "",
     })
     @paramsDecorator({ hasParams: true })
-    static async getIndex(
+    static getIndex(
         this: DemoService<string>,
         _params: any,
         _config: RequestConfig,
-    ) {
+    ): Promise<string>
+     {
         // 不写任何返回， 默认会返回 this.res.data
+        // @ts-ignore
         return this.res.data
     }
 

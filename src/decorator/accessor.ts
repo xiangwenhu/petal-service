@@ -47,7 +47,7 @@ function innerAccessorDecorator(
         init(initialValue) {
             const instance = this;
             const _class_ = this.constructor;
-            logger.log(`innerAccessorDecorator class:${_class_.name}, filed:${String(
+            logger.log(`innerAccessorDecorator class:${_class_.name}, field:${String(
                 context.name
             )}`);
             dataStore.updateFieldConfig(_class_, instance, {
@@ -74,7 +74,7 @@ function innerStaticAccessorDecorator(
         },
         init(initialValue) {
             const _class_ = this;
-            logger.log(`innerStaticAccessorDecorator class:${_class_.name}, filed:${String(
+            logger.log(`innerStaticAccessorDecorator class:${_class_.name}, field:${String(
                 context.name
             )}`);
             dataStore.updateStaticFieldConfig(_class_, undefined, {

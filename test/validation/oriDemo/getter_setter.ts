@@ -18,7 +18,7 @@ function getterDecorator(field: string) {
             }
 
             console.log(
-                "staticFiledDecorator addInitializer here",
+                "staticFieldDecorator addInitializer here",
                 context,
                 target
             );

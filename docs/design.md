@@ -81,7 +81,7 @@ src
     decorator
         accessor.ts   装饰 accessor
         class.ts      装饰 class，存入默认配置
-        filed.ts      装饰 class 的属性， 进行属性映射
+        field.ts      装饰 class 的属性， 进行属性映射
         getter.ts     装饰 class getter
         method.ts     装饰 class 的方法，这里是核心，装饰器会更改方法，合并配置，最终发送网络请求。
         util.ts       辅助方法

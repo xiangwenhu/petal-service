@@ -65,7 +65,7 @@ DemoService
 输出
 ```shell
 innerStaticMethodDecorator class:DemoService, method:getIndex
-innerFieldDecorator class:DemoService, filed:timeoutValue
+innerFieldDecorator class:DemoService, field:timeoutValue
 Function getIndex final config: {
   timeout: 5000,
   responseType: 'json',

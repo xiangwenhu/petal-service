@@ -45,7 +45,7 @@ function innerGetterDecorator(
         const instance = this;
         const _class_ = instance.constructor;
         logger.log(
-            `innerGetterDecorator class:${_class_.name}, filed:${String(
+            `innerGetterDecorator class:${_class_.name}, field:${String(
                 context.name
             )}`
         );
@@ -68,7 +68,7 @@ function innerStaticGetterDecorator(
         // context: demo {"kind":"field","name":"age","static":true,"private":false,"access":{}}
         const _class_ = this;
         logger.log(
-            `innerStaticGetterDecorator class:${_class_.name}, filed:${String(
+            `innerStaticGetterDecorator class:${_class_.name}, field:${String(
                 context.name
             )}`
         );

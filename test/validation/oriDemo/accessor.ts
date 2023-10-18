@@ -11,7 +11,7 @@ function accessorDecorator(field: string) {
         //     // target： {get: ƒ, set: ƒ}
         //     // context: {"kind":"accessor","name":"headers","static":true,"private":false,"access":{has: ƒ, get: ƒ, set: ƒ}}
         //     console.log(
-        //         "staticFiledDecorator addInitializer here",
+        //         "staticFieldDecorator addInitializer here",
         //         context,
         //         target
         //     );
@@ -36,7 +36,7 @@ function accessorDecorator(field: string) {
                 target.set.call(this, value);
             },
             init(initialValue) {
-                console.log(`filed:${field}, initialValue:`, initialValue);
+                console.log(`field:${field}, initialValue:`, initialValue);
                 return initialValue
             },
         };

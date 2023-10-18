@@ -115,7 +115,7 @@ export default class DataStore {
             mountConfigs.classConfig,
             // 实例 config 属性的值
             mountConfigs.propertyConfig,
-            // class filed map后组成的config
+            // class field map后组成的config
             mountConfigs.fieldConfig,
             // method 上的config
             mountConfigs.methodConfig.config || {}

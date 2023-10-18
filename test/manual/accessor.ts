@@ -8,11 +8,14 @@ class DemoService<R = any> extends BaseService<R>{
         url: "https://baidu.com"
     })
     async getIndex(this: DemoService<string>): Promise<string> {
+        console.log("this.something:", this.#someThing);
         return this.res.data;
     }
 
     @accessorDecorator()
     accessor timeout: number = 15 * 1000;
+
+    #someThing = "someThings";
 
 }
 

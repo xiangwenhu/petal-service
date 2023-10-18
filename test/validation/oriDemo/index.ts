@@ -1,4 +1,4 @@
-function staticFiledDecorator(
+function staticfieldDecorator(
     target: any,
     context: ClassFieldDecoratorContext
 ) {
@@ -7,13 +7,13 @@ function staticFiledDecorator(
         // target： undefined
         // context: {"kind":"field","name":"age","static":true,"private":false,"access":{}}
         console.log(
-            "staticFiledDecorator addInitializer here",
+            "staticFieldDecorator addInitializer here",
             context,
             target
         );
     });
 }
-function instanceFiledDecorator(
+function instancefieldDecorator(
     target: any,
     context: ClassFieldDecoratorContext
 ) {
@@ -22,7 +22,7 @@ function instanceFiledDecorator(
         // target undefined
         // {"kind":"field","name":"name","static":false,"private":false,"access":{}}
         console.log(
-            "instanceFiledDecorator addInitializer here",
+            "instancefieldDecorator addInitializer here",
             context,
             target
         );
@@ -73,7 +73,7 @@ function instanceMethodDecorator(
 
 @classDecorator
 class Person {
-    @staticFiledDecorator
+    @staticfieldDecorator
     static age: number = 23;
     @staticMethodDecorator
     static run() {
@@ -83,7 +83,7 @@ class Person {
         console.log("constructor");
         this.name = name;
     }
-    @instanceFiledDecorator
+    @instancefieldDecorator
     name: string = "Forest";
     @instanceMethodDecorator
     eat() {
@@ -93,8 +93,8 @@ class Person {
 const p = new Person("Ray");
 // 最终的输出
 // staticMethodDecorator addInitializer here [Function: run]
-// staticFiledDecorator addInitializer here undefined
+// staticfieldDecorator addInitializer here undefined
 // classDecorator addInitializer here [class Person] { age: 23 }
 // instanceMethod addInitializer here [Function: eat]
-// instanceFiledDecorator addInitializer here undefined
+// instancefieldDecorator addInitializer here undefined
 // constructor

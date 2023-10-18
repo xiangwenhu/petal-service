@@ -43,7 +43,7 @@ function innerFieldDecorator(
         const instance = this;
         const _class_ = instance.constructor;
         logger.log(
-            `innerFieldDecorator class:${_class_.name}, filed:${String(
+            `innerFieldDecorator class:${_class_.name}, field:${String(
                 context.name
             )}`
         );
@@ -66,7 +66,7 @@ function innerStaticFieldDecorator(
         // context: demo {"kind":"field","name":"age","static":true,"private":false,"access":{}}
         const _class_ = this;
         logger.log(
-            `innerFieldDecorator class:${_class_.name}, filed:${String(
+            `innerFieldDecorator class:${_class_.name}, field:${String(
                 context.name
             )}`
         );
