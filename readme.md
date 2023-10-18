@@ -166,7 +166,9 @@ npm install petal-service
 * [accessor](https://github.com/xiangwenhu/petal-service-test/tree/main/test/accessor.ts)
 * [静态accessor](https://github.com/xiangwenhu/petal-service-test/tree/main/test/accessor-static.ts)
 * [查询方法的config](https://github.com/xiangwenhu/petal-service-test/tree/main/test/getMethodConfig.ts)
-
+* [方法统计](https://github.com/xiangwenhu/petal-service-test/tree/main/test/staticConfig.ts)
+* [使用全局暴露的实例方法执行方法统计](https://github.com/xiangwenhu/petal-service-test/tree/main/test/global-statistics.ts)
+* [装饰非异步方法](https://github.com/xiangwenhu/petal-service-test/tree/main/test/noPromiseMethod.ts)
 
 ## 代码思路和存储
 参见 [design.md](https://github.com/xiangwenhu/petal-service/blob/master/docs/design.md)
