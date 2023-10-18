@@ -25,13 +25,16 @@ export function proxyRequest({
                 return Reflect.get(target, property, receiver);
             },
         });
-        return method.call(proxy).then((resData: any) => {
-            // api method方法里面可以什么都不写，直接返回结果
-            if (resData === undefined) {
-                return res.data;
-            }
-            return resData;
-        });
+        return Promise
+            .resolve()
+            .then(() => method.call(proxy))
+            .then((resData: any) => {
+                // api method方法里面可以什么都不写，直接返回结果
+                if (resData === undefined) {
+                    return res.data;
+                }
+                return resData;
+            });
     });
 }
 
