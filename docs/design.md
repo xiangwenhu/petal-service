@@ -66,11 +66,18 @@ Map {
 }
 ```
 
+## 存储和class的相关属性对应关系
+* config和静态的config是运行时读取的，因为属性值是可以被修改的
+* accessorDecorator,getterDecorator, fieldDecorator 实际上只是保存了属性的映射关系，真正取值是发生到方法被调用的时候，因为属性值是可以被修改的。
+
+![对应关系](./petal-service-design.png)
+
 ## 目录结构和功能说明
 ```
 src
     dataStore
         index.ts      数据存储
+        statistics    统计被装饰的方法基本信息
     decorator
         accessor.ts   装饰 accessor
         class.ts      装饰 class，存入默认配置
