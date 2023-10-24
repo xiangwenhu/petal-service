@@ -4,22 +4,14 @@ import { IDataStore } from "./datastore";
 import Logger from "./logger";
 import { RequestConfig, RequestInstance } from "./request";
 
+export interface StorageMapValue {
+    classConfig?: Partial<StorageMapValue.ConfigValue>;
+    methods?: Map<Function, StorageMapValue.MethodConfigValue>;
+    instances?: Map<Object, StorageMapValue.CommonConfigValue>;
+    staticConfig?: StorageMapValue.CommonConfigValue;
+    staticMethods?: Map<Function, StorageMapValue.MethodConfigValue>;
+}
 
-export type StorageMapValueKey =
-    | "classConfig"
-    | "methods"
-    | "instances"
-    | "staticConfig"
-    | "staticMethods";
-
-export type StorageMapValue = Map<
-    StorageMapValueKey,
-    | StorageMapValue.ConfigValue       // classConfig
-    | StorageMapValue.MethodsMap        // methods staticMethods
-    | StorageMapValue.InstancesMap      // instances
-    | StorageMapValue.CommonConfigValue // staticConfig
-    | StorageMapValue.ProxiesValue      // proxies
->;
 
 export namespace StorageMapValue {
     export type ConfigValue = Partial<RequestConfig>;
@@ -34,14 +26,13 @@ export namespace StorageMapValue {
     }
     export type InstancesMap = Map<Object, CommonConfigValue>;
     export type CommonConfigValue = {
-        config?: ConfigValue,  // 暂时无用
+        config?: ConfigValue; // 暂时无用
         fieldPropertyMap?: FieldPropertyMapValue;
     };
     export type FieldPropertyMapValue = Record<PropertyKey, PropertyKey>;
 
-    export type ProxiesValue = Map<Object | Function, Object | Function>
+    export type ProxiesValue = Map<Object | Function, Object | Function>;
 }
-
 
 export type StorageMap = Map<Function, StorageMapValue>;
 
@@ -90,7 +81,7 @@ export interface CreateDecoratorOptions {
     /**
      * 日志对象
      */
-    get logger(): Logger
+    get logger(): Logger;
 }
 
 export type InnerCreateDecoratorOptions = CreateDecoratorOptions &

@@ -7,7 +7,7 @@
 
 ```typescript
 Map {
-    ["构造函数class"]: Map {
+    ["构造函数class"]: {
         /**
          * class 的请求配置
          * 更新：dataStore.updateClassConfig

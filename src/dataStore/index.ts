@@ -1,4 +1,4 @@
-import { StorageMap, StorageMapValue, StorageMapValueKey } from "../types";
+import { StorageMap, StorageMapValue } from "../types";
 import { Method, RequestConfig } from "../types";
 import {
     getProperty,
@@ -33,16 +33,18 @@ export default class DataStore {
         const isStatic = isFunction(classOrInstance);
 
         const { storeMap } = this;
-        const _class_: Function = isStatic ? classOrInstance as Function : classOrInstance.constructor;
-        const rootConfig: StorageMapValue = storeMap.get(_class_) || new Map();
+        const _class_: Function = isStatic
+            ? (classOrInstance as Function)
+            : classOrInstance.constructor;
+        const rootConfig: StorageMapValue = storeMap.get(_class_) || {};
 
         // 挂载class身上的config
-        const classConfig = rootConfig.get(STORE_KEYS.classConfig) || {};
+        const classConfig = rootConfig.classConfig || {};
 
         // 方法上的config
-        const methodKey: StorageMapValueKey = isStatic ? "staticMethods" :"methods";
         const methodConfig =
-            (rootConfig.get(methodKey) as StorageMapValue.MethodsMap).get(method) || {};
+            ((isStatic ? rootConfig.staticMethods : rootConfig.methods) ||
+            new Map<Function, StorageMapValue.MethodConfigValue>()).get(method);
 
         // 实例或者class config 属性对应着的config
         const propertyConfig = getProperty(classOrInstance, "config", {}) || {};
@@ -50,14 +52,10 @@ export default class DataStore {
         // fieldConfig
         let propertyMap;
         if (isStatic) {
-            const commonConfig = (rootConfig.get(
-                STORE_KEYS.staticConfig
-            ) as StorageMapValue.CommonConfigValue) || {}
+            const commonConfig = rootConfig.staticConfig || {};
             propertyMap = commonConfig.fieldPropertyMap || {};
         } else {
-            const instancesMap: StorageMapValue.InstancesMap =
-                (rootConfig.get(STORE_KEYS.instances) as StorageMapValue.InstancesMap) ||
-                new Map();
+            const instancesMap = rootConfig.instances || new Map<Object, StorageMapValue.CommonConfigValue>();
             // 从示例map中查找示例对应的配置
             const commonConfig: StorageMapValue.CommonConfigValue =
                 instancesMap.get(classOrInstance) || {};
@@ -81,9 +79,8 @@ export default class DataStore {
             classConfig,
             methodConfig,
             propertyConfig,
-            fieldConfig
-        }
-
+            fieldConfig,
+        };
     }
 
     /**
@@ -100,7 +97,11 @@ export default class DataStore {
         defaultConfig: RequestConfig = {},
         argumentsObj: ArrayLike<any>
     ) {
-        if (!isObject(method) && !isFunction(method) && !isAsyncFunction(method)) {
+        if (
+            !isObject(method) &&
+            !isFunction(method) &&
+            !isAsyncFunction(method)
+        ) {
             throw new Error(
                 "methodFunction must be a/an Object|Function|AsyncFunction"
             );
@@ -118,13 +119,16 @@ export default class DataStore {
             // class field map后组成的config
             mountConfigs.fieldConfig,
             // method 上的config
-            mountConfigs.methodConfig.config || {}
+            mountConfigs.methodConfig.config || {},
         ]);
 
-        mConfig = this.adjustConfig(mConfig, argumentsObj, mountConfigs.methodConfig);
+        mConfig = this.adjustConfig(
+            mConfig,
+            argumentsObj,
+            mountConfigs.methodConfig
+        );
         return mConfig;
     }
-
 
     /**
      * 根据调用method的值，获取调用的默认参数
@@ -164,7 +168,9 @@ export default class DataStore {
         let { config, ...userOptions }: StorageMapValue.MethodConfigValue =
             methodConfig;
 
-        const defaultOptions = this.getDefaultParamsOptions(mergedConfig.method as Method);
+        const defaultOptions = this.getDefaultParamsOptions(
+            mergedConfig.method as Method
+        );
         const {
             hasBody,
             hasConfig: hasExtraConfig,
@@ -203,7 +209,10 @@ export default class DataStore {
         if (argLength > 0 && hasExtraConfig) {
             expectedLength++;
             if (argLength >= expectedLength) {
-                mergedConfig = merge([mergedConfig, argumentsObj[expectedLength - 1]]);
+                mergedConfig = merge([
+                    mergedConfig,
+                    argumentsObj[expectedLength - 1],
+                ]);
             }
         }
         return mergedConfig;
@@ -234,7 +243,10 @@ export default class DataStore {
         let commonConfig: StorageMapValue.CommonConfigValue =
             instances.get(instance!) || {};
 
-        commonConfig.fieldPropertyMap = merge([commonConfig.fieldPropertyMap || {}, config]);
+        commonConfig.fieldPropertyMap = merge([
+            commonConfig.fieldPropertyMap || {},
+            config,
+        ]);
         instances.set(instance!, commonConfig);
         storeMap.set(_class_, val);
     }
@@ -255,9 +267,13 @@ export default class DataStore {
 
         const val: StorageMapValue = storeMap.get(_class_) || new Map();
         let commonConfig: StorageMapValue.CommonConfigValue =
-            val.get(staticConfigKey) as StorageMapValue.CommonConfigValue || {};
+            (val.get(staticConfigKey) as StorageMapValue.CommonConfigValue) ||
+            {};
 
-        commonConfig.fieldPropertyMap = merge([commonConfig.fieldPropertyMap || {}, mapConfig]);
+        commonConfig.fieldPropertyMap = merge([
+            commonConfig.fieldPropertyMap || {},
+            mapConfig,
+        ]);
         val.set(staticConfigKey, commonConfig);
         storeMap.set(_class_, val);
     }
@@ -317,7 +333,6 @@ export default class DataStore {
         storeMap.set(_class_, val);
     }
 
-
     /**
      * 更新class的请求配置
      * @param _class_
@@ -329,5 +344,4 @@ export default class DataStore {
         val.set(STORE_KEYS.classConfig, config);
         storeMap.set(_class_, val);
     }
-
 }
