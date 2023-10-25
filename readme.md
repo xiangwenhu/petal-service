@@ -1,7 +1,11 @@
 ## 环境要求
 * 支持 Map, Proxy, Reflect
 * 支持装饰器新语法, 详情参见：[proposal-decorators](https://github.com/tc39/proposal-decorators)
+* 如果使用TypeScript, TypeScript 5.0以上并且不设置experimentalDecorators。5.0的修饰器标准跟之前的修饰器是不兼容的。旧版的 --experimentalDecorators 选项将会仍然保留，如果启用此配置，则仍然会将装饰器视为旧版，新版的装饰器无需任何配置就能够默认启用。
 * 支持装饰器新语法: accessor
+
+简单就是 E6+ `+` typescript 5.0 +
+
 ```typescript
 // 语法示例
 type Decorator = (value: Input, context: {
