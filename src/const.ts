@@ -1,4 +1,4 @@
-import { StorageMapValue, StorageMapValueKey } from "./types";
+import { StorageMapValue } from "./types";
 import { Method, RequestConfig } from "./types/request";
 
 export const DEFAULT_CONFIG: RequestConfig = {
@@ -8,13 +8,6 @@ export const DEFAULT_CONFIG: RequestConfig = {
 
 export const storeMap = new Map<Function, StorageMapValue>();
 
-export const STORE_KEYS: Record<StorageMapValueKey, StorageMapValueKey> = {
-    "classConfig": "classConfig",
-    "instances": "instances",
-    "methods": "methods",
-    "staticConfig": "staticConfig",
-    "staticMethods": "staticMethods",
-}
 
 export const NOT_USE_BODY_METHODS: Method[] = ["get", "head", "GET", "HEAD"];
 

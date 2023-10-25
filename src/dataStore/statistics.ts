@@ -28,9 +28,9 @@ const EMPTY_RESULT: StatisticsResult = {
 };
 
 export default class Statistics {
-    constructor(public storeMap: StorageMap) {}
+    constructor(public storeMap: StorageMap) { }
 
-    getStatistics (
+    getStatistics(
         classOrInstance: Function | Object | undefined | null = undefined
     ): StatisticsResult {
         if (isFunction(classOrInstance)) {
@@ -42,7 +42,7 @@ export default class Statistics {
             // @ts-ignore
             isFunction(classOrInstance.constructor)
         ) {
-             // @ts-ignore
+            // @ts-ignore
             return this.countSingleClass(classOrInstance.constructor);
         }
         if (classOrInstance === null || classOrInstance === undefined) {
@@ -76,19 +76,15 @@ export default class Statistics {
     }
 
     private countSingleClass(_class_: Function): StatisticsResult {
-        const sv = this.storeMap.get(_class_);
-        if (!sv) {
+        const rootConfig = this.storeMap.get(_class_);
+        if (!rootConfig) {
             return cloneJSON(EMPTY_RESULT);
         }
-        const methodsMap: StorageMapValue.MethodsMap = (sv.get("methods") ||
-            new Map()) as StorageMapValue.MethodsMap;
-        const staticMethodsMap: StorageMapValue.MethodsMap = (sv.get(
-            "staticMethods"
-        ) || new Map()) as StorageMapValue.MethodsMap;
+        const methodsMap: StorageMapValue.MethodsMap = rootConfig.methods || new Map<Function, StorageMapValue.MethodConfigValue>;
+        const staticMethodsMap: StorageMapValue.MethodsMap = rootConfig.staticMethods || new Map<Function, StorageMapValue.MethodConfigValue>();
 
         const methods = Array.from(methodsMap.keys());
         const staticMethods = Array.from(staticMethodsMap.keys());
-
         return {
             instanceMethods: this.countMethods(_class_, methods),
             staticMethods: this.countMethods(_class_, staticMethods),

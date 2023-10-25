@@ -1,15 +1,13 @@
-import { StorageMap, StorageMapValue } from "../types";
-import { Method, RequestConfig } from "../types";
+import { NOT_USE_BODY_METHODS } from "../const";
+import { merge } from "../lib/merge";
+import { Method, RequestConfig, StorageMap, StorageMapValue } from "../types";
 import {
     getProperty,
-    getOwnProperty,
     isAsyncFunction,
     isFunction,
-    isObject,
+    isObject
 } from "../util";
 import { hasPathParams, pathToUrl } from "../util/path";
-import { NOT_USE_BODY_METHODS, STORE_KEYS } from "../const";
-import { merge } from "../lib/merge";
 
 function shouldUseBody(method: Method) {
     if (method == null) {
@@ -44,7 +42,7 @@ export default class DataStore {
         // 方法上的config
         const methodConfig =
             ((isStatic ? rootConfig.staticMethods : rootConfig.methods) ||
-            new Map<Function, StorageMapValue.MethodConfigValue>()).get(method);
+                new Map<Function, StorageMapValue.MethodConfigValue>()).get(method) || {};
 
         // 实例或者class config 属性对应着的config
         const propertyConfig = getProperty(classOrInstance, "config", {}) || {};
@@ -230,15 +228,12 @@ export default class DataStore {
         config: Record<PropertyKey, PropertyKey>
     ) {
         const { storeMap } = this;
-        const instancesKey = STORE_KEYS.instances;
 
-        const val: StorageMapValue = storeMap.get(_class_) || new Map();
-        let instances: StorageMapValue.InstancesMap = val.get(
-            instancesKey
-        ) as StorageMapValue.InstancesMap;
+        const rootConfig: StorageMapValue | undefined = storeMap.get(_class_) || {};
+        let instances: StorageMapValue.InstancesMap | undefined = rootConfig.instances;
         if (!instances) {
-            instances = new Map();
-            val.set(instancesKey, instances);
+            instances = new Map<Object, StorageMapValue.CommonConfigValue>();
+            rootConfig.instances = instances;
         }
         let commonConfig: StorageMapValue.CommonConfigValue =
             instances.get(instance!) || {};
@@ -248,7 +243,7 @@ export default class DataStore {
             config,
         ]);
         instances.set(instance!, commonConfig);
-        storeMap.set(_class_, val);
+        storeMap.set(_class_, rootConfig);
     }
 
     /**
@@ -263,19 +258,17 @@ export default class DataStore {
         mapConfig: Record<PropertyKey, PropertyKey>
     ) {
         const { storeMap } = this;
-        const staticConfigKey = STORE_KEYS.staticConfig;
 
-        const val: StorageMapValue = storeMap.get(_class_) || new Map();
-        let commonConfig: StorageMapValue.CommonConfigValue =
-            (val.get(staticConfigKey) as StorageMapValue.CommonConfigValue) ||
+        const rootConfig: StorageMapValue = storeMap.get(_class_) || {};
+        let commonConfig: StorageMapValue.CommonConfigValue = rootConfig.staticConfig ||
             {};
 
         commonConfig.fieldPropertyMap = merge([
             commonConfig.fieldPropertyMap || {},
             mapConfig,
         ]);
-        val.set(staticConfigKey, commonConfig);
-        storeMap.set(_class_, val);
+        rootConfig.staticConfig = commonConfig;
+        storeMap.set(_class_, rootConfig);
     }
 
     /**
@@ -318,16 +311,13 @@ export default class DataStore {
         key: "methods" | "staticMethods"
     ) {
         const { storeMap } = this;
-        const val: StorageMapValue = storeMap.get(_class_) || new Map();
-        let methodsMapValue: StorageMapValue.MethodsMap = val.get(
-            key
-        ) as StorageMapValue.MethodsMap;
+        const val: StorageMapValue = storeMap.get(_class_) || {};
+        let methodsMapValue: StorageMapValue.MethodsMap | undefined = val[key];
         if (!methodsMapValue) {
             methodsMapValue = new Map();
-            val.set(key, methodsMapValue);
+            val[key] = methodsMapValue;
         }
-        let oldConfig: StorageMapValue.MethodConfigValue =
-            methodsMapValue.get(method) || {};
+        let oldConfig: StorageMapValue.MethodConfigValue = methodsMapValue.get(method) || {};
         oldConfig = merge([oldConfig, config]);
         methodsMapValue.set(method, oldConfig);
         storeMap.set(_class_, val);
@@ -340,8 +330,8 @@ export default class DataStore {
      */
     updateClassConfig(_class_: Function, config: StorageMapValue.ConfigValue) {
         const { storeMap } = this;
-        const val: StorageMapValue = storeMap.get(_class_) || new Map();
-        val.set(STORE_KEYS.classConfig, config);
+        const val: StorageMapValue = storeMap.get(_class_) || {};
+        val.classConfig = config;
         storeMap.set(_class_, val);
     }
 }

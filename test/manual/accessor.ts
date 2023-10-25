@@ -8,7 +8,7 @@ class DemoService<R = any> extends BaseService<R>{
         url: "https://baidu.com"
     })
     async getIndex(this: DemoService<string>): Promise<string> {
-        console.log("this.something:", this.#someThing);
+        // console.log("this.something:", this.#someThing);
         return this.res.data;
     }
 
