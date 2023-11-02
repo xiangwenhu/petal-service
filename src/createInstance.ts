@@ -157,7 +157,7 @@ export default function createInstance(config: ServiceRootConfig = {}) {
         getMethodConfig(classOrInstance: Object | Function, method: Function) {
             const oriFun = getProperty(method, SYMBOL_ORIGIN_FUNCTION);
             if (!oriFun) {
-                return {};
+                throw new Error(`方法 ${method.name} 不是通过petal-service注册的方法`);
             }
             const mountConfig = dataStore.getMountConfigs(
                 classOrInstance,
