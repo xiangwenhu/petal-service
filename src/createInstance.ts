@@ -170,6 +170,6 @@ export default function createInstance(config: ServiceRootConfig = {}) {
         },
         getStatistics(classOrInstance?: Object | Function | null | undefined) {
             return statistics.getStatistics(classOrInstance);
-        },
+        }
     };
 }
