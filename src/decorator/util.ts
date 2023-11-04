@@ -16,17 +16,26 @@ export function proxyRequest({
     logger: Logger;
 }) {
     const { simulated } = config;
+    let promiseRes: Promise<any>;
     if (simulated === true) {
-        return Promise.resolve().then(() => {
+        promiseRes = Promise.resolve().then(() => {
             logger.log(
                 `${config.url} request is simulated, final merged config is:`,
                 config
             );
-            return config;
-        });
+            return {
+                config,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                data: config,
+            };
+        })
+    } else {
+        promiseRes = request!(config as any);
     }
 
-    return request!(config as any).then((res) => {
+    return promiseRes.then((res) => {
         // 代理 classInstance, 即方法实例
         const proxy = new Proxy(proxyObject, {
             get: function (target, property, receiver) {

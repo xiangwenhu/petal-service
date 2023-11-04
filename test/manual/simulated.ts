@@ -46,8 +46,8 @@ serviceA
         },
     )
     .then((res) => {
-        console.log("final config", res);
+        console.log("final res", res);
     })
     .catch((err) => {
-        console.log("final config", err);
+        console.log("final res", err);
     });
