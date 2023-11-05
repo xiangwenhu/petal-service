@@ -1,6 +1,11 @@
+import { AxiosRequestConfig } from "axios";
+
+export interface RequestConfig<D = any> extends AxiosRequestConfig<D>{
+    simulated?: boolean;
+}
+
 export {
-    AxiosRequestConfig as RequestConfig,
     AxiosResponse as ApiResponse,
     AxiosInstance as RequestInstance,
-    Method
-} from "axios"
+    Method,
+} from "axios";
