@@ -220,9 +220,12 @@ npm install petal-service
 - [x] setRequestInstance参数修改为函数，传入内置的创建实例的函数，配置，实例等
 - [x] dataStore存储关系图
 - [x] 调整存储结构
-- [ ] 支持模拟参数，获取最后请求参数
+- [x] 支持模拟参数，获取最后请求参数
+- [ ] 支持cache?, 参考[make-fetch-happen](https://github.com/npm/make-fetch-happen/tree/main/lib/cache)
+- [ ] 支持mock? 参见 [axios-mock-adapter](https://www.npmjs.com/package/axios-mock-adapter)
 - [ ] 下移mergeConfig,在调用中合并config，然后再发http请求，解决访问私有变量|属性？？？
 - [ ] 服务请求TypeScript提示问题
 - [ ] 编写文档
 - [ ] 编写文章
-- [ ] yapi 和 swagger 转 service
+- [ ] yapi 和 swagger 转 service,参见 [yapi-to-petal-service](https://github.com/xiangwenhu/yapi-to-petal-service) 和 [swagger-to-petal-service](https://github.com/xiangwenhu/swagger-to-petal-service)
+- [ ] node-fetch 版本？
