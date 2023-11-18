@@ -1,7 +1,8 @@
 ## 发布检查
-1. npm pack 
+1. npm run build
+2. npm pack 
     检查文件
-2. npm publish 
+3. npm publish 
     发布
 
 ## 取消发布

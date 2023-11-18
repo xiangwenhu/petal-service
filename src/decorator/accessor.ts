@@ -35,7 +35,7 @@ function innerAccessorDecorator(
     target: ClassAccessorDecoratorTarget<any, any>,
     context: ClassAccessorDecoratorContext<any, any>,
     field: keyof RequestConfig,
-    { dataStore, logger }: CreateDecoratorOptions
+    creatorOptions: CreateDecoratorOptions
 ) {
     const result: ClassAccessorDecoratorResult<any, any> = {
         get(this) {
@@ -45,6 +45,7 @@ function innerAccessorDecorator(
             target.set.call(this, value);
         },
         init(initialValue) {
+            const { dataStore, logger } = creatorOptions;
             const instance = this;
             const _class_ = this.constructor;
             logger.log(`innerAccessorDecorator class:${_class_.name}, field:${String(
@@ -63,7 +64,7 @@ function innerStaticAccessorDecorator(
     target: ClassAccessorDecoratorTarget<any, any>,
     context: ClassAccessorDecoratorContext<any, any>,
     field: keyof RequestConfig,
-    { dataStore, logger }: CreateDecoratorOptions
+    creatorOptions: CreateDecoratorOptions
 ) {
     const result: ClassAccessorDecoratorResult<any, any> = {
         get(this) {
@@ -73,6 +74,8 @@ function innerStaticAccessorDecorator(
             target.set.call(this, value);
         },
         init(initialValue) {
+            const { dataStore, logger } = creatorOptions;
+
             const _class_ = this;
             logger.log(`innerStaticAccessorDecorator class:${_class_.name}, field:${String(
                 context.name
