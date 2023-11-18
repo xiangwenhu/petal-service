@@ -31,10 +31,11 @@ function innerMethodDecorator(
     method: Function,
     context: ClassMethodDecoratorContext<any>,
     config: RequestConfig,
-    { defaults, dataStore, request, logger }: CreateDecoratorOptions
+    creatorOptions: CreateDecoratorOptions
 ) {
     let classInstance: Function;
     context.addInitializer(function () {
+        const { dataStore, logger } = creatorOptions;
         // this: class instance
         // target: method
         // context: demo {"kind":"method","name":"eat","static":false,"private":false,"access":{}}
@@ -61,6 +62,8 @@ function innerMethodDecorator(
     });
 
     function proxyMethod() {
+        const { defaults, dataStore, request, logger } = creatorOptions;
+
         // 读取最终合并后的配置
         const config = dataStore.getMethodMergedConfig(
             classInstance,
@@ -94,10 +97,12 @@ function innerStaticMethodDecorator(
     method: Function,
     context: ClassMethodDecoratorContext<Function>,
     config: RequestConfig,
-    { defaults, dataStore, request, logger }: CreateDecoratorOptions
+    creatorOptions: CreateDecoratorOptions
 ) {
+    
     let _class_: Function;
     context.addInitializer(function () {
+        const { logger, dataStore} = creatorOptions;
         // this: class
         // target: 静态method
         // context: demo: {"kind":"method","name":"run","static":true,"private":false,"access":{}}
@@ -123,6 +128,7 @@ function innerStaticMethodDecorator(
     });
 
     function proxyMethod() {
+        const { logger, dataStore, defaults, request} = creatorOptions;
         // 读取最终合并后的配置
         const config = dataStore.getMethodMergedConfig(
             _class_,
