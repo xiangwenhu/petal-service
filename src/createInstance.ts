@@ -25,18 +25,6 @@ import {
 
 import Statistics from "./dataStore/statistics";
 
-/**
- * 更新配置
- * @param options
- * @param config
- */
-function innerSetConfig(
-    options: CreateDecoratorOptions,
-    config: RequestConfig
-) {
-    const oldConfig = options.defaults || {};
-    options.defaults = merge([oldConfig, config]);
-}
 
 function initRequestInstance(config: ServiceRootConfig) {
     if (isFunction(config.request) || isAsyncFunction(config.request)) {
@@ -59,12 +47,16 @@ export default function createInstance(config: ServiceRootConfig = {}) {
 
     let requestInstance: RequestInstance | undefined = initRequestInstance(config);
 
+    let defaultsValue = config.defaults || {};
+
     const options: CreateDecoratorOptions = {
         dataStore,
-        defaults: config.defaults || {},
+        get defaults() {
+            return defaultsValue
+        },
         get request() {
             if (requestInstance == undefined) {
-                requestInstance = createRequestInstance(options.defaults);
+                requestInstance = createRequestInstance(defaultsValue);
             }
             return requestInstance;
         },
@@ -111,7 +103,9 @@ export default function createInstance(config: ServiceRootConfig = {}) {
          * @param config
          * @returns
          */
-        setConfig: (config: RequestConfig) => innerSetConfig(options, config),
+        setConfig: (config: RequestConfig) => {
+            defaultsValue = merge([defaultsValue, config || {}])
+        },
         /**
          * 设置request实例
          * @param request
@@ -124,8 +118,8 @@ export default function createInstance(config: ServiceRootConfig = {}) {
             }) => RequestInstance
         ) {
             requestInstance = create({
-                createRequestInstance, 
-                defaults: options.defaults, 
+                createRequestInstance,
+                defaults: options.defaults,
                 instance: requestInstance
             })
         },
