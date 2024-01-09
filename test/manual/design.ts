@@ -1,4 +1,7 @@
-import { accessorDecorator, BaseService, classDecorator, fieldDecorator, getterDecorator, methodDecorator, paramsDecorator, RequestConfig } from "../../src";
+import { accessorDecorator, BaseService, classDecorator, fieldDecorator, getterDecorator, methodDecorator, RequestConfig, enableLog } from "../../src";
+
+
+enableLog();
 
 @classDecorator({baseURL: "https://base.com"})
 class DemoService<R = any> extends BaseService<R>{
@@ -8,7 +11,6 @@ class DemoService<R = any> extends BaseService<R>{
     @methodDecorator({
         url: ""
     })
-    @paramsDecorator({ hasParams: true, hasBody: false, hasConfig: true })
     async getIndex(this: DemoService<string>): Promise<string> {
         return this.res.data;
     }
@@ -44,7 +46,6 @@ class DemoService<R = any> extends BaseService<R>{
     @methodDecorator({
         url: ""
     })
-    @paramsDecorator({ hasParams: true, hasBody: false, hasConfig: true })
     static async getIndex(this: DemoService<string>): Promise<string> {
         return this.res.data;
     }

@@ -1,8 +1,9 @@
 import { NOT_USE_BODY_METHODS } from "../const";
 import { merge } from "../lib/merge";
-import { Method, RequestConfig, StorageMap, StorageMapValue } from "../types";
+import { Method, RequestParams, RequestConfig, StorageMap, StorageMapValue } from "../types";
 import {
     getProperty,
+    hasOwnProperty,
     isAsyncFunction,
     isFunction,
     isObject
@@ -93,7 +94,7 @@ export default class DataStore {
         instanceOrClass: Object,
         method: Function,
         defaultConfig: RequestConfig = {},
-        argumentsObj: ArrayLike<any>
+        argumentsObj: RequestParams<any>
     ) {
         if (
             !isObject(method) &&
@@ -128,27 +129,6 @@ export default class DataStore {
         return mConfig;
     }
 
-    /**
-     * 根据调用method的值，获取调用的默认参数
-     * @param method
-     * @returns
-     */
-    private getDefaultParamsOptions(
-        method: Method
-    ): StorageMapValue.MethodParamsOptions {
-        if (shouldUseBody(method)) {
-            return {
-                hasBody: true,
-                hasConfig: true,
-                hasParams: false,
-            };
-        }
-        return {
-            hasBody: false,
-            hasConfig: true,
-            hasParams: false,
-        };
-    }
 
     /**
      * 根据参数，最后调整参数
@@ -159,24 +139,20 @@ export default class DataStore {
      */
     private adjustConfig(
         mergedConfig: RequestConfig,
-        argumentsObj: ArrayLike<any>,
+        argumentsObj: RequestParams<any>,
         methodConfig: StorageMapValue.MethodConfigValue
     ): RequestConfig<any> {
-        let argLength = argumentsObj.length;
-        let { config, ...userOptions }: StorageMapValue.MethodConfigValue =
-            methodConfig;
 
-        const defaultOptions = this.getDefaultParamsOptions(
-            mergedConfig.method as Method
-        );
         const {
             hasBody,
             hasConfig: hasExtraConfig,
             hasParams,
+            hasPath,
         } = {
-            hasBody: defaultOptions.hasBody || userOptions.hasBody,
-            hasParams: defaultOptions.hasParams || userOptions.hasParams,
-            hasConfig: defaultOptions.hasConfig || userOptions.hasConfig,
+            hasBody: hasOwnProperty(argumentsObj, "data"),
+            hasParams: hasOwnProperty(argumentsObj, "params"),
+            hasConfig: hasOwnProperty(argumentsObj, "config"),
+            hasPath: hasOwnProperty(argumentsObj, "path"),
         };
 
         const isHavePathParams = hasPathParams(mergedConfig.url || "");
@@ -184,34 +160,29 @@ export default class DataStore {
         let expectedLength = 0;
 
         // 有路径参数
-        if (argLength > 0 && isHavePathParams) {
-            expectedLength++;
+        if (hasPath && isHavePathParams) {
             mergedConfig.url = pathToUrl(
                 mergedConfig.url || "",
-                argumentsObj[expectedLength - 1]
+                argumentsObj.path!
             );
         }
         // 有请求参数
-        if (argLength > 0 && hasParams) {
+        if (hasParams) {
             expectedLength++;
-            mergedConfig.params = argumentsObj[expectedLength - 1] || {};
+            mergedConfig.params = argumentsObj.params || {}
         }
-        // TODO: 有body
-        if (argLength > 0 && hasBody) {
-            expectedLength++;
-            if (argLength >= expectedLength) {
-                mergedConfig.data = argumentsObj[expectedLength - 1];
-            }
+
+        if (hasBody) {
+            mergedConfig.data = argumentsObj.data
         }
+
         // 额外的配置Config
-        if (argLength > 0 && hasExtraConfig) {
-            expectedLength++;
-            if (argLength >= expectedLength) {
-                mergedConfig = merge([
-                    mergedConfig,
-                    argumentsObj[expectedLength - 1],
-                ]);
-            }
+        if (hasExtraConfig) {
+            mergedConfig = merge([
+                mergedConfig,
+                argumentsObj.config || {},
+            ]);
+
         }
         return mergedConfig;
     }

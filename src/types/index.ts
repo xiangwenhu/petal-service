@@ -18,12 +18,7 @@ export namespace StorageMapValue {
     export type MethodsMap = Map<Function, MethodConfigValue>;
     export type MethodConfigValue = {
         config?: ConfigValue;
-    } & MethodParamsOptions;
-    export interface MethodParamsOptions {
-        hasParams?: boolean;
-        hasBody?: boolean;
-        hasConfig?: boolean;
-    }
+    };
     export type InstancesMap = Map<Object, CommonConfigValue>;
     export type CommonConfigValue = {
         config?: ConfigValue; // 暂时无用
@@ -87,20 +82,27 @@ export interface CreateDecoratorOptions {
 export type InnerCreateDecoratorOptions = CreateDecoratorOptions &
     ServiceRootConfig;
 
-/**
- * method 参数配置
- */
-export interface ParamsDecoratorOptions {
+
+
+export interface RequestParams<D = any, P
+    = any> {
     /**
-     * 是否有body
+     * path 参数，比如：  /get/:id
      */
-    hasBody?: boolean;
+    path: Record<string, string | number>;
     /**
-     * 是否有参数
+     * query 参数： 比如  get?id=10
      */
-    hasParams?: boolean;
+    params: P;
     /**
-     * 是否有额外的配置选项
+     * 请求
      */
-    hasConfig?: boolean;
+    data: D;
+    /**
+     * 外的配置参数，主要用于设置 headers等
+     */
+    config: Partial<RequestConfig>;
 }
+
+
+

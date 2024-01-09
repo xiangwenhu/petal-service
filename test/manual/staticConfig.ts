@@ -1,10 +1,10 @@
 import {
     ApiResponse,
     RequestConfig,
+    RequestParams,
     enableLog,
     fieldDecorator,
     methodDecorator,
-    paramsDecorator
 } from "../../src";
 
 enableLog(true);
@@ -21,12 +21,8 @@ class DemoService {
         method: "get",
         url: "",
     })
-    @paramsDecorator({
-        hasParams: true
-    })
     static async getIndex(
-        params: any,
-        config: RequestConfig,
+        _params: Pick<RequestParams, "params" | "config">
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         return this.res.data
@@ -43,9 +39,11 @@ class DemoService {
 
 DemoService
     .getIndex(
-        { since: "monthly" },
         {
-            headers: { userId: 1 },
+            params: { since: "monthly" },
+            config: {
+                headers: { userId: 1 },
+            }
         },
     )
     .then((res: any) => {

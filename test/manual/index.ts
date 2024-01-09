@@ -1,7 +1,7 @@
 import {
-    classDecorator, methodDecorator, setConfig, paramsDecorator, fieldDecorator, enableLog, getStatistics
+    classDecorator, methodDecorator, setConfig, fieldDecorator, enableLog, getStatistics
 } from "../../src";
-import { ApiResponse, RequestConfig } from "../../src/types";
+import { ApiResponse, RequestConfig, RequestParams } from "../../src/types";
 
 // enableLog();
 setConfig({
@@ -20,13 +20,9 @@ class DemoService<R = any> {
         method: "get",
         url: "",
     })
-    @paramsDecorator({
-        hasParams: true
-    })
     public async getIndex(
         this: DemoService,
-        _params: any,
-        _config: RequestConfig
+        _params: Pick<RequestParams, "params" | "config">,
     ) {
         return this.res.data;
     }
@@ -46,13 +42,9 @@ class SubDemoService extends DemoService {
         method: "get",
         url: "",
     })
-    @paramsDecorator({
-        hasParams: true,
-    })
     async getBingIndex<R = string>(
         this: SubDemoService,
-        _params: any,
-        _config: RequestConfig
+        _params: Pick<RequestParams, "params" | "config">,
     ): Promise<string> {
         return this.res!.data;
     }
@@ -64,10 +56,11 @@ class SubDemoService extends DemoService {
 const serviceA = new DemoService();
 // serviceA
 //     .getIndex(
-//         { since: "monthly" },
-//         undefined,
 //         {
-//             headers: { userId: 1 },
+//             query: { since: "monthly" },
+//             config: {
+//                 headers: { userId: 1 },
+//             }
 //         }
 //     )
 //     .then((res) => {
@@ -80,9 +73,11 @@ const serviceA = new DemoService();
 const subService = new SubDemoService();
 // subService
 //     .getBingIndex(
-//         { since: "monthly" },
 //         {
-//             headers: { a: 1 },
+//             query: { since: "monthly" },
+//             config: {
+//                 headers: { a: 1 },
+//             }
 //         }
 //     )
 //     .then((res) => {
@@ -92,19 +87,21 @@ const subService = new SubDemoService();
 //         console.log("res subService getBingIndex error:", err);
 //     });
 
-// subService
-//     .getIndex(
-//         { since: "monthly" },
-//         {
-//             headers: { a: 1 },
-//         }
-//     )
-//     .then((res) => {
-//         console.log("res subService getIndex :", res.length);
-//     })
-//     .catch((err) => {
-//         console.log("res subService getIndex  error:", err);
-//     });
+subService
+    .getIndex(
+        {
+            query: { since: "monthly" },
+            config: {
+                headers: { a: 1 },
+            }
+        }
+    )
+    .then((res) => {
+        console.log("res subService getIndex :", res.length);
+    })
+    .catch((err) => {
+        console.log("res subService getIndex  error:", err);
+    });
 
 
 console.log(JSON.stringify(getStatistics(), undefined, "\t"));

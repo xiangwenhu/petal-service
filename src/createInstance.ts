@@ -6,7 +6,6 @@ import { createFieldDecorator } from "./decorator/field";
 import { createGetterDecorator } from "./decorator/getter";
 import {
     createMethodDecorator,
-    createParamsDecorator,
 } from "./decorator/method";
 import { merge } from "./lib/merge";
 import getLogger from "./logger";
@@ -82,10 +81,6 @@ export default function createInstance(config: ServiceRootConfig = {}) {
          * method装饰器
          */
         methodDecorator: createMethodDecorator(options),
-        /**
-         * params装饰器
-         */
-        paramsDecorator: createParamsDecorator(options),
         /**
          * field字段装饰器
          */

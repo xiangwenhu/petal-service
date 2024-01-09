@@ -1,5 +1,5 @@
 import createInstance from "../../src/createInstance"
-import { ApiResponse, RequestConfig } from "../../src/types";
+import { ApiResponse, RequestConfig, RequestParams } from "../../src/types";
 
 const {
     classDecorator,
@@ -40,9 +40,8 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        params: any,
-        config: RequestConfig,
-    ){
+        params: Pick<RequestParams, "params" | "config">,
+    ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
     }
@@ -55,10 +54,12 @@ class DemoService<R = any> {
 const serviceA = new DemoService();
 serviceA
     .getIndex(
-        { since: "monthly" },
         {
-            headers: { userId: 1 },
-        },
+            params: { since: "monthly" },
+            config: {
+                headers: { userId: 1 },
+            }
+        }
     )
     .then((res: any) => {
         console.log("res serviceA getIndex:", res.length);
