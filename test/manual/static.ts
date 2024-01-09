@@ -1,5 +1,5 @@
 import createInstance from "../../src/createInstance"
-import { ApiResponse, RequestConfig } from "../../src/types";
+import { ApiResponse, RequestConfig, RequestParams } from "../../src/types";
 
 const {
     classDecorator, methodDecorator, enableLog, fieldDecorator
@@ -23,8 +23,7 @@ class DemoService {
     })
     static async getCourse(
         this: typeof DemoService,
-        _pathParams: Record<string, string | number>,
-        _config: RequestConfig,
+        _params: Pick<RequestParams, "path" | "config">
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
@@ -38,10 +37,12 @@ class DemoService {
 DemoService
     .getCourse(
         {
-            type: "frontend"
-        },
-        {
-            headers: { userId: 1 },
+            path: {
+                type: "frontend"
+            },
+            config: {
+                headers: { userId: 1 },
+            }
         },
     )
     .then((res) => {

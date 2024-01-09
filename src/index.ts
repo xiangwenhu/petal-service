@@ -13,7 +13,6 @@ export const classDecorator = instance.classDecorator;
 export const createDecorator = instance.createDecorator;
 export const fieldDecorator = instance.fieldDecorator;
 export const methodDecorator = instance.methodDecorator;
-export const paramsDecorator = instance.paramsDecorator;
 export const getterDecorator = instance.getterDecorator;
 export const setConfig = instance.setConfig;
 export const enableLog = instance.enableLog;
@@ -29,7 +28,6 @@ declare global {
         const petalCreateDecorator: typeof instance.createDecorator;
         const petalFieldDecorator: typeof instance.fieldDecorator;
         const petalMethodDecorator: typeof instance.methodDecorator;
-        const petalParamsDecorator: typeof instance.paramsDecorator;
         const petalAccessorDecorator: typeof instance.accessorDecorator;
         const petalGetterDecorator: typeof instance.getterDecorator;
 
@@ -50,7 +48,6 @@ g.petalClassDecorator = instance.classDecorator;
 g.petalCreateDecorator = instance.createDecorator;
 g.petalFieldDecorator = instance.fieldDecorator;
 g.petalMethodDecorator = instance.methodDecorator;
-g.petalParamsDecorator = instance.paramsDecorator;
 g.petalAccessorDecorator = instance.accessorDecorator;
 g.petalGetterDecorator = instance.getterDecorator;
 

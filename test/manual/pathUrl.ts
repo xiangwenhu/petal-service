@@ -1,10 +1,9 @@
 import {
     classDecorator,
-    paramsDecorator,
     methodDecorator,
     enableLog
 } from "../../src";
-import { ApiResponse, RequestConfig } from "../../src/types";
+import { ApiResponse, RequestConfig, RequestParams } from "../../src/types";
 
 enableLog();
 // 设置baseUrl和超时时间
@@ -20,13 +19,10 @@ class DemoService<R = any> {
         method: "get",
         url: "/course/:type",
     })
-    @paramsDecorator({
-        hasParams: false,
-    })
+
     public async getIndex(
         this: DemoService<string>,
-        _pathParams: Record<string, string | number>,
-        _config: RequestConfig,
+        _params: Pick<RequestParams, "path" | "config">
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
@@ -38,11 +34,13 @@ const serviceA = new DemoService();
 serviceA
     .getIndex(
         {
-            type: 'frontend'
-        },
-        {
-            headers: { userId: 1 },
-        },
+            path: {
+                type: 'frontend'
+            },
+            config: {
+                headers: { userId: 1 },
+            }
+        }
     )
     .then((res) => {
         console.log("res serviceA getIndex:", res.length);

@@ -1,4 +1,4 @@
-import { ApiResponse, RequestConfig } from "../../src/types";
+import { ApiResponse, RequestParams, RequestConfig } from "../../src/types";
 import createInstance from "../../src/createInstance"
 
 const {
@@ -6,7 +6,6 @@ const {
     methodDecorator,
     setConfig,
     fieldDecorator,
-    paramsDecorator,
     enableLog
 } = createInstance({
     defaults: {
@@ -37,13 +36,9 @@ class DemoService<R = any> {
         method: "get",
         url: "",
     })
-    @paramsDecorator({
-        hasParams: true,
-    })
     public async getIndex(
         this: DemoService<string>,
-        params: any,
-        config: RequestConfig,
+        params: Pick<RequestParams, "query" | "config">,
     ) {
         const something = this.getSomething();
         console.log("something: ", something);
@@ -67,10 +62,12 @@ class DemoService<R = any> {
 const serviceA = new DemoService();
 serviceA
     .getIndex(
-        { since: "monthly" },
         {
-            headers: { userId: 1 },
-        },
+            query: { since: "monthly" },
+            config: {
+                headers: { userId: 1 },
+            }
+        }
     )
     .then((res: any) => {
         console.log("res serviceA getIndex:", res.length);
