@@ -149,8 +149,8 @@ export default class DataStore {
             hasParams,
             hasPath,
         } = {
-            hasBody: hasOwnProperty(argumentsObj, "body"),
-            hasParams: hasOwnProperty(argumentsObj, "query"),
+            hasBody: hasOwnProperty(argumentsObj, "data"),
+            hasParams: hasOwnProperty(argumentsObj, "params"),
             hasConfig: hasOwnProperty(argumentsObj, "config"),
             hasPath: hasOwnProperty(argumentsObj, "path"),
         };

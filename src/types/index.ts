@@ -84,7 +84,8 @@ export type InnerCreateDecoratorOptions = CreateDecoratorOptions &
 
 
 
-export interface RequestParams<D = any> {
+export interface RequestParams<D = any, P
+    = any> {
     /**
      * path 参数，比如：  /get/:id
      */
@@ -92,7 +93,7 @@ export interface RequestParams<D = any> {
     /**
      * query 参数： 比如  get?id=10
      */
-    params: Record<string, string | number>;
+    params: P;
     /**
      * 请求
      */
@@ -102,4 +103,6 @@ export interface RequestParams<D = any> {
      */
     config: Partial<RequestConfig>;
 }
+
+
 

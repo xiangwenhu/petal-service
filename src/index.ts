@@ -17,7 +17,7 @@ export const getterDecorator = instance.getterDecorator;
 export const setConfig = instance.setConfig;
 export const enableLog = instance.enableLog;
 export const accessorDecorator = instance.accessorDecorator;
-export const getMethodConfig  = instance.getMethodConfig;
+export const getMethodConfig = instance.getMethodConfig;
 export const getStatistics = instance.getStatistics;
 export const setRequestInstance = instance.setRequestInstance
 
