@@ -38,7 +38,7 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        params: Pick<RequestParams, "query" | "config">,
+        params: Pick<RequestParams, "params" | "config">,
     ) {
         const something = this.getSomething();
         console.log("something: ", something);
@@ -63,7 +63,7 @@ const serviceA = new DemoService();
 serviceA
     .getIndex(
         {
-            query: { since: "monthly" },
+            params: { since: "monthly" },
             config: {
                 headers: { userId: 1 },
             }

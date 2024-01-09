@@ -1,5 +1,5 @@
 import { BaseService, classDecorator, methodDecorator, setConfig, fieldDecorator, enableLog } from "../../src";
-import { ReqParams, RequestConfig } from "../../src/types";
+import { RequestParams, RequestConfig } from "../../src/types";
 
 // 允许打印日志
 enableLog(true);
@@ -25,7 +25,7 @@ class DemoService<R> extends BaseService<R>{
     })
     static getIndex(
         this: DemoService<string>,
-        params: Pick<ReqParams, "query" | 'config'>
+        _params: Pick<RequestParams, "params" | 'config'>
     ): Promise<string> {
         // 不写任何返回， 默认会返回 this.res.data
         // @ts-ignore
@@ -40,7 +40,7 @@ class DemoService<R> extends BaseService<R>{
 DemoService
     .getIndex(
         {
-            query: { since: "monthly" },
+            params: { since: "monthly" },
             config: {
                 headers: { userId: 1 },
             }

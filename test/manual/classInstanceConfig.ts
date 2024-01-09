@@ -40,7 +40,7 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        params: Pick<RequestParams, "query" | "config">,
+        params: Pick<RequestParams, "params" | "config">,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
@@ -55,7 +55,7 @@ const serviceA = new DemoService();
 serviceA
     .getIndex(
         {
-            query: { since: "monthly" },
+            params: { since: "monthly" },
             config: {
                 headers: { userId: 1 },
             }

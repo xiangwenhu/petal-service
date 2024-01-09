@@ -22,7 +22,7 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService,
-        _params: Pick<RequestParams, "query" | "config">,
+        _params: Pick<RequestParams, "params" | "config">,
     ) {
         return this.res.data;
     }
@@ -44,7 +44,7 @@ class SubDemoService extends DemoService {
     })
     async getBingIndex<R = string>(
         this: SubDemoService,
-        _params: Pick<RequestParams, "query" | "config">,
+        _params: Pick<RequestParams, "params" | "config">,
     ): Promise<string> {
         return this.res!.data;
     }

@@ -92,7 +92,7 @@ export interface RequestParams<D = any> {
     /**
      * query 参数： 比如  get?id=10
      */
-    query: Record<string, string | number>;
+    params: Record<string, string | number>;
     /**
      * 请求
      */

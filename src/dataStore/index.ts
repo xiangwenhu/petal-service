@@ -169,7 +169,7 @@ export default class DataStore {
         // 有请求参数
         if (hasParams) {
             expectedLength++;
-            mergedConfig.params = argumentsObj.query || {}
+            mergedConfig.params = argumentsObj.params || {}
         }
 
         if (hasBody) {

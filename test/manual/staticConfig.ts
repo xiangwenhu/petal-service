@@ -22,7 +22,7 @@ class DemoService {
         url: "",
     })
     static async getIndex(
-        _params: Pick<RequestParams, "query" | "config">
+        _params: Pick<RequestParams, "params" | "config">
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         return this.res.data
@@ -40,7 +40,7 @@ class DemoService {
 DemoService
     .getIndex(
         {
-            query: { since: "monthly" },
+            params: { since: "monthly" },
             config: {
                 headers: { userId: 1 },
             }
