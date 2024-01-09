@@ -60,7 +60,7 @@ Map {
 * config和静态的config是运行时读取的，因为属性值是可以被修改的
 * accessorDecorator,getterDecorator, fieldDecorator 实际上只是保存了属性的映射关系，真正取值是发生到方法被调用的时候，因为属性值是可以被修改的。
 
-![对应关系](./petal-service-design.png)
+![对应关系](./petal-service-design-v2.png)
 
 ## 目录结构和功能说明
 ```
