@@ -90,7 +90,7 @@ const subService = new SubDemoService();
 subService
     .getIndex(
         {
-            query: { since: "monthly" },
+            params: { since: "monthly" },
             config: {
                 headers: { a: 1 },
             }
