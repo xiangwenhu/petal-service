@@ -22,12 +22,6 @@ Map {
             ["方法"]: { 
                 // 请求配置
                 config: RequestConfig;
-                // 方法是否有参数
-                hasParams?: boolean;
-                // 方法是否有body
-                hasBody?: boolean;
-                // 方法是否有额外配置
-                hasConfig?: boolean;
             }
         },
         /**
@@ -57,10 +51,6 @@ Map {
             // 键为方法， 值为请求配置和一些外的参数配置
             ["方法"]: {
                 config: RequestConfig;
-                hasParams?: boolean;
-                hasBody?: boolean;
-                hasConfig?: boolean;
-            }
         }
     }
 }
