@@ -4,6 +4,11 @@ import * as wUrl from "whatwg-url";
 // const REG_HOST = /^http(s)?:\/\/(.*?)\//i;
 const REG_HTTP_START = /^http(s)?/i;
 
+
+function normalize(url: string) {
+    return url.replace(/{(\w+)}/g, ':$1');
+}
+
 function isFullHttp(path: string) {
     return REG_HTTP_START.test(path);
 }
@@ -15,12 +20,9 @@ export function hasPathParams(path: string) {
     if (isFullHttp(path)) {
         const urlIns = new wUrl.URL(path);
         pathToValid = urlIns.pathname;
-        // https://example.com 会返回 "/"
-        // if(pathToValid === "/"){
-        //     return ""
-        // }
     }
     let keys: Key[] = [];
+    pathToValid = normalize(pathToValid);
     pathToRegexp(pathToValid, keys);
     return keys.length > 0;
 }
@@ -34,13 +36,14 @@ export function pathToUrl(
         return path;
     }
 
+    const nPath = normalize(path);
     // /user/:id
-    if (!isFullHttp(path)) {
-        const toPath = compile(path, { encode: encodeURIComponent });
+    if (!isFullHttp(nPath)) {
+        const toPath = compile(nPath, { encode: encodeURIComponent });
         return toPath(pathParams);
     }
 
-    const url = new wUrl.URL(path);
+    const url = new wUrl.URL(nPath);
     const toPath = compile(url.pathname, { encode: encodeURIComponent });
     // TODO:: username password模式？
     const rPath = `${url.protocol}//${url.host}` + toPath(pathParams);

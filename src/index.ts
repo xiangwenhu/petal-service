@@ -1,5 +1,6 @@
 import createInstance from "./createInstance";
 import BaseService from "./BaseService";
+import { RequestParams, RequestConfig, ApiResponse } from "./types";
 
 export {
     createInstance,
@@ -40,6 +41,13 @@ declare global {
         const petalCreateInstance: typeof createInstance;
 
         const PetalBaseService: typeof BaseService;
+
+        type PetalRequestParams<D = any, P = any> = RequestParams<D,P>;
+
+        type PetalRequestConfig<D = any> = RequestConfig<D>;
+
+        type PetalApiResponse<D = any, C = any> = ApiResponse<D, C>
+
     }
 }
 // 全局属性设置
