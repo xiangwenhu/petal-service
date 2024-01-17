@@ -42,11 +42,12 @@ declare global {
 
         const PetalBaseService: typeof BaseService;
 
-        type PetalRequestParams<D = any, P = any> = RequestParams<D,P>;
+        type PetalRequestParams<D = any, P = any, PP = Record<string | number, string | number>> = RequestParams<D, P, PP>;
 
         type PetalRequestConfig<D = any> = RequestConfig<D>;
 
         type PetalApiResponse<D = any, C = any> = ApiResponse<D, C>
+
 
     }
 }

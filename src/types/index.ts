@@ -85,11 +85,11 @@ export type InnerCreateDecoratorOptions = CreateDecoratorOptions &
 
 
 export interface RequestParams<D = any, P
-    = any> {
+    = any, PP = Record<string, string | number>> {
     /**
      * path 参数，比如：  /get/:id
      */
-    path: Record<string, string | number>;
+    path: PP;
     /**
      * query 参数： 比如  get?id=10
      */
@@ -101,8 +101,61 @@ export interface RequestParams<D = any, P
     /**
      * 外的配置参数，主要用于设置 headers等
      */
-    config: Partial<RequestConfig>;
+    config: Partial<RequestConfig<D>>;
 }
 
 
+export namespace RequestParamsPick {
+
+    type CommonParams<D = any> = {
+        config?: Partial<RequestConfig<D>>
+    }
+
+    /**
+     * path + config?
+     */
+    export interface Path<P = any> extends CommonParams {
+        path: P;
+    }
+
+    /**
+     * path + data + config?
+     */
+    export interface PathData<P = any, D = any> extends CommonParams<D> {
+        path: P;
+        data: D
+    }
+
+    /**
+     * path + params + data + config?
+     */
+    export interface PathParamsData<P = any, Q = any, D = any> extends CommonParams<D> {
+        path: P;
+        query: Q;
+        data: D
+    }
+
+    /**
+     * params + config?
+     */
+    export interface Params<P = any> extends CommonParams {
+        params: P;
+    }
+
+    /**
+     * params + data + config?
+     */
+    export interface ParamsData<P = any, D = any> extends CommonParams<D> {
+        query: P;
+        data: D
+    }
+
+    /**
+     * data + config?
+     */
+    export interface Data<D = any> extends CommonParams {
+        data: D
+    }
+
+}
 
