@@ -39,8 +39,8 @@ class DemoService<R = any> {
     public async getIndex(
         this: DemoService<string>,
         _params: RequestParamsPick.Params<{
-            since: string
-        }>,
+            since: string;
+        }>
     ) {
         const something = this.getSomething();
         console.log("something: ", something);

@@ -1,3 +1,4 @@
+import { Params, RequestParamsPick } from './../../src/types/index';
 import createInstance from "../../src/createInstance"
 import { ApiResponse, RequestConfig, RequestParams } from "../../src/types";
 
@@ -40,7 +41,9 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        params: Pick<RequestParams, "params" | "config">,
+        _params: RequestParamsPick.Params<{
+            since: string
+        }>,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
