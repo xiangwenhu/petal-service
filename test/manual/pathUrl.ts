@@ -22,8 +22,8 @@ class DemoService<R = any> {
 
     public async getIndex(
         this: DemoService<string>,
-        _params: PetalParamsPick.Params<{
-            since: string;
+        _params: PetalParamsPick.Path<{
+            type: string;
         }>
     ) {
         // 不写任何返回， 默认会返回 this.res.data

@@ -1,12 +1,10 @@
-import { ApiResponse, RequestConfig } from "../../../src/types";
-import createInstance from "../../../src/createInstance"
+import createInstance from "../../../src/createInstance";
 
 const {
     classDecorator,
     methodDecorator,
     setConfig,
     fieldDecorator,
-    paramsDecorator,
     enableLog
 } = createInstance({
     defaults: {

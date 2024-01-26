@@ -51,7 +51,3 @@ DemoService
     .catch((err) => {
         console.log("error DemoService static getIndex:", err);
     });
-
-
-
-new FormData()

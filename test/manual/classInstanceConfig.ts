@@ -1,6 +1,6 @@
-import { Params, RequestParamsPick } from './../../src/types/index';
-import createInstance from "../../src/createInstance"
-import { ApiResponse, RequestConfig, RequestParams } from "../../src/types";
+import createInstance from "../../src/createInstance";
+import { ApiResponse, RequestConfig } from "../../src/types";
+import { RequestParamsPick } from './../../src/types/index';
 
 const {
     classDecorator,

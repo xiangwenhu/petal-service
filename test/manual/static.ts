@@ -1,5 +1,6 @@
+import "../../src/index"
 import createInstance from "../../src/createInstance"
-import { ApiResponse, RequestConfig, RequestParams } from "../../src/types";
+import { ApiResponse, } from "../../src/types";
 
 const {
     classDecorator, methodDecorator, enableLog, fieldDecorator
