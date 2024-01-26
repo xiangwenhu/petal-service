@@ -22,7 +22,9 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        _params: Pick<RequestParams, "path" | "config">
+        _params: PetalParamsPick.Path<{
+            type: string
+        }>
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data
@@ -31,6 +33,7 @@ class DemoService<R = any> {
 }
 
 const service = new DemoService();
+service.getIndex({ path:{ type: "all" }});
 
 const config = getMethodConfig(service, function aaa() { });
 

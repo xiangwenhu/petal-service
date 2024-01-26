@@ -44,7 +44,9 @@ class SubDemoService extends DemoService {
     })
     async getBingIndex<R = string>(
         this: SubDemoService,
-        _params: Pick<RequestParams, "params" | "config">,
+        _params: PetalParamsPick.Params<{
+            since: string;
+        }>,
     ): Promise<string> {
         return this.res!.data;
     }
