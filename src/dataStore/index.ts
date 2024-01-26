@@ -253,7 +253,7 @@ export default class DataStore {
         method: Function,
         config: StorageMapValue.MethodConfigValue
     ) {
-        this.innerUpdateStaticMethodConfig(_class_, method, config, "methods");
+        this.innerUpdateMethodConfig(_class_, method, config, "methods");
     }
 
     /**
@@ -267,7 +267,7 @@ export default class DataStore {
         method: Function,
         config: StorageMapValue.MethodConfigValue
     ) {
-        this.innerUpdateStaticMethodConfig(
+        this.innerUpdateMethodConfig(
             _class_,
             method,
             config,
@@ -275,7 +275,7 @@ export default class DataStore {
         );
     }
 
-    private innerUpdateStaticMethodConfig(
+    private innerUpdateMethodConfig(
         _class_: Function,
         method: Function,
         config: StorageMapValue.MethodConfigValue,
