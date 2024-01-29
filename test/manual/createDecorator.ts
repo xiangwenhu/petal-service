@@ -37,7 +37,7 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        _params: Pick<RequestParams, "config">,
+        _params: PetalParamsPick.Native,
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         return this.res.data

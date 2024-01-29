@@ -1,5 +1,6 @@
-import { BaseService, classDecorator, methodDecorator, setConfig, fieldDecorator, enableLog } from "../../src";
-import { RequestParams, RequestConfig } from "../../src/types";
+import axios from "axios";
+import { BaseService, classDecorator, enableLog, fieldDecorator, methodDecorator, setConfig } from "../../src";
+import { RequestParamsPick } from "../../src/types";
 
 // 允许打印日志
 enableLog(true);
@@ -13,22 +14,28 @@ setConfig({
 
 // 设置baseUrl和超时时间
 @classDecorator({
+    timeout: 30 * 1000,
+    baseURL: "https://www.jd.com"
+})
+@classDecorator({
     timeout: 60 * 1000,
     baseURL: "https://www.example.com"
 })
-class DemoService<R> extends BaseService<R>{
-
+class DemoService<R = any> extends BaseService<R>{
     // 设置 api method 请求参数，最主要的是url, params, data和额外的config
     @methodDecorator({
         method: "get",
-        url: "",
+        url: "/c",
     })
-    static getIndex(
+    @methodDecorator({
+        method: "get",
+        url: "/d",
+    })
+    async getIndex(
         this: DemoService<string>,
-        _params: Pick<RequestParams, "params" | 'config'>
+        _params: RequestParamsPick.Params<{ since: string }>
     ): Promise<string> {
         // 不写任何返回， 默认会返回 this.res.data
-        // @ts-ignore
         return this.res.data
     }
 
@@ -37,8 +44,7 @@ class DemoService<R> extends BaseService<R>{
     static timeoutValue = 15 * 1000;
 }
 
-DemoService
-    .getIndex(
+new DemoService().getIndex(
         {
             params: { since: "monthly" },
             config: {

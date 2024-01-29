@@ -1,4 +1,3 @@
-import { paramsDecorator } from "../../../src";
 import createInstance from "../../../src/createInstance"
 import { ApiResponse, RequestConfig } from "../../../src/types";
 
@@ -33,9 +32,6 @@ class DemoService<R = any> {
     @methodDecorator({
         method: "get",
         url: "",
-    })
-    @paramsDecorator({
-        hasParams: true
     })
     static #getIndex(
         this: DemoService<string>,

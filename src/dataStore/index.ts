@@ -27,7 +27,7 @@ export default class DataStore {
      * @returns
      */
     getMountConfigs(classOrInstance: Object | Function, method: Function) {
-        // 如果instanceOrClass是class, 可以任务method是静态方法
+        // 如果instanceOrClass是class, 可以认为method是静态方法
         // 反之，是实例属性
         const isStatic = isFunction(classOrInstance);
 
@@ -253,7 +253,7 @@ export default class DataStore {
         method: Function,
         config: StorageMapValue.MethodConfigValue
     ) {
-        this.innerUpdateStaticMethodConfig(_class_, method, config, "methods");
+        this.innerUpdateMethodConfig(_class_, method, config, "methods");
     }
 
     /**
@@ -267,7 +267,7 @@ export default class DataStore {
         method: Function,
         config: StorageMapValue.MethodConfigValue
     ) {
-        this.innerUpdateStaticMethodConfig(
+        this.innerUpdateMethodConfig(
             _class_,
             method,
             config,
@@ -275,7 +275,7 @@ export default class DataStore {
         );
     }
 
-    private innerUpdateStaticMethodConfig(
+    private innerUpdateMethodConfig(
         _class_: Function,
         method: Function,
         config: StorageMapValue.MethodConfigValue,
@@ -304,5 +304,11 @@ export default class DataStore {
         const val: StorageMapValue = storeMap.get(_class_) || {};
         val.classConfig = config;
         storeMap.set(_class_, val);
+    }
+
+    hasClassConfig(_class_: Function) {
+        const { storeMap } = this;
+        const val: StorageMapValue = storeMap.get(_class_) || {};
+        return !!val.classConfig
     }
 }

@@ -1,5 +1,6 @@
+import "../../src/index"
 import createInstance from "../../src/createInstance"
-import { ApiResponse, RequestConfig, RequestParams } from "../../src/types";
+import { ApiResponse, } from "../../src/types";
 
 const {
     classDecorator, methodDecorator, enableLog, fieldDecorator
@@ -23,7 +24,9 @@ class DemoService {
     })
     static async getCourse(
         this: typeof DemoService,
-        _params: Pick<RequestParams, "path" | "config">
+        _params: PetalParamsPick.Path<{
+            type: string;
+        }>
     ) {
         // 不写任何返回， 默认会返回 this.res.data
         // return this.res!.data

@@ -42,23 +42,23 @@ petalSetConfig({
     timeout: 60 * 1000,
     baseURL: "http://www.example.com",
 })
-class DemoService<R> extends PetalBaseService<R> {
+class DemoService<R> extends BaseService<R>{
     // 设置 api method 请求参数，最主要的是url, params, data和额外的config
-    @petalMethodDecorator({
-        method: "post",
+    @methodDecorator({
+        method: "get",
         url: "",
     })
     static async getIndex(
         this: DemoService<string>,
-        _params: Pick<PetalRequestParams<number, { since: string }>, "params" | "config">,
-    ) {
+        _params: RequestParamsPick.Params<{ since: string }>
+    ): Promise<string> {
         // 不写任何返回， 默认会返回 this.res.data
-        return this.res.data;
+        return this.res.data
     }
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 自定义默认值
-    @petalFieldDecorator("timeout")
-    static timeoutValue = 5 * 1000;
+    @fieldDecorator("timeout")
+    static timeoutValue = 15 * 1000;
 }
 
 DemoService.getIndex(
@@ -232,6 +232,7 @@ npm install petal-service
 - [x] dataStore存储关系图
 - [x] 调整存储结构
 - [x] 支持模拟参数，获取最后请求参数
+- [x] 重复装饰问题, method和class重复装饰，会logger.warn
 - [ ] 支持cache?, 参考[make-fetch-happen](https://github.com/npm/make-fetch-happen/tree/main/lib/cache)
 - [ ] 支持mock? 参见 [axios-mock-adapter](https://www.npmjs.com/package/axios-mock-adapter)
 - [ ] 下移mergeConfig,在调用中合并config，然后再发http请求，解决访问私有变量|属性？？？

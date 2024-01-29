@@ -1,6 +1,6 @@
 import createInstance from "./createInstance";
 import BaseService from "./BaseService";
-import { RequestParams, RequestConfig, ApiResponse } from "./types";
+import { RequestParams, RequestConfig, ApiResponse, RequestParamsPick } from "./types";
 
 export {
     createInstance,
@@ -42,12 +42,71 @@ declare global {
 
         const PetalBaseService: typeof BaseService;
 
-        type PetalRequestParams<D = any, P = any> = RequestParams<D,P>;
+        type PetalRequestParams<D = any, P = any, PP = Record<string | number, string | number>> = RequestParams<D, P, PP>;
 
         type PetalRequestConfig<D = any> = RequestConfig<D>;
 
         type PetalApiResponse<D = any, C = any> = ApiResponse<D, C>
 
+        namespace PetalParamsPick {
+
+            /**
+             * config 即 axios 请求的整个配置
+             */
+            export type Native<D = any> = RequestParamsPick.Native<D>;
+
+            /**
+             * path +  config? ,
+             * path 示例  /del/:id， id即为path参数 ,
+             * config 即 axios 请求的整个配置
+             */
+            export type Path<P = any> = RequestParamsPick.Path<P>;
+
+            /**
+             * path + data + config? ,
+             * path 示例  /del/:id， id即为path参数 ,
+             * data   即 axios 请求的配置中的 data ,
+             * config 即 axios 请求的整个配置
+             */
+            export type PathData<P = any, D = any> = RequestParamsPick.PathData<P, D>
+
+
+            /**
+             * path + params +  config? ,
+             * path 示例  /del/:id， id即为path参数 ,
+             * params 即 axios 请求配置中的 params ,
+             * config 即 axios 请求的整个配置
+             */
+            export type PathParams<P = any, PP = any> = RequestParamsPick.PathParams<P, PP>;
+
+            /**
+             * path + params + data + config? ,
+             * path 示例  /del/:id， id即为path参数 ,
+             * params 即 axios 请求配置中的 params ,
+             * data   即 axios 请求的配置中的 data ,
+             * config 即 axios 请求的整个配置
+             */
+            export type PathParamsData<P = any, PP = any, D = any> = RequestParamsPick.PathParamsData<P, PP, D>
+            /**
+             * params +  config? ,
+             * params 即 axios 请求配置中的 params ,
+             * config 即 axios 请求的整个配置
+             */
+            export type Params<P = any> = RequestParamsPick.Params<P>;
+
+            /**
+             * params + data + config? ,
+             * params 即 axios 请求配置中的 params ,
+             * config 即 axios 请求的整个配置
+             */
+            export type ParamsData<P = any, D = any> = RequestParamsPick.ParamsData<P, D>
+            /**
+             * data + config? ,
+             * data   即 axios 请求的配置中的 data ,
+             * config 即 axios 请求的整个配置
+             */
+            export type Data<D = any> = RequestParamsPick.Data<D>
+        }
     }
 }
 // 全局属性设置

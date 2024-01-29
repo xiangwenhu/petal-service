@@ -1,6 +1,6 @@
 {
   "name": "petal-service",
-  "version": "0.0.35",
+  "version": "0.0.37",
   "description": "轻松服务,快乐编程",
   "main": "./dist/index.js",
   "type": "commonjs",
@@ -19,6 +19,7 @@
   ],
   "scripts": {
     "test": "mocha --recursive",
+    "bp": "npm run build && npm pack",
     "build": "tsc"
   },
   "devDependencies": {

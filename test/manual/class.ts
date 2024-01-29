@@ -1,4 +1,4 @@
-import { ApiResponse, RequestParams, RequestConfig } from "../../src/types";
+import { ApiResponse, RequestParams, RequestConfig, RequestParamsPick } from "../../src/types";
 import createInstance from "../../src/createInstance"
 
 const {
@@ -38,7 +38,9 @@ class DemoService<R = any> {
     })
     public async getIndex(
         this: DemoService<string>,
-        params: Pick<RequestParams, "params" | "config">,
+        _params: RequestParamsPick.Params<{
+            since: string;
+        }>
     ) {
         const something = this.getSomething();
         console.log("something: ", something);
