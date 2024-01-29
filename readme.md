@@ -232,7 +232,7 @@ npm install petal-service
 - [x] dataStore存储关系图
 - [x] 调整存储结构
 - [x] 支持模拟参数，获取最后请求参数
-- [ ] 重复装饰问题
+- [x] 重复装饰问题, method和class重复装饰，会logger.warn
 - [ ] 支持cache?, 参考[make-fetch-happen](https://github.com/npm/make-fetch-happen/tree/main/lib/cache)
 - [ ] 支持mock? 参见 [axios-mock-adapter](https://www.npmjs.com/package/axios-mock-adapter)
 - [ ] 下移mergeConfig,在调用中合并config，然后再发http请求，解决访问私有变量|属性？？？
