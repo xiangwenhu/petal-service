@@ -27,7 +27,7 @@ export default class DataStore {
      * @returns
      */
     getMountConfigs(classOrInstance: Object | Function, method: Function) {
-        // 如果instanceOrClass是class, 可以任务method是静态方法
+        // 如果instanceOrClass是class, 可以认为method是静态方法
         // 反之，是实例属性
         const isStatic = isFunction(classOrInstance);
 
@@ -304,5 +304,11 @@ export default class DataStore {
         const val: StorageMapValue = storeMap.get(_class_) || {};
         val.classConfig = config;
         storeMap.set(_class_, val);
+    }
+
+    hasClassConfig(_class_: Function) {
+        const { storeMap } = this;
+        const val: StorageMapValue = storeMap.get(_class_) || {};
+        return !!val.classConfig
     }
 }

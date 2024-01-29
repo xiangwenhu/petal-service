@@ -14,16 +14,24 @@ setConfig({
 
 // 设置baseUrl和超时时间
 @classDecorator({
+    timeout: 30 * 1000,
+    baseURL: "https://www.jd.com"
+})
+@classDecorator({
     timeout: 60 * 1000,
     baseURL: "https://www.example.com"
 })
-class DemoService<R> extends BaseService<R>{
+class DemoService<R = any> extends BaseService<R>{
     // 设置 api method 请求参数，最主要的是url, params, data和额外的config
     @methodDecorator({
         method: "get",
-        url: "",
+        url: "/c",
     })
-    static async getIndex(
+    @methodDecorator({
+        method: "get",
+        url: "/d",
+    })
+    async getIndex(
         this: DemoService<string>,
         _params: RequestParamsPick.Params<{ since: string }>
     ): Promise<string> {
@@ -36,8 +44,7 @@ class DemoService<R> extends BaseService<R>{
     static timeoutValue = 15 * 1000;
 }
 
-DemoService
-    .getIndex(
+new DemoService().getIndex(
         {
             params: { since: "monthly" },
             config: {

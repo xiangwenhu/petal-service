@@ -6,13 +6,13 @@ export function proxyRequest({
     method,
     config,
     request,
-    proxyObject,
+    thisObject,
     logger,
 }: {
     method: Function;
     config: RequestConfig;
     request: RequestInstance;
-    proxyObject: Object;
+    thisObject: Object;
     logger: Logger;
 }) {
     const { simulated } = config;
@@ -37,7 +37,7 @@ export function proxyRequest({
 
     return promiseRes.then((res) => {
         // 代理 classInstance, 即方法实例
-        const proxy = new Proxy(proxyObject, {
+        const thisObjectProxy = new Proxy(thisObject, {
             get: function (target, property, receiver) {
                 if (property == "res") {
                     return res;
@@ -46,7 +46,7 @@ export function proxyRequest({
             },
         });
         return Promise.resolve()
-            .then(() => method.call(proxy))
+            .then(() => method.call(thisObjectProxy))
             .then((resData: any) => {
                 // api method方法里面可以什么都不写，直接返回结果
                 if (resData === undefined) {

@@ -2,7 +2,7 @@ import { CreateDecoratorOptions } from "../types";
 import { DEFAULT_CONFIG } from "../const";
 import { RequestConfig } from "../types";
 
-export function createClassDecorator({ dataStore, logger }: CreateDecoratorOptions) {
+export function createClassDecorator(createDecoratorOptions: CreateDecoratorOptions) {
     /**
      * 示例
      * @classDecorator({
@@ -22,9 +22,13 @@ export function createClassDecorator({ dataStore, logger }: CreateDecoratorOptio
             // this: class
             // target: class
             // context: demo '{"kind":"class","name":"Class的Name"}'
-            logger.log("classDecorator:", target.name);
+            createDecoratorOptions.logger.log("classDecorator:", target.name);
             context.addInitializer(function () {
+                const { dataStore, logger } = createDecoratorOptions;
                 const _class_ = target;
+                if (dataStore.hasClassConfig(_class_)) {
+                    logger.warn("classDecorator:", _class_.name, "已经配置，重复配置会覆盖");
+                }
                 dataStore.updateClassConfig(_class_, config);
             });
         };
