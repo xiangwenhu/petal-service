@@ -1,6 +1,7 @@
 import createInstance from "./createInstance";
 import BaseService from "./BaseService";
 import { RequestParams, RequestConfig, ApiResponse, RequestParamsPick } from "./types";
+import { VERSION } from "./const";
 
 export {
     createInstance,
@@ -9,7 +10,7 @@ export {
 export * from "./types";
 
 // 默认实例导出
-const instance = createInstance();
+export const instance = createInstance();
 export const classDecorator = instance.classDecorator;
 export const createDecorator = instance.createDecorator;
 export const fieldDecorator = instance.fieldDecorator;
@@ -20,7 +21,8 @@ export const enableLog = instance.enableLog;
 export const accessorDecorator = instance.accessorDecorator;
 export const getMethodConfig = instance.getMethodConfig;
 export const getStatistics = instance.getStatistics;
-export const setRequestInstance = instance.setRequestInstance
+export const setRequestInstance = instance.setRequestInstance;
+export const version = VERSION;
 
 // 全局属性申明
 declare global {
@@ -39,6 +41,8 @@ declare global {
         const petalGetStatistics: typeof instance.getStatistics;
 
         const petalCreateInstance: typeof createInstance;
+
+        const petalDefaultInstance: typeof instance;
 
         const PetalBaseService: typeof BaseService;
 
@@ -111,6 +115,9 @@ declare global {
 }
 // 全局属性设置
 var g = globalThis as any;
+
+g.petalDefaultInstance = instance;
+
 g.petalClassDecorator = instance.classDecorator;
 g.petalCreateDecorator = instance.createDecorator;
 g.petalFieldDecorator = instance.fieldDecorator;

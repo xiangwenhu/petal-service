@@ -45,7 +45,7 @@ export default class Statistics {
             // @ts-ignore
             return this.countSingleClass(classOrInstance.constructor);
         }
-        if (classOrInstance === null || classOrInstance === undefined) {
+        if (classOrInstance == undefined) {
             return Array.from(this.storeMap.keys())
                 .map((_class_) => {
                     return this.countSingleClass(_class_);

@@ -1,4 +1,4 @@
-import { SYMBOL_ORIGIN_FUNCTION } from "./const";
+import { SYMBOL_ORIGIN_FUNCTION, VERSION } from "./const";
 import DataStore from "./dataStore";
 import { createAccessorDecorator } from "./decorator/accessor";
 import { createClassDecorator } from "./decorator/class";
@@ -73,6 +73,7 @@ export default function createInstance(config: ServiceRootConfig = {}) {
     // };
 
     return {
+        version: VERSION,
         /**
          * class装饰器
          */
