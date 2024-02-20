@@ -1,6 +1,5 @@
-import { NOT_USE_BODY_METHODS } from "../const";
 import { merge } from "../lib/merge";
-import { Method, RequestParams, RequestConfig, StorageMap, StorageMapValue } from "../types";
+import { RequestConfig, RequestParams, StorageMap, StorageMapValue } from "../types";
 import {
     getProperty,
     hasOwnProperty,
@@ -10,18 +9,11 @@ import {
 } from "../util";
 import { hasPathParams, pathToUrl } from "../util/path";
 
-function shouldUseBody(method: Method) {
-    if (method == null) {
-        return true;
-    }
-    return !NOT_USE_BODY_METHODS.includes(method.toLowerCase() as Method);
-}
-
 export default class DataStore {
     public storeMap: StorageMap = new Map<Function, StorageMapValue>();
 
     /**
-     * 获取挂载的配置，不包括创建实例的配置
+     * 获取配置
      * @param method
      * @param classOrInstance
      * @returns
@@ -118,13 +110,12 @@ export default class DataStore {
             // class field map后组成的config
             mountConfigs.fieldConfig,
             // method 上的config
-            mountConfigs.methodConfig.config || {},
+            mountConfigs.methodConfig?.config || {},
         ]);
 
         mConfig = this.adjustConfig(
             mConfig,
             argumentsObj,
-            mountConfigs.methodConfig
         );
         return mConfig;
     }
@@ -140,7 +131,6 @@ export default class DataStore {
     private adjustConfig(
         mergedConfig: RequestConfig,
         argumentsObj: RequestParams<any>,
-        methodConfig: StorageMapValue.MethodConfigValue
     ): RequestConfig<any> {
 
         const {
@@ -206,8 +196,7 @@ export default class DataStore {
             instances = new Map<Object, StorageMapValue.CommonConfigValue>();
             rootConfig.instances = instances;
         }
-        let commonConfig: StorageMapValue.CommonConfigValue =
-            instances.get(instance!) || {};
+        let commonConfig = instances.get(instance!) || {};
 
         commonConfig.fieldPropertyMap = merge([
             commonConfig.fieldPropertyMap || {},
@@ -288,7 +277,7 @@ export default class DataStore {
             methodsMapValue = new Map();
             val[key] = methodsMapValue;
         }
-        let oldConfig: StorageMapValue.MethodConfigValue = methodsMapValue.get(method) || {};
+        let oldConfig = methodsMapValue.get(method) || {};
         oldConfig = merge([oldConfig, config]);
         methodsMapValue.set(method, oldConfig);
         storeMap.set(_class_, val);
