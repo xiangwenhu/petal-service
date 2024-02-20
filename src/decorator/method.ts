@@ -29,7 +29,8 @@ export function createMethodDecorator(
 
 function commonMethodDecorator(
     method: Function,
-    classOrInstance: Object | Function,
+    methodOwner: Object | Function,
+    thisObject: Object | Function,
     creatorOptions: CreateDecoratorOptions,
     context: ClassMethodDecoratorContext<any>,
     callback: Function) {
@@ -38,28 +39,31 @@ function commonMethodDecorator(
 
         // 读取最终合并后的配置
         const config = dataStore.getMethodMergedConfig(
-            classOrInstance,
+            thisObject,
             method,
             defaults,
             arguments.length > 0 ? arguments[0] : {}
         );
+
+        const constructorName = isFunction(thisObject) ?  (thisObject as Function).name : thisObject.constructor.name;
+
         logger.log(
-            `${classOrInstance.constructor.name} ${method.name} final config:`,
+            `${constructorName} ${method.name} final config:`,
             config
         );
 
         return proxyRequest({
             method,
-            thisObject: classOrInstance,
+            thisObject: thisObject,
             config,
             request,
             logger
         });
     }
 
-    const propertyDescriptor = Object.getOwnPropertyDescriptor(classOrInstance, context.name);
+    const propertyDescriptor = Object.getOwnPropertyDescriptor(thisObject, context.name);
     const oriSYMBOL = SYMBOL_ORIGIN_FUNCTION;
-    const cName = isFunction(classOrInstance) ? (classOrInstance as Function).name : classOrInstance.constructor.name;
+    const cName = isFunction(thisObject) ? (thisObject as Function).name : thisObject.constructor.name;
     if (propertyDescriptor && oriSYMBOL in propertyDescriptor.value) {
         creatorOptions.logger.warn(`methodDecorator: ${cName} ${String(context.name)} 已经配置，重复配置会覆盖`);
     }
@@ -73,7 +77,7 @@ function commonMethodDecorator(
 
     try {
         // 防止被串改
-        Object.defineProperty(classOrInstance, context.name, {
+        Object.defineProperty(methodOwner, context.name, {
             configurable: true,
             // writable: true,
             value: proxyMethod,
@@ -104,7 +108,9 @@ function innerMethodDecorator(
             )}`
         );
 
-        commonMethodDecorator(method, classInstance, creatorOptions, context, () => {
+        const proto = Object.getPrototypeOf(classInstance);
+
+        commonMethodDecorator(method, proto, classInstance, creatorOptions, context, () => {
             dataStore.updateMethodConfig(_class_, method, { config });
         })
 
@@ -131,7 +137,7 @@ function innerStaticMethodDecorator(
             )}`
         );
 
-        commonMethodDecorator(method, _class_, creatorOptions, context, () => {
+        commonMethodDecorator(method, _class_, _class_, creatorOptions, context, () => {
             dataStore.updateStaticMethodConfig(_class_, method, { config });
         })
 
