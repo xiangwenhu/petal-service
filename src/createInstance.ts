@@ -103,6 +103,13 @@ export default function createInstance(config: ServiceRootConfig = {}) {
             defaultsValue = merge([defaultsValue, config || {}])
         },
         /**
+         * 获得配置
+         * @returns
+         */
+        getConfig() {
+            return defaultsValue;
+        },
+        /**
          * 设置request实例
          * @param request
          */
