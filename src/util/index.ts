@@ -51,7 +51,7 @@ export function hasOwnProperty(obj: any, propertyName: PropertyKey) {
     return hasOwnProp.call(obj, propertyName);
 }
 
-export function createRequestInstance(config: RequestConfig) {
+export function createAxiosInstance(config: RequestConfig) {
     return axios.create(config);
 }
 

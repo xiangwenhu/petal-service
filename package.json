@@ -1,6 +1,6 @@
 {
   "name": "petal-service",
-  "version": "0.0.40",
+  "version": "0.0.42",
   "description": "轻松服务,快乐编程",
   "main": "./dist/index.js",
   "type": "commonjs",

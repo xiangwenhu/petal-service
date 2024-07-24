@@ -50,4 +50,4 @@ export const REQUEST_CONFIG_KEYS = [
 export const SYMBOL_ORIGIN_FUNCTION = Symbol("OriginFunction");
 
 
-export const VERSION = "0.0.40";
+export const VERSION = "0.0.42";

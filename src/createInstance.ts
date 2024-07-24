@@ -16,7 +16,7 @@ import {
     ServiceRootConfig,
 } from "./types";
 import {
-    createRequestInstance,
+    createAxiosInstance,
     getProperty,
     isAsyncFunction,
     isFunction,
@@ -25,12 +25,12 @@ import {
 import Statistics from "./dataStore/statistics";
 
 
-function initRequestInstance(config: ServiceRootConfig) {
-    if (isFunction(config.request) || isAsyncFunction(config.request)) {
-        return config.request;
+function initRequester(config: ServiceRootConfig) {
+    if (isFunction(config.requester) || isAsyncFunction(config.requester)) {
+        return config.requester;
     }
-    if (isFunction(config.createRequest)) {
-        return config.createRequest?.call(config);
+    if (isFunction(config.createRequester)) {
+        return config.createRequester?.call(config);
     }
     return undefined;
 }
@@ -44,7 +44,7 @@ export default function createInstance(config: ServiceRootConfig = {}) {
     const dataStore = new DataStore();
     const statistics = new Statistics(dataStore.storeMap);
 
-    let requestInstance: RequestInstance | undefined = initRequestInstance(config);
+    let requester: RequestInstance | undefined = initRequester(config);
 
     let defaultsValue = config.defaults || {};
 
@@ -53,11 +53,12 @@ export default function createInstance(config: ServiceRootConfig = {}) {
         get defaults() {
             return defaultsValue
         },
-        get request() {
-            if (requestInstance == undefined) {
-                requestInstance = createRequestInstance(defaultsValue);
+        get requester() {
+            // 未定义，创建默认实例
+            if (requester == undefined) {
+                requester = createAxiosInstance(defaultsValue);
             }
-            return requestInstance;
+            return requester;
         },
         get logger() {
             return config.enableLog
@@ -65,12 +66,6 @@ export default function createInstance(config: ServiceRootConfig = {}) {
                 : getLogger(false);
         },
     };
-
-    // const options: CreateDecoratorOptions = {
-    //     dataStore,
-    //     defaults: innerOptions.defaults,
-    //     request: innerOptions.request,
-    // };
 
     return {
         version: VERSION,
@@ -103,21 +98,17 @@ export default function createInstance(config: ServiceRootConfig = {}) {
             defaultsValue = merge([defaultsValue, config || {}])
         },
         /**
-         * 设置request实例
-         * @param request
+         * 获得配置
+         * @returns
          */
-        setRequestInstance(
-            create: (options: {
-                createRequestInstance: typeof createRequestInstance;
-                defaults: RequestConfig,
-                instance?: RequestInstance
-            }) => RequestInstance
-        ) {
-            requestInstance = create({
-                createRequestInstance,
-                defaults: options.defaults,
-                instance: requestInstance
-            })
+        getConfig() {
+            return defaultsValue;
+        },
+        get requester() {
+            return options.requester;
+        },
+        setRequester(val: RequestInstance){
+            requester = val;
         },
         /**
          * 自定义装饰器

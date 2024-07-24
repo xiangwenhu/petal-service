@@ -36,17 +36,13 @@ export interface ServiceRootConfig {
      */
     defaults?: RequestConfig;
     /**
-     * 请求方法
-     * @param config RequestConfig
-     * @returns
+     * 网络请求者
      */
-    request?: RequestInstance;
+    requester?: RequestInstance;
     /**
-     * 创建re
-     * @returns
+     * 创建网络请求者 
      */
-    createRequest?: () => RequestInstance;
-
+    createRequester?: () => RequestInstance;
     /**
      * 启用日志
      */
@@ -71,7 +67,7 @@ export interface CreateDecoratorOptions {
      * @param config RequestConfig
      * @returns
      */
-    get request(): RequestInstance;
+    get requester(): RequestInstance;
     /**
      * 日志对象
      */
