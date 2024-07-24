@@ -22,8 +22,9 @@ export const enableLog = instance.enableLog;
 export const accessorDecorator = instance.accessorDecorator;
 export const getMethodConfig = instance.getMethodConfig;
 export const getStatistics = instance.getStatistics;
-export const setRequestInstance = instance.setRequestInstance;
 export const version = VERSION;
+export const requester = instance.requester;
+export const setRequester = instance.setRequester;
 
 // 全局属性申明
 declare global {
@@ -37,10 +38,14 @@ declare global {
 
         const petalSetConfig: typeof instance.setConfig;
         const petalGetConfig: typeof instance.getConfig;
-        const petalSetRequestInstance: typeof instance.setRequestInstance;
+
         const petalEnableLog: typeof instance.enableLog;
         const petalGetMethodConfig: typeof instance.getMethodConfig;
         const petalGetStatistics: typeof instance.getStatistics;
+
+        const petalRequester: typeof instance.requester
+
+        const petalSetRequester: typeof instance.setRequester;
 
         const petalCreateInstance: typeof createInstance;
 
@@ -129,7 +134,6 @@ g.petalGetterDecorator = instance.getterDecorator;
 
 g.petalSetConfig = instance.setConfig;
 g.petalGetConfig = instance.getConfig;
-g.petalSetRequestInstance = instance.setRequestInstance;
 g.petalEnableLog = instance.enableLog;
 g.petalGetMethodConfig = instance.getMethodConfig
 g.petalGetStatistics = instance.getStatistics;
@@ -137,3 +141,6 @@ g.petalGetStatistics = instance.getStatistics;
 g.petalCreateInstance = createInstance;
 
 g.PetalBaseService = BaseService;
+
+g.petalRequester = instance.requester;
+g.petalSetRequester = instance.setRequester;

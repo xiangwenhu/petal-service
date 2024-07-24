@@ -5,13 +5,13 @@ import Logger from "../types/logger";
 export function proxyRequest({
     method,
     config,
-    request,
+    requester,
     thisObject,
     logger,
 }: {
     method: Function;
     config: RequestConfig;
-    request: RequestInstance;
+    requester: RequestInstance;
     thisObject: Object;
     logger: Logger;
 }) {
@@ -32,7 +32,7 @@ export function proxyRequest({
             };
         })
     } else {
-        promiseRes = request!(config as any);
+        promiseRes = requester!(config as any);
     }
 
     return promiseRes.then((res) => {

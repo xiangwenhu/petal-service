@@ -1,23 +1,18 @@
 import {
     accessorDecorator,
-    enableLog,
     BaseService,
+    enableLog,
     methodDecorator,
-    getMethodConfig,
-    setRequestInstance,
+    requester
 } from "../../src";
 
-enableLog();
+enableLog(false);
 
-setRequestInstance(({ createRequestInstance, defaults }) => {
-    const instance = createRequestInstance(defaults);
-
-    instance.interceptors.request.use((config) => {
-        console.log("config:", config);
-        return config;
-    });
-    return instance;
+requester.interceptors.request.use((config) => {
+    console.log("interceptors:", config);
+    return config;
 });
+
 
 class DemoService<R = any> extends BaseService<R> {
     @methodDecorator({
@@ -30,11 +25,6 @@ class DemoService<R = any> extends BaseService<R> {
     @accessorDecorator("timeout")
     static accessor timeout: number = 20 * 1000;
 }
-
-console.log(
-    "getIndex config:",
-    getMethodConfig(DemoService, DemoService.getIndex)
-);
 
 DemoService.getIndex()
     .then((res) => {

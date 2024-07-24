@@ -35,7 +35,7 @@ function commonMethodDecorator(
     context: ClassMethodDecoratorContext<any>,
     callback: Function) {
     function proxyMethod() {
-        const { defaults, dataStore, request, logger } = creatorOptions;
+        const { defaults, dataStore, requester, logger } = creatorOptions;
 
         // 读取最终合并后的配置
         const config = dataStore.getMethodMergedConfig(
@@ -45,7 +45,7 @@ function commonMethodDecorator(
             arguments.length > 0 ? arguments[0] : {}
         );
 
-        const constructorName = isFunction(thisObject) ?  (thisObject as Function).name : thisObject.constructor.name;
+        const constructorName = isFunction(thisObject) ? (thisObject as Function).name : thisObject.constructor.name;
 
         logger.log(
             `${constructorName} ${method.name} final config:`,
@@ -54,9 +54,9 @@ function commonMethodDecorator(
 
         return proxyRequest({
             method,
-            thisObject: thisObject,
+            thisObject,
             config,
-            request,
+            requester,
             logger
         });
     }
