@@ -42,25 +42,25 @@ petalSetConfig({
     timeout: 60 * 1000,
     baseURL: "http://www.example.com",
 })
-class DemoService<R> extends BaseService<R>{
+class DemoService extends PetalBaseService {
     // 设置 api method 请求参数，最主要的是url, params, data和额外的config
-    @methodDecorator({
-        method: "get",
+    @petalMethodDecorator({
+        method: "post",
         url: "",
     })
     static async getIndex(
-        this: DemoService<string>,
-        _params: RequestParamsPick.Params<{ since: string }>
+        _params: PetalParamsPick.Params<{ since: string }>,
     ): Promise<string> {
         // 不写任何返回， 默认会返回 this.res.data
-        return this.res.data
+        return this.res.data;
     }
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 自定义默认值
-    @fieldDecorator("timeout")
-    static timeoutValue = 15 * 1000;
+    @petalFieldDecorator("timeout")
+    static timeoutValue = 5 * 1000;
 }
 
+// 调用
 DemoService.getIndex(
     {
         params: { since: "monthly" },
@@ -69,12 +69,13 @@ DemoService.getIndex(
         },
     }
 )
-    .then((res: any) => {
-        console.log("res DemoService static getIndex:", res.length);
+    .then((res) => {
+        console.log("res DemoService static getIndex:", res);
     })
     .catch((err) => {
         console.log("error DemoService static getIndex:", err);
     });
+
 ```
 输出
 ```shell
@@ -106,8 +107,8 @@ res DemoService static getIndex: 1256
      accessor timeout: number = 15 * 1000;
 ```
 - 支持静态方法和静态属性
-- 支持基于Axios自定义request
-- 支持拦截器, 可以通过基于Axios自定义request实现
+- 支持基于Axios自定义requester
+- 支持拦截器
 - 支持实例属性config作为配置
 - 支持静态属性config作为配置
 - 内置BaseServiceClass，快捷使用 res和config属性
@@ -161,8 +162,7 @@ console.log(JSON.stringify(result, undefined , "\t"));
 ```
 npm install petal-service
 ```
-- 增强自定义装饰器的介入能力？ (TODO::)
-- json配置转服务 (TODO::))
+
 
 
 ## 使用示例
@@ -235,10 +235,15 @@ npm install petal-service
 - [x] 调整存储结构
 - [x] 支持模拟参数，获取最后请求参数
 - [x] 重复装饰问题, method和class重复装饰，会logger.warn
+- [x] 服务请求TypeScript提示问题 (PetalParamsPick 命令空间)
+- [ ] 除了全局暴露装饰器方法，其他的暴露为对象
+- [ ] 全局示例支持设置logger
+
+
+## TODO  低优先级
 - [ ] 支持cache?, 参考[make-fetch-happen](https://github.com/npm/make-fetch-happen/tree/main/lib/cache)
 - [ ] 支持mock? 参见 [axios-mock-adapter](https://www.npmjs.com/package/axios-mock-adapter)
 - [ ] 下移mergeConfig,在调用中合并config，然后再发http请求，解决访问私有变量|属性？？？
-- [ ] 服务请求TypeScript提示问题
 - [ ] 编写文档
 - [ ] 编写文章
 - [ ] yapi 和 swagger 转 service,参见 [yapi-to-petal-service](https://github.com/xiangwenhu/yapi-to-petal-service) 和 [swagger-to-petal-service](https://github.com/xiangwenhu/swagger-to-petal-service)
