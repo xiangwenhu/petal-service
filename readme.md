@@ -238,6 +238,7 @@ npm install petal-service
 - [x] 服务请求TypeScript提示问题 (PetalParamsPick 命令空间)
 - [ ] 除了全局暴露装饰器方法，其他的暴露为对象
 - [ ] 全局示例支持设置logger
+- [ ] 提供直接发起网络请求的方法
 
 
 ## TODO  低优先级
