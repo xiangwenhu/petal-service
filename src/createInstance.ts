@@ -23,6 +23,7 @@ import {
 } from "./util";
 
 import Statistics from "./dataStore/statistics";
+import Logger from "./types/logger";
 
 
 function initRequester(config: ServiceRootConfig) {
@@ -104,11 +105,17 @@ export default function createInstance(config: ServiceRootConfig = {}) {
         getConfig() {
             return defaultsValue;
         },
-        get requester() {
+        getRequester() {
             return options.requester;
         },
         setRequester(val: RequestInstance){
             requester = val;
+        },
+        getLogger(){
+            return options.logger
+        },
+        setLogger(val: Logger){
+            config.logger  = val
         },
         /**
          * 自定义装饰器

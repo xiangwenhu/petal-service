@@ -171,7 +171,7 @@ npm install petal-service
 * [创建新实例](https://github.com/xiangwenhu/petal-service-test/tree/main/test/createInstance.ts)
 * [创建新实例 + createRequester ](https://github.com/xiangwenhu/petal-service-test/tree/main/test/createInstance-createRequester.ts)
 * [默认实例 + 拦截器](https://github.com/xiangwenhu/petal-service-test/tree/main/test/global-interceptors.ts)
-* [使用自定义的requestor](https://github.com/xiangwenhu/petal-service-test/tree/main/test/useCustomRequestor.ts)
+* [使用自定义的requestor](https://github.com/xiangwenhu/petal-service-test/tree/main/test/setRequestor.ts)
 * [默认实例](https://github.com/xiangwenhu/petal-service-test/tree/main/test/global.ts)
 * [getter](https://github.com/xiangwenhu/petal-service-test/tree/main/test/getter.ts)
 * [静态getter](https://github.com/xiangwenhu/petal-service-test/tree/main/test/getter-static.ts)
@@ -236,9 +236,9 @@ npm install petal-service
 - [x] 支持模拟参数，获取最后请求参数
 - [x] 重复装饰问题, method和class重复装饰，会logger.warn
 - [x] 服务请求TypeScript提示问题 (PetalParamsPick 命令空间)
-- [ ] 除了全局暴露装饰器方法，其他的暴露为对象
-- [ ] 全局示例支持设置logger
-- [ ] 提供直接发起网络请求的方法
+- [x] 全局示例支持设置logger
+- [x] 提供直接发起网络请求的方法 (getRequestor()可以获取)
+- [ ] 除了全局暴露装饰器方法，其他的暴露为对象?? 全局暴露 petal???
 
 
 ## TODO  低优先级
