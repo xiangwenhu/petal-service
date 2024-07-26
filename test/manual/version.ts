@@ -1,3 +1,3 @@
-import  {instance} from  "../../src";
+import { instance } from "../../src";
 
 console.log("version:", instance.version);

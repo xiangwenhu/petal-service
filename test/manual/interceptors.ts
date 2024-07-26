@@ -3,11 +3,12 @@ import {
     BaseService,
     enableLog,
     methodDecorator,
-    requester
+    getRequester
 } from "../../src";
 
 enableLog(false);
 
+const requester = getRequester();
 requester.interceptors.request.use((config) => {
     console.log("interceptors:", config);
     return config;
