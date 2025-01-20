@@ -1,6 +1,7 @@
 import { DEFAULT_CONFIG, SYMBOL_ORIGIN_FUNCTION } from "../const";
 import { CreateDecoratorOptions, RequestConfig } from "../types";
 import { isFunction } from "../util";
+import { isArrowFunction, isAsyncFunction, isAsyncGeneratorFunction, isGeneratorFunction, isNormalFunction } from "../util/function";
 import { proxyRequest } from "./util";
 
 export function createMethodDecorator(
@@ -11,12 +12,22 @@ export function createMethodDecorator(
             target: Function,
             context: ClassMethodDecoratorContext<any>
         ) {
+            debugger;
+
+            if (!(isNormalFunction(target) && isAsyncFunction(target))) {
+                if (isGeneratorFunction(target) || isAsyncGeneratorFunction(target) || isArrowFunction(target)) {
+                    throw new Error(`methodDecorator 只能用于装饰class的普通方法或者异步方法，当前方法名：${target?.name}`);
+                }
+            }
+
             if (context.kind !== "method") {
                 throw new Error("methodDecorator 只能用于装饰class的method");
             }
             if (context.private) {
                 throw new Error(`methodDecorator 不能用于装饰class的private method: ${String(context.name)}`);
             }
+
+
             const method = context.static
                 ? innerStaticMethodDecorator
                 : innerMethodDecorator;

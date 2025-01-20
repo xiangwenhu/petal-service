@@ -1,5 +1,6 @@
 import { CreateDecoratorOptions } from "../types";
 import { RequestConfig } from "../types";
+import { isFunction } from "../util";
 import { isRequestConfigKey } from "./util";
 
 export function createFieldDecorator(
@@ -16,6 +17,11 @@ export function createFieldDecorator(
             if (context.private) {
                 throw new Error(`fieldDecorator 不能用于装饰class的private field: ${String(context.name)}`);
             }
+
+            // if (isFunction(target)) {
+            //     throw new Error(`fieldDecorator 不能用于装饰class的方法属性 ${String(context.name)}`);
+            // }
+
             const sName = `${String(context.name)}`
             if (!field && !isRequestConfigKey(sName)) {
                 throw new Error("accessorDecorator field 不是有效的键");
@@ -47,6 +53,8 @@ function innerFieldDecorator(
                 context.name
             )}`
         );
+
+        
 
         dataStore.updateFieldConfig(_class_, instance, {
             [field]: context.name,
