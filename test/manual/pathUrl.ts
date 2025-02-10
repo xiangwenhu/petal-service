@@ -17,7 +17,7 @@ class DemoService<R = any> {
     // 设置 api 请求参数，最主要的是url, params, data和额外的config
     @methodDecorator({
         method: "get",
-        url: "/course/:type",
+        url: "/course/:type?c=1",
     })
 
     public async getIndex(

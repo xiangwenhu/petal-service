@@ -12,8 +12,6 @@ export function createMethodDecorator(
             target: Function,
             context: ClassMethodDecoratorContext<any>
         ) {
-            debugger;
-
             if (!(isNormalFunction(target) && isAsyncFunction(target))) {
                 if (isGeneratorFunction(target) || isAsyncGeneratorFunction(target) || isArrowFunction(target)) {
                     throw new Error(`methodDecorator 只能用于装饰class的普通方法或者异步方法，当前方法名：${target?.name}`);

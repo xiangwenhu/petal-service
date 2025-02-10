@@ -14,7 +14,8 @@ function isFullHttp(path: string) {
 }
 
 export function hasPathParams(path: string) {
-    let pathToValid = path;
+    // /api/index?type=0  || https://www.ip.cn/api/index?type=0  有queryString部分，pathToRegexp 会报错
+    let pathToValid = path.split("?")[0];
     // https://example:9980/user/:id/:month
     // https://example.com
     if (isFullHttp(path)) {
@@ -36,16 +37,19 @@ export function pathToUrl(
         return path;
     }
 
-    const nPath = normalize(path);
+    const [pathname, query] = path.split("?");
+
+    const nPath = normalize(pathname);
     // /user/:id
     if (!isFullHttp(nPath)) {
         const toPath = compile(nPath, { encode: encodeURIComponent });
-        return toPath(pathParams);
+        const rPath = toPath(pathParams);
+        return [rPath, query].filter(Boolean).join("?")
     }
 
     const url = new wUrl.URL(nPath);
     const toPath = compile(url.pathname, { encode: encodeURIComponent });
     // TODO:: username password模式？
     const rPath = `${url.protocol}//${url.host}` + toPath(pathParams);
-    return rPath;
+    return [rPath, query].filter(Boolean).join("?");
 }
