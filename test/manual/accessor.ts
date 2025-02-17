@@ -2,11 +2,12 @@ import { accessorDecorator, enableLog, BaseService, methodDecorator } from "../.
 
 enableLog();
 
-class DemoService<R = any> extends BaseService<R>{
+class DemoService<R = any> extends BaseService<R> {
 
     @methodDecorator({
         url: "https://baidu.com"
     })
+    // @ts-ignore
     async getIndex(this: DemoService<string>): Promise<string> {
         // console.log("this.something:", this.#someThing);
         return this.res.data;
