@@ -26,7 +26,7 @@ setConfig({
 // 设置baseUrl和超时时间
 @classDecorator({
     baseURL: "https://www.baidu.com",
-    timeout: 60 * 1000
+    timeout: 60 * 1000,
 })
 class DemoService<R = any> {
 
@@ -44,8 +44,7 @@ class DemoService<R = any> {
     ) {
         const something = this.getSomething();
         console.log("something: ", something);
-        // 不写任何返回， 默认会返回 this.res.data
-        // return this.res!.data
+        return this.res.data
     }
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 默认值 

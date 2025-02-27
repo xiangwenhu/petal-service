@@ -39,7 +39,6 @@ class DemoService<R = any> {
         this: DemoService<string>,
         _params: PetalParamsPick.Native,
     ) {
-        // 不写任何返回， 默认会返回 this.res.data
         return this.res.data
     }
     @headersDecorator headers = {

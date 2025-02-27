@@ -51,7 +51,6 @@ class DemoService extends PetalBaseService {
     static async getIndex(
         _params: PetalParamsPick.Params<{ since: string }>,
     ): Promise<string> {
-        // 不写任何返回， 默认会返回 this.res.data
         return this.res.data;
     }
 
@@ -239,6 +238,8 @@ npm install petal-service
 - [x] 服务请求TypeScript提示问题 (PetalParamsPick 命令空间)
 - [x] 全局示例支持设置logger
 - [x] 提供直接发起网络请求的方法 (getRequestor()可以获取)
+- [x] 逻辑问题：被装饰的方法如果返回的值是 undefined，那么默认返回的是 res.data, 问题在于如果res.data不是undefined, 但是res.data.list是undefined    
+   **使用extractData: boolean显示配置**   
 - [ ] 除了全局暴露装饰器方法，其他的暴露为对象?? 全局暴露 petal???
 
 

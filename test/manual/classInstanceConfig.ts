@@ -45,8 +45,6 @@ class DemoService<R = any> {
             since: string
         }>,
     ) {
-        // 不写任何返回， 默认会返回 this.res.data
-        // return this.res!.data
     }
 
     // 设置 实例的baseURL ，优先级: 方法 > 大于实例 > class > 默认值 

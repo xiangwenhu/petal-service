@@ -37,7 +37,7 @@ class DemoService<R> extends PetalBaseService<R> {
 
     // 设置 实例的timeout ，优先级: 方法 > 大于实例 > class > 自定义默认值
     @petalFieldDecorator("timeout")
-    static timeoutValue = 5 * 1000;
+    static timeoutValue = 15 * 1000;
 }
 
 DemoService

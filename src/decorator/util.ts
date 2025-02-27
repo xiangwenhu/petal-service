@@ -1,4 +1,4 @@
-import { REQUEST_CONFIG_KEYS } from "../const";
+import { REQUEST_CONFIG_KEYS, SYMBOL_ORIGIN_FUNCTION } from "../const";
 import { RequestConfig, RequestInstance } from "../types";
 import Logger from "../types/logger";
 
@@ -15,7 +15,7 @@ export function proxyRequest({
     thisObject: Object;
     logger: Logger;
 }) {
-    const { simulated } = config;
+    const { simulated, autoExtractData } = config;
     let promiseRes: Promise<any>;
     if (simulated === true) {
         promiseRes = Promise.resolve().then(() => {
@@ -48,8 +48,7 @@ export function proxyRequest({
         return Promise.resolve()
             .then(() => method.call(thisObjectProxy))
             .then((resData: any) => {
-                // api method方法里面可以什么都不写，直接返回结果
-                if (resData === undefined) {
+                if (!!autoExtractData == true) {
                     return res.data;
                 }
                 return resData;
