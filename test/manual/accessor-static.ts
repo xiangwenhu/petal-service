@@ -1,25 +1,25 @@
-import { accessorDecorator, enableLog, BaseService, methodDecorator,  getMethodConfig} from "../../src";
+import { accessorDecorator, enableLog, BaseService, methodDecorator, getMethodConfig } from "../../src";
 
 enableLog();
 
-class DemoService<R = any> extends BaseService<R>{
+class DemoService<R = any> extends BaseService<R> {
 
     @methodDecorator({
         url: "https://baidu.com/"
     })
-    static async getIndex(): Promise<string> {
+    static async * getIndex(): any {
         return this.res.data;
     }
 
-     @accessorDecorator("timeout")
-     static accessor timeout: number = 20 * 1000;
+    @accessorDecorator("timeout")
+    static accessor timeout: number = 20 * 1000;
 
 }
 
 console.log("getIndex config:", getMethodConfig(DemoService, DemoService.getIndex));
 
-DemoService.getIndex().then(res => {
+DemoService.getIndex().then((res: any) => {
     console.log("res:", res.length);
-}).catch(err => {
+}).catch((err: any) => {
     console.log("err:", err);
 })
